@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>http://localhost:49702/about/</loc>
+  </url><url>
+    <loc>http://localhost:49702/book/</loc>
+  </url><url>
+    <loc>http://localhost:49702/careers/</loc>
+  </url><url>
+    <loc>http://localhost:49702/categories/</loc>
+  </url><url>
+    <loc>http://localhost:49702/occasions/</loc>
+  </url><url>
+    <loc>http://localhost:49702/tags/</loc>
+  </url><url>
+    <loc>http://localhost:49702/</loc>
+  </url>
+</urlset>
