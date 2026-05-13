@@ -1,0 +1,31 @@
+<footer class="site-footer">
+  <div class="footer-top">
+    <div class="footer-brand">
+      <p class="footer-wordmark">The Drink Is Right</p>
+      <p class="footer-desc">Mobile bartending for weddings, birthday parties, retirement celebrations, anniversaries, and every event in between.</p>
+      <p class="footer-loc">{{ .Site.Params.location }}</p>
+    </div>
+
+    <div class="footer-col">
+      <h4>Follow Us</h4>
+      <a href="https://www.instagram.com/thedrinkisright" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://www.facebook.com/thedrinkisright" target="_blank" rel="noopener">Facebook</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>Careers</h4>
+      <a href="/careers">Join Our Team</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <a href="mailto:{{ .Site.Params.email }}">{{ .Site.Params.email }}</a>
+      <a href="tel:{{ .Site.Params.phone }}">{{ .Site.Params.phone }}</a>
+      <p class="footer-note">Prefer to talk? We love that.<br>Call or text anytime.</p>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>© {{ now.Year }} The Drink Is Right. All rights reserved.</p>
+  </div>
+</footer>

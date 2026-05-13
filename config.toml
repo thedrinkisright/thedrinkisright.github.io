@@ -1,0 +1,14 @@
+baseURL = "https://www.thedrinkisright.com/"
+languageCode = "en-us"
+title = "The Drink Is Right"
+
+[params]
+  tagline     = "The Right Drink For Every Experience"
+  description = "Elevated cocktails and a bar experience done right. Mobile bartending for every occasion across NYC and surrounding areas."
+  phone       = "(929) 235-8606"
+  email       = "info@thedrinkisright.com"
+  quoteURL    = "https://forms.gle/rXCxw14ytjveiWHK7"
+  location    = "Serving NYC & Surrounding Areas"
+
+[markup.goldmark.renderer]
+  unsafe = true

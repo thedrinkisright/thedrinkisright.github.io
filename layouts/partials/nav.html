@@ -1,0 +1,35 @@
+<header class="site-header" id="site-header">
+  <div class="nav-bar">
+    <div class="nav-left">
+      <a href="/#services" class="nav-link">Bar Services</a>
+      <a href="/about/" class="nav-link">About</a>
+    </div>
+
+    <a href="/" class="nav-logo" aria-label="The Drink Is Right — Home">
+      <img
+        src="/images/logo.png"
+        alt="The Drink Is Right"
+        class="nav-logo-img"
+        width="213"
+        height="150"
+      />
+      <span class="logo-sub">Mobile Bartending · New York City &amp; Beyond</span>
+    </a>
+
+    <div class="nav-right">
+      <a href="tel:{{ .Site.Params.phone }}" class="nav-phone">{{ .Site.Params.phone }}</a>
+      <a href="/book" class="btn btn-sm btn-gold">Book Now</a>
+    </div>
+
+    <button class="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <nav class="mobile-nav" id="mobile-nav" aria-hidden="true">
+    <a href="/#services">Bar Services</a>
+    <a href="/about/">About</a>
+    <a href="tel:{{ .Site.Params.phone }}">{{ .Site.Params.phone }}</a>
+    <a href="/book" class="mobile-cta">Book Now →</a>
+  </nav>
+</header>

@@ -1,0 +1,43 @@
+{{ define "main" }}
+
+<section class="about-body" data-nav-theme="dark">
+  <div class="container">
+
+    <div class="about-intro">
+      <p class="eyebrow">Who We Are</p>
+      <h1>About <em>The Drink Is Right</em></h1>
+      <p class="about-lead">The Drink Is Right was built on a simple belief — that every celebration deserves more than just drinks. It deserves an experience.</p>
+    </div>
+
+    <div class="about-story">
+      <p>Rooted in a lifelong passion for hospitality and entertaining, The Drink Is Right brings professional mobile bartending directly to your event across New York City and beyond. From intimate anniversaries to milestone birthdays, retirement send-offs to wedding cocktail hours — every occasion is treated with the same level of care, creativity, and craft.</p>
+      <p>What sets us apart isn't just what's in the glass. It's how your guests feel from the moment the bar opens. We show up prepared, professional, and fully focused on making your event unforgettable — so you can focus on the people who matter most.</p>
+      <p>Every menu is customized to your event. Every cocktail is crafted with intention. And every client gets our full personal attention from the first conversation to the final pour.</p>
+      <p class="about-closing"><strong>This is what we love to do.</strong> And we'd be honored to be part of your next celebration.</p>
+    </div>
+
+    <div class="about-notes">
+      <p class="about-notes-title">A few things to note</p>
+      <ul class="about-notes-list">
+        <li>We operate as a <strong>Dry For-Hire</strong> bartending service — you purchase the alcohol, we handle everything else</li>
+        <li>We serve <strong>all five boroughs</strong> of New York City and surrounding areas</li>
+        <li>Available for events of all sizes — <strong>up to 80 guests per bartender</strong></li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<section class="cta-section" data-nav-theme="dark">
+  <div class="cta-inner">
+    <p class="eyebrow">Let's Work Together</p>
+    <h2>Ready to plan<br><em>your event?</em></h2>
+    <p>Tell us what you're celebrating and we'll build a bar plan around it.</p>
+    <div class="cta-actions">
+      <a href="/book" class="btn btn-gold">Book Now</a>
+      <a href="tel:{{ .Site.Params.phone }}" class="btn btn-outline-white">Call Us Directly</a>
+    </div>
+  </div>
+</section>
+
+{{ end }}
