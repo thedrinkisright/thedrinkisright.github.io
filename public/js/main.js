@@ -95,6 +95,12 @@ if (document.querySelector('.book-form')) {
 
 
 if (document.querySelector('.book-form')) {
+  var bookFormEl = document.querySelector('.book-form');
+
+  // Always reset form on page load — clears cached values from browser back button
+  bookFormEl.reset();
+
+  // Then pre-fill from URL params if coming from homepage mini form
   var params = new URLSearchParams(window.location.search);
   var fieldMap = {
     'name':       'name',

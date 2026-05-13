@@ -2,6 +2,9 @@ baseURL = "https://www.thedrinkisright.com/"
 languageCode = "en-us"
 title = "The Drink Is Right"
 
+# GitHub Pages image cache location
+cacheDir = "/tmp/hugo_cache"
+
 [params]
   tagline     = "The Right Drink For Every Experience"
   description = "Elevated cocktails and a bar experience done right. Mobile bartending for every occasion across NYC and surrounding areas."

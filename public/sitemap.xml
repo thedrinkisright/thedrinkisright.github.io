@@ -2,18 +2,14 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>http://localhost:58206/about/</loc>
+    <loc>http://localhost:54329/about/</loc>
   </url><url>
-    <loc>http://localhost:58206/book/</loc>
+    <loc>http://localhost:54329/categories/</loc>
   </url><url>
-    <loc>http://localhost:58206/careers/</loc>
+    <loc>http://localhost:54329/occasions/</loc>
   </url><url>
-    <loc>http://localhost:58206/categories/</loc>
+    <loc>http://localhost:54329/tags/</loc>
   </url><url>
-    <loc>http://localhost:58206/occasions/</loc>
-  </url><url>
-    <loc>http://localhost:58206/tags/</loc>
-  </url><url>
-    <loc>http://localhost:58206/</loc>
+    <loc>http://localhost:54329/</loc>
   </url>
 </urlset>
