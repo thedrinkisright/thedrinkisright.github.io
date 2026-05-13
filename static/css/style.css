@@ -302,22 +302,45 @@ em  { font-style: italic; color: inherit; }
 .mobile-nav {
   display: none;
   flex-direction: column;
-  background: var(--warm-white);
-  border-top: 1px solid rgba(201,168,76,0.2);
   padding: 1rem 2rem 2rem;
+  border-top: 1px solid rgba(201,168,76,0.2);
 }
+
+/* When nav is cream → mobile menu is black with cream text */
+.site-header.scrolled .mobile-nav {
+  background: #000;
+}
+.site-header.scrolled .mobile-nav a {
+  color: var(--cream);
+  border-bottom: 1px solid rgba(250,247,242,0.1);
+}
+
+/* When nav is black → mobile menu is cream with black text */
+.site-header.nav-dark .mobile-nav {
+  background: var(--warm-white);
+}
+.site-header.nav-dark .mobile-nav a {
+  color: var(--text-dark);
+  border-bottom: 1px solid var(--off-white);
+}
+
+/* Shared link styles */
 .mobile-nav a {
   padding: 0.9rem 0;
   font-size: 0.8rem;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--text-dark);
-  border-bottom: 1px solid var(--off-white);
   transition: color var(--dur);
 }
 .mobile-nav a:hover { color: var(--gold); }
-.mobile-nav .mobile-cta { color: var(--green); border-bottom: none; }
+
+/* Book Now always gold, no border */
+.site-header.scrolled .mobile-nav .mobile-cta,
+.site-header.nav-dark .mobile-nav .mobile-cta {
+  color: var(--gold);
+  border-bottom: none;
+}
 
 
 /* ==========================================================
