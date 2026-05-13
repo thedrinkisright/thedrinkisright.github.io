@@ -2,10 +2,10 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Careers on The Drink Is Right</title>
-    <link>http://localhost:58206/careers/</link>
+    <link>http://localhost:64205/careers/</link>
     <description>Recent content in Careers on The Drink Is Right</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <atom:link href="http://localhost:58206/careers/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:64205/careers/index.xml" rel="self" type="application/rss+xml" />
   </channel>
 </rss>

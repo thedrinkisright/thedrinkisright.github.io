@@ -481,10 +481,6 @@ em  { font-style: italic; color: inherit; }
   position: relative;
   overflow: hidden;
 }
-.occ-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 16px 48px rgba(0,0,0,0.12);
-}
 
 .occ-card--green  { background: var(--green-pale); border-color: rgba(26,107,71,0.15); }
 .occ-card--dark   { background: var(--charcoal); color: var(--cream); }
@@ -875,6 +871,7 @@ em  { font-style: italic; color: inherit; }
   -webkit-appearance: none;
   transition: border-color var(--dur), background var(--dur);
   outline: none;
+  color-scheme: dark;
 }
 
 /* Homepage mini form placeholders */
@@ -892,8 +889,13 @@ em  { font-style: italic; color: inherit; }
 }
 
 .cta-input::-webkit-calendar-picker-indicator {
-  filter: invert(1);
+  filter: invert(1) brightness(2);
   cursor: pointer;
+  opacity: 1;
+  display: block;
+  width: 20px;
+  height: 20px;
+  background-size: contain;
 }
 
 .cta-input option { background: var(--charcoal); color: var(--cream); }
