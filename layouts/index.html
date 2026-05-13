@@ -259,7 +259,7 @@
       <div class="cta-mini-fields">
         <input type="text" id="mini-name" placeholder="Your Name" class="cta-input" />
         <input type="email" id="mini-email" placeholder="Email Address" class="cta-input" />
-        <input type="date" id="mini-date" class="cta-input" />
+        <input type="text" id="mini-date" class="cta-input" placeholder="Event Date" onfocus="this.type='date'" onblur="if(!this.value)this.type='text'" />
         <select id="mini-event" class="cta-input">
           <option value="" disabled selected>Event Type</option>
           <option value="Birthday Party">🎂 Birthday Party</option>

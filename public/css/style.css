@@ -898,11 +898,7 @@ em  { font-style: italic; color: inherit; }
   background-size: contain;
 }
 
-/* Restore native date picker on mobile so calendar icon shows */
-input[type="date"].cta-input {
-  -webkit-appearance: auto;
-  appearance: auto;
-}
+/* Calendar icon white on dark inputs */
 
 .cta-input option { background: var(--charcoal); color: var(--cream); }
 
