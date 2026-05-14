@@ -1115,6 +1115,9 @@ em  { font-style: italic; color: inherit; }
 /* Date input color fix */
 .form-group input[type="date"] { color-scheme: dark; }
 
+/* Force dark color-scheme on book page date input always */
+#date { color-scheme: dark; }
+
 .form-submit { text-align: center; }
 
 .form-note {
