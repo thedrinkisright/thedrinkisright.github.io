@@ -921,7 +921,50 @@ em  { font-style: italic; color: inherit; }
   background-size: contain;
 }
 
-/* Calendar icon white on dark inputs */
+/* Date input wrapper with clickable calendar icon button */
+.date-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.date-input-wrap input {
+  width: 100%;
+  padding-right: 2.8rem !important;
+}
+
+.date-icon-btn {
+  position: absolute;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.85;
+  transition: opacity 0.2s;
+  z-index: 2;
+}
+
+.date-icon-btn:hover { opacity: 1; }
+
+/* White calendar icon on desktop for text-type date inputs */
+/* Calendar icon handled by real buttons on both date inputs */
+
+/* CTA mini form date wrapper */
+.cta-date-wrap { width: 100%; }
+.cta-date-wrap input { width: 100%; }
+
+/* Keep native calendar icon white */
+
+/* Hide native calendar icon on both date inputs — buttons handle them */
+#date::-webkit-calendar-picker-indicator,
+#mini-date::-webkit-calendar-picker-indicator {
+  display: none;
+  -webkit-appearance: none;
+}
 
 .cta-input option { background: var(--charcoal); color: var(--cream); }
 
