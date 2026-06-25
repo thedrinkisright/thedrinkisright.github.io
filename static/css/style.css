@@ -1484,7 +1484,7 @@ em  { font-style: italic; color: inherit; }
 }
 .footer-bottom p {
   font-size: 0.72rem;
-  color: rgba(250,247,242,0.25);
+  color: #000;
 }
 .footer-keywords {
   font-size: 0.65rem !important;
