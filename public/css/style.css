@@ -1867,3 +1867,38 @@ em  { font-style: italic; color: inherit; }
 .booking-cta__note a {
   color: #5E5747;
 }
+
+.thankyou-section {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #111;
+  text-align: center;
+}
+
+.thankyou-inner {
+  max-width: 560px;
+  padding: 2rem;
+}
+
+.thankyou-inner h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 5vw, 3rem);
+  color: #F5EED8;
+  margin: 0 0 1rem;
+}
+
+.thankyou-inner p {
+  color: #9A907E;
+  font-size: 16px;
+  line-height: 1.7;
+  margin: 0 0 2rem;
+}
+
+.thankyou-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
