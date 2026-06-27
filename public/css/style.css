@@ -1902,3 +1902,7 @@ em  { font-style: italic; color: inherit; }
   justify-content: center;
   flex-wrap: wrap;
 }
+
+body:has(.thankyou-section) .site-header {
+  display: none;
+}
