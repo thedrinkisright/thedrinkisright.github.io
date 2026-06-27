@@ -305,40 +305,6 @@
 <!-- ============================================================
      CTA BANNER
      ============================================================ -->
-<section class="cta-section" data-nav-theme="dark">
-  <div class="cta-inner">
-    <p class="eyebrow">Let's Make It Happen</p>
-    <h2>Ready to see if your<br><em>date is available?</em></h2>
-    <p>Tell us the basics and we'll get back to you within 24 hours.</p>
-
-    <div class="cta-mini-form">
-      <div class="cta-mini-fields">
-        <input type="text" id="mini-name" placeholder="Your Name" class="cta-input" />
-        <input type="email" id="mini-email" placeholder="Email Address" class="cta-input" />
-        <div class="date-input-wrap cta-date-wrap">
-          <input type="text" id="mini-date" class="cta-input" placeholder="Event Date" onfocus="this.type='date'; try{this.showPicker()}catch(e){}" onblur="if(!this.value)this.type='text'" onchange="if(!this.value)this.type='text'" />
-          <button type="button" class="date-icon-btn" onclick="var d=document.getElementById('mini-date');d.type='date';d.focus();try{d.showPicker()}catch(e){}" tabindex="-1" aria-label="Open calendar">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-          </button>
-        </div>
-        <select id="mini-event" class="cta-input">
-          <option value="" disabled selected>Event Type</option>
-          <option value="Birthday Party">🎂 Birthday Party</option>
-          <option value="Wedding">🥂 Wedding</option>
-          <option value="Retirement Party">✨ Retirement Party</option>
-          <option value="Anniversary">💍 Anniversary</option>
-          <option value="Corporate Event">🏢 Corporate Event</option>
-          <option value="Bridal Shower">💐 Bridal Shower</option>
-          <option value="House Party">🎉 House Party</option>
-          <option value="Graduation Party">🎓 Graduation Party</option>
-          <option value="Other">Other</option>
-        </select>
-      </div>
-      <a href="/book" id="cta-book-btn" class="btn btn-gold btn-full">Start Your Booking →</a>
-    </div>
-
-    <p class="cta-note">Prefer to talk it through? We love that too. Call or text us directly.</p>
-  </div>
-</section>
+{{ partial "booking-cta.html" . }}
 
 {{ end }}

@@ -1806,3 +1806,64 @@ em  { font-style: italic; color: inherit; }
   max-width: 760px;
   margin: 0 auto;
 }
+
+.booking-cta {
+  background: #111;
+  padding: 56px 48px;
+  text-align: center;
+}
+
+.booking-cta__eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #B8960C;
+  margin: 0 0 18px;
+}
+
+.booking-cta__heading {
+  font-family: 'Playfair Display', serif;
+  font-size: 34px;
+  font-weight: 700;
+  color: #F5EED8;
+  line-height: 1.2;
+  margin: 0 0 10px;
+}
+
+.booking-cta__heading em {
+  font-style: italic;
+  color: #D4AF37;
+}
+
+.booking-cta__sub {
+  font-size: 15px;
+  color: #9A907E;
+  margin: 0 0 36px;
+}
+
+.booking-cta__btn {
+  display: inline-block;
+  background: #D4AF37;
+  color: #111;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 15px 38px;
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+.booking-cta__btn:hover {
+  background: #E5C04A;
+}
+
+.booking-cta__note {
+  margin: 20px 0 0;
+  font-size: 12.5px;
+  color: #5E5747;
+}
+
+.booking-cta__note a {
+  color: #5E5747;
+}
