@@ -856,7 +856,7 @@ em  { font-style: italic; color: inherit; }
   max-width: 680px;
   margin: 0 auto;
 }
-.cta-inner h2  { color: var(--cream); margin-bottom: 1rem; white-space: nowrap;}
+.cta-inner h2  { color: var(--cream); margin-bottom: 1rem; }
 .cta-inner em  { color: var(--gold-light); }
 .cta-inner > p { color: var(--text-light); font-size: 1rem; margin-bottom: 2.5rem; }
 
@@ -1919,7 +1919,6 @@ body:has(.thankyou-section) .site-header {
 }
 
 .pkg-bottom-cta h2 {
-  white-space: nowrap;
   font-family: 'Playfair Display', serif;
   font-size: clamp(1.8rem, 4vw, 2.5rem);
   color: #F5EED8;
@@ -1939,4 +1938,18 @@ body:has(.thankyou-section) .site-header {
 
 .about-cta h2 {
   white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .pkg-bottom-cta h2 {
+    white-space: normal;
+  }
+
+  .pkg-bottom-cta h2::after {
+    content: none;
+  }
+
+  .cta-inner h2 {
+    white-space: normal;
+  }
 }
