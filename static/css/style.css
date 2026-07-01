@@ -1953,3 +1953,35 @@ body:has(.thankyou-section) .site-header {
     white-space: normal;
   }
 }
+
+.notfound-section {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  text-align: center;
+}
+
+.notfound-inner {
+  max-width: 480px;
+  padding: 2rem;
+}
+
+.notfound-inner h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 5vw, 3rem);
+  color: #F5EED8;
+  margin: 0 0 1rem;
+}
+
+.notfound-inner p {
+  color: #9A907E;
+  font-size: 16px;
+  line-height: 1.7;
+  margin: 0 0 2rem;
+}
+
+body:has(.notfound-section) .site-header {
+  display: none;
+}
