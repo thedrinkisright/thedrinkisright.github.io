@@ -1996,10 +1996,6 @@ body:has(.notfound-section) .site-header {
   border-radius: 8px;
 }
 
-.drink-img:hover {
-  border-color: #D4AF37;
-}
-
 .drink-always {
   position: absolute;
   bottom: 0;
@@ -2023,8 +2019,14 @@ body:has(.notfound-section) .site-header {
   text-align: right;
 }
 
-.drink-img:hover .drink-hover-name {
-  opacity: 1;
+@media (hover: hover) {
+  .drink-img:hover {
+    border-color: #D4AF37;
+  }
+
+  .drink-img:hover .drink-hover-name {
+    opacity: 1;
+  }
 }
 
 .menu-body {
