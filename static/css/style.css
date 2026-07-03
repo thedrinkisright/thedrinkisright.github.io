@@ -2132,3 +2132,24 @@ body:has(.notfound-section) .site-header {
   font-size: 1.05rem;
   color: var(--text-light);
 }
+
+.menu-body h1 {
+  color: var(--cream);
+}
+
+.menu-category-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  color: var(--cream);
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.menu-category {
+  margin-bottom: 4rem;
+}
+
+.menu-grid {
+  margin-top: 1.5rem;
+}
