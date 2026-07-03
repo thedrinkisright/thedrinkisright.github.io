@@ -180,7 +180,7 @@ window.addEventListener('scroll', updateNavTheme, { passive: true });
 updateNavTheme(); // run once on load
 
 // ---- Scroll-away nav (careers and book pages) ----
-if (document.querySelector('.careers-body') || document.querySelector('.book-form') || document.querySelector('.about-body') || document.querySelector('.pkg-page')) {
+if (document.querySelector('.careers-body') || document.querySelector('.book-form') || document.querySelector('.about-body') || document.querySelector('.pkg-page') || document.querySelector('.menu-body')) {
   // Auto-hide nav and position form on /book page
   if (document.querySelector('.book-form')) {
     setTimeout(function() {
