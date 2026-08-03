@@ -45,6 +45,88 @@ if (ctaBtn) {
   });
 }
 
+// ---- /book page: two-step flow (choose package -> event details) ----
+if (document.getElementById('book-step-1')) {
+  // Reset here (before any deep-link tier gets applied below) so the later
+  // "always reset on load" block doesn't wipe out a deep-linked selection.
+  var bookFormEarly = document.querySelector('.book-form');
+  if (bookFormEarly) bookFormEarly.reset();
+
+  var step1 = document.getElementById('book-step-1');
+  var step2 = document.getElementById('book-step-2');
+  var progressSteps = document.querySelectorAll('.book-progress-step');
+  var tierCards = document.querySelectorAll('.tier-select-card');
+  var skipBtn = document.getElementById('tier-skip-btn');
+  var changeBtn = document.getElementById('change-package-btn');
+  var tierInput = document.getElementById('service_tier');
+  var chip = document.getElementById('selected-package-chip');
+  var chipName = document.getElementById('selected-package-name');
+  var chipPrice = document.getElementById('selected-package-price');
+
+  function scrollToBookTop() {
+    var bookInner = document.querySelector('.book-inner');
+    if (!bookInner) return;
+    var rect = bookInner.getBoundingClientRect();
+    var targetY = rect.top + window.scrollY - 20;
+    smoothScrollTo(Math.max(0, targetY));
+  }
+
+  function setActiveProgress(n) {
+    progressSteps.forEach(function(el) {
+      el.classList.toggle('is-active', parseInt(el.dataset.step, 10) <= n);
+    });
+  }
+
+  function goToStep2(tierName, tierPrice) {
+    if (tierName) {
+      tierInput.value = tierName;
+      chipName.textContent = tierName;
+      chipPrice.textContent = tierPrice ? '— ' + tierPrice : '';
+      chip.hidden = false;
+    } else {
+      tierInput.value = '';
+      chip.hidden = true;
+    }
+    step1.hidden = true;
+    step2.hidden = false;
+    setActiveProgress(2);
+    scrollToBookTop();
+  }
+
+  function goToStep1() {
+    step2.hidden = true;
+    step1.hidden = false;
+    setActiveProgress(1);
+    scrollToBookTop();
+  }
+
+  tierCards.forEach(function(card) {
+    card.addEventListener('click', function() {
+      goToStep2(card.dataset.tier, card.dataset.price);
+    });
+  });
+
+  if (skipBtn) {
+    skipBtn.addEventListener('click', function() { goToStep2(null, null); });
+  }
+
+  if (changeBtn) {
+    changeBtn.addEventListener('click', goToStep1);
+  }
+
+  // Deep link support: /book?tier=Full%20Bar jumps straight to step 2
+  var tierParam = new URLSearchParams(window.location.search).get('tier');
+  if (tierParam) {
+    var matchCard = null;
+    tierCards.forEach(function(card) {
+      if (card.dataset.tier.toLowerCase() === tierParam.toLowerCase()) matchCard = card;
+    });
+    if (matchCard) {
+      goToStep2(matchCard.dataset.tier, matchCard.dataset.price);
+    }
+  }
+}
+
 // ---- /book page: phone number validation ----
 if (document.querySelector('.book-form')) {
   var bookForm = document.querySelector('.book-form');
@@ -97,10 +179,10 @@ if (document.querySelector('.book-form')) {
 if (document.querySelector('.book-form')) {
   var bookFormEl = document.querySelector('.book-form');
 
-  // Always reset form on page load — clears cached values from browser back button
-  bookFormEl.reset();
+  // (Form is already reset above, before tier deep-linking runs, so cached
+  // values from the browser back button are cleared without wiping the tier.)
 
-  // Then pre-fill from URL params if coming from homepage mini form
+  // Pre-fill from URL params if coming from homepage mini form
   var params = new URLSearchParams(window.location.search);
   var fieldMap = {
     'name':       'name',

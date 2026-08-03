@@ -567,10 +567,11 @@ em  { font-style: italic; color: inherit; }
   position: relative;
   overflow: hidden;
 }
-.drink-img--a { background: linear-gradient(135deg, #2C1F10, #1A1208); }
-.drink-img--b { background: linear-gradient(135deg, #0F2318, #1A3D26); }
-.drink-img--c { background: linear-gradient(135deg, #2A1A08, #3D2C14); }
-.drink-img--d { background: linear-gradient(135deg, #121F16, #1A3328); }
+
+.drink-img--a { background-image: url('/images/drinks/seasonal.png');  background-size: 45%; background-position: center;  background-repeat: no-repeat; }
+.drink-img--b { background-image: url('/images/drinks/signature.png'); background-size: 45%; background-position: center; background-repeat: no-repeat; }
+.drink-img--c { background-image: url('/images/drinks/classic.png'); background-size: 45%; background-position: center; background-repeat: no-repeat; }
+.drink-img--d { background-image: url('/images/drinks/mocktail.png'); background-size: 45%; background-position: center; background-repeat: no-repeat; }
 
 .drink-tag {
   position: absolute;
@@ -1035,6 +1036,235 @@ em  { font-style: italic; color: inherit; }
   line-height: 1.7;
   max-width: 560px;
   margin: 0 auto;
+}
+
+/* ---- Step progress indicator ---- */
+.book-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  max-width: 420px;
+  margin: 0 auto 3rem;
+}
+
+.book-progress-step {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  opacity: 0.4;
+  transition: opacity var(--dur);
+}
+
+.book-progress-step.is-active { opacity: 1; }
+
+.book-progress-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid rgba(250,247,242,0.35);
+  color: var(--cream);
+  font-size: 0.78rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.book-progress-step.is-active .book-progress-num {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #000;
+}
+
+.book-progress-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cream);
+  white-space: nowrap;
+}
+
+.book-progress-bar {
+  flex: 1;
+  height: 1px;
+  background: rgba(250,247,242,0.15);
+  min-width: 30px;
+}
+
+/* ---- Step 1: tier select cards ---- */
+.tier-select-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.tier-select-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  text-align: left;
+  background: rgba(250,247,242,0.04);
+  border: 1px solid rgba(250,247,242,0.14);
+  border-radius: 4px;
+  padding: 1.75rem 1.5rem;
+  cursor: pointer;
+  transition: border-color var(--dur), background var(--dur), transform var(--dur);
+  font-family: var(--sans);
+}
+
+.tier-select-card:hover,
+.tier-select-card:focus-visible {
+  border-color: var(--gold);
+  background: rgba(250,247,242,0.07);
+  transform: translateY(-3px);
+}
+
+.tier-select-card--featured {
+  border-color: rgba(201,168,76,0.5);
+}
+
+.tier-select-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tier-select-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(250,247,242,0.5);
+}
+
+.tier-select-name {
+  color: var(--cream);
+  font-size: 1.4rem;
+  margin: 0;
+}
+
+.tier-select-price {
+  color: var(--gold);
+  font-size: 1rem;
+  font-weight: 700;
+  margin: -0.5rem 0 0;
+}
+
+.tier-select-sub {
+  color: rgba(250,247,242,0.7);
+  font-size: 0.85rem;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.tier-select-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  flex: 1;
+}
+
+.tier-select-items li {
+  font-size: 0.8rem;
+  color: rgba(250,247,242,0.75);
+  padding-left: 1.1rem;
+  position: relative;
+}
+
+.tier-select-items li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.5em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--gold);
+}
+
+.tier-select-btn {
+  margin-top: 0.25rem;
+  text-align: center;
+  width: 100%;
+  pointer-events: none;
+}
+
+.tier-select-skip {
+  text-align: center;
+  margin-top: 2.25rem;
+  font-size: 0.85rem;
+  color: rgba(250,247,242,0.6);
+}
+
+.tier-select-skip button {
+  background: none;
+  border: none;
+  color: var(--gold);
+  font-size: 0.85rem;
+  font-family: var(--sans);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: 0;
+}
+
+/* ---- Step 2: selected package chip ---- */
+.selected-package-chip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  max-width: 820px;
+  margin: 0 auto 2rem;
+  background: rgba(201,168,76,0.08);
+  border: 1px solid rgba(201,168,76,0.35);
+  border-radius: 3px;
+  padding: 0.9rem 1.25rem;
+}
+
+.selected-package-text {
+  color: var(--cream);
+  font-size: 0.88rem;
+}
+
+.selected-package-text strong { color: var(--gold); }
+
+.selected-package-text span {
+  color: rgba(250,247,242,0.6);
+  margin-left: 0.4rem;
+}
+
+.selected-package-chip button {
+  background: none;
+  border: none;
+  color: rgba(250,247,242,0.7);
+  font-size: 0.78rem;
+  font-family: var(--sans);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: 0;
+  white-space: nowrap;
+}
+
+.selected-package-chip button:hover { color: var(--gold); }
+
+@media (max-width: 860px) {
+  .tier-select-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+  .book-progress { max-width: 300px; margin-bottom: 2.25rem; }
+  .book-progress-label { font-size: 0.62rem; }
+  .selected-package-chip { flex-direction: column; align-items: flex-start; gap: 0.6rem; }
 }
 
 /* Form layout */

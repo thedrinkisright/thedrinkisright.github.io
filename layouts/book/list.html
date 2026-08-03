@@ -3,11 +3,102 @@
 <section class="book-body" data-nav-theme="dark">
   <div class="book-inner">
 
-    <div class="book-header">
-      <p class="eyebrow">Let's Make It Happen</p>
-      <h1 class="book-title"><em>Book The Drink Is Right</em></h1>
-      <p class="book-sub">Tell us about your event and we'll get back to you within 24 hours with availability and a custom quote.</p>
+    <div class="book-progress" id="book-progress">
+      <div class="book-progress-step is-active" data-step="1">
+        <span class="book-progress-num">1</span>
+        <span class="book-progress-label">Choose Package</span>
+      </div>
+      <div class="book-progress-bar"><span></span></div>
+      <div class="book-progress-step" data-step="2">
+        <span class="book-progress-num">2</span>
+        <span class="book-progress-label">Your Details</span>
+      </div>
     </div>
+
+    <!-- ============================================================
+         STEP 1 — PACKAGE PICKER
+         ============================================================ -->
+    <div class="book-step" id="book-step-1">
+
+      <div class="book-header">
+        <p class="eyebrow">Let's Make It Happen</p>
+        <h1 class="book-title"><em>Choose Your Package</em></h1>
+        <p class="book-sub">Pick the tier that fits your event — you can always fine-tune the details with us after you submit.</p>
+      </div>
+
+      <div class="tier-select-grid">
+
+        <button type="button" class="tier-select-card" data-tier="Bartender">
+          <div class="tier-select-top">
+            <span class="tier-select-label">Tier 01</span>
+            <span class="pkg-badge">Labor only</span>
+          </div>
+          <h3 class="tier-select-name">Bartender</h3>
+          <p class="tier-select-sub">Perfect when you already have a setup — just need a skilled bartender on-site.</p>
+          <ul class="tier-select-items">
+            <li>Bartending tools</li>
+            <li>Garnishes &amp; bar napkins</li>
+            <li>Alcohol shopping list</li>
+          </ul>
+          <span class="btn btn-sm btn-gold tier-select-btn">Select Package →</span>
+        </button>
+
+        <button type="button" class="tier-select-card tier-select-card--featured" data-tier="Basic Bar">
+          <div class="tier-select-top">
+            <span class="tier-select-label">Tier 02</span>
+            <span class="pkg-badge">Bar + equipment</span>
+          </div>
+          <h3 class="tier-select-name">Basic Bar</h3>
+          <p class="tier-select-sub">Everything in Bartender, plus a full bar table and cooling setup.</p>
+          <ul class="tier-select-items">
+            <li>Steel frame bar table</li>
+            <li>Wine chiller + beer cooler</li>
+            <li>Ice cooler, garbage bin &amp; more</li>
+          </ul>
+          <span class="btn btn-sm btn-gold tier-select-btn">Select Package →</span>
+        </button>
+
+        <button type="button" class="tier-select-card" data-tier="Full Bar">
+          <div class="tier-select-top">
+            <span class="tier-select-label">Tier 03</span>
+            <span class="pkg-badge pkg-badge--gold">Most popular</span>
+          </div>
+          <h3 class="tier-select-name">Full Bar</h3>
+          <p class="tier-select-sub">The complete setup — ice, cups, mixers, water, coolers. You focus on the guests.</p>
+          <ul class="tier-select-items">
+            <li>Disposable cups &amp; mixers</li>
+            <li>Water bottles + ice cooler</li>
+            <li>Everything included, top to bottom</li>
+          </ul>
+          <span class="btn btn-sm btn-gold tier-select-btn">Select Package →</span>
+        </button>
+
+      </div>
+
+      <p class="tier-select-skip">
+        Not sure which one fits? <button type="button" id="tier-skip-btn">Skip and tell us about your event →</button>
+      </p>
+
+    </div>
+
+    <!-- ============================================================
+         STEP 2 — CONTACT / EVENT DETAILS FORM
+         ============================================================ -->
+    <div class="book-step" id="book-step-2" hidden>
+
+      <div class="book-header">
+        <p class="eyebrow">Let's Make It Happen</p>
+        <h1 class="book-title"><em>Your Event Details</em></h1>
+        <p class="book-sub">Tell us about your event and we'll get back to you within 24 hours with availability and a custom quote.</p>
+      </div>
+
+      <div class="selected-package-chip" id="selected-package-chip" hidden>
+        <span class="selected-package-text">
+          Package: <strong id="selected-package-name"></strong>
+          <span id="selected-package-price"></span>
+        </span>
+        <button type="button" id="change-package-btn">Change package</button>
+      </div>
 
     <!-- ⚠️ Replace maqvdgrb with your actual Formspree form ID -->
     <form class="book-form" action="https://formspree.io/f/maqvdgrb" method="POST">
@@ -16,6 +107,7 @@
       <input type="hidden" name="_subject" value="New Booking Inquiry — The Drink Is Right" />
       <input type="hidden" name="_next" value="https://thedrinkisright.com/thank-you" />
       <input type="text" name="_gotcha" style="display:none" />
+      <input type="hidden" id="service_tier" name="service_tier" value="" />
 
       <div class="form-row form-row--2">
         <div class="form-group">
@@ -103,6 +195,8 @@
       </div>
 
     </form>
+
+    </div>
 
   </div>
 </section>
