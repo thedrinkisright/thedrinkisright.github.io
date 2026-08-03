@@ -2250,9 +2250,6 @@ body:has(.notfound-section) .site-header {
 }
 
 @media (hover: hover) {
-  .drink-img:hover {
-    border-color: #D4AF37;
-  }
 
   .drink-img:hover .drink-hover-name {
     opacity: 1;
