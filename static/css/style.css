@@ -2009,8 +2009,9 @@ em  { font-style: italic; color: inherit; }
   border-top: 1px solid #f0ede6;
 }
 .pkg-tier-footer span {
-  font-size: 0.75rem;
-  color: #999;
+  font-size: 1rem;
+  color: #000;
+  font-weight: 700;
 }
 
 .pkg-divider {
