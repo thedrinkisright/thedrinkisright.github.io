@@ -568,10 +568,10 @@ em  { font-style: italic; color: inherit; }
   overflow: hidden;
 }
 
-.drink-img--a { background-image: url('/images/drinks/seasonal.png');  background-size: 40% ; background-position: center; background-repeat: no-repeat; }
-.drink-img--b { background-image: url('/images/drinks/signature.png'); background-size: 40%; background-position: center; background-repeat: no-repeat; }
-.drink-img--c { background-image: url('/images/drinks/classic.png'); background-size: 40%; background-position: center; background-repeat: no-repeat; }
-.drink-img--d { background-image: url('/images/drinks/mocktail.png'); background-size: 40%; background-position: center; background-repeat: no-repeat; }
+.drink-img--a { background-image: url('/images/drinks/seasonal.png');  background-size: contain; background-position: center; background-repeat: no-repeat; }
+.drink-img--b { background-image: url('/images/drinks/signature.png'); background-size: contain; background-position: center; background-repeat: no-repeat; }
+.drink-img--c { background-image: url('/images/drinks/classic-test.png'); background-size: contain; background-position: center; background-repeat: no-repeat; }
+.drink-img--d { background-image: url('/images/drinks/mocktail.png'); background-size: contain; background-position: center; background-repeat: no-repeat; }
 
 .drink-tag {
   position: absolute;
@@ -1188,6 +1188,14 @@ em  { font-style: italic; color: inherit; }
   height: 5px;
   border-radius: 50%;
   background: var(--gold);
+}
+
+.tier-select-rates {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--cream);
+  text-align: center;
+  margin: 6px 0 0;
 }
 
 .tier-select-btn {
@@ -2009,7 +2017,7 @@ em  { font-style: italic; color: inherit; }
   border-top: 1px solid #f0ede6;
 }
 .pkg-tier-footer span {
-  font-size: 1rem;
+  font-size: 0.75rem;
   color: #000;
   font-weight: 700;
 }
