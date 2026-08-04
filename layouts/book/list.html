@@ -66,6 +66,7 @@
             <span class="pkg-badge pkg-badge--gold">Most popular</span>
           </div>
           <h3 class="tier-select-name">Full Bar</h3>
+          <p class="tier-select-price">Starting at $1,500</p>
           <p class="tier-select-sub">The complete setup — ice, cups, mixers, water, coolers. You focus on the guests.</p>
           <ul class="tier-select-items">
             <li>Disposable cups &amp; mixers</li>
@@ -171,11 +172,11 @@
       <div class="form-row form-row--2">
         <div class="form-group">
           <label for="event_start_time">Event Start Time <span class="required">*</span></label>
-          <input type="time" id="event_start_time" name="event_start_time" required />
+          <input type="time" id="event_start_time" name="event_start_time" onfocus="try{this.showPicker()}catch(e){}" required />
         </div>
         <div class="form-group">
           <label for="event_end_time">Event End Time <span class="required">*</span></label>
-          <input type="time" id="event_end_time" name="event_end_time" required />
+          <input type="time" id="event_end_time" name="event_end_time" onfocus="try{this.showPicker()}catch(e){}" required />
         </div>
       </div>
 
