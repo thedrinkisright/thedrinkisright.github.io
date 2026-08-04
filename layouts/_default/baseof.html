@@ -34,6 +34,25 @@
   <meta http-equiv="Expires" content="0" />
   <title>{{ if .IsHome }}{{ .Site.Title }} — Mobile Bartending NYC{{ else }}{{ .Title }} | {{ .Site.Title }}{{ end }}</title>
 
+  {{ $desc := .Site.Params.description }}
+  {{ with .Description }}{{ $desc = . }}{{ end }}
+  {{ $ogTitle := cond .IsHome "The Drink Is Right" (printf "%s | %s" .Title .Site.Title) }}
+  {{ $ogImage := printf "%simages/og-share.jpg" .Site.BaseURL }}
+  <link rel="canonical" href="{{ .Permalink }}" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="The Drink Is Right" />
+  <meta property="og:title" content="{{ $ogTitle }}" />
+  <meta property="og:description" content="{{ $desc }}" />
+  <meta property="og:url" content="{{ .Permalink }}" />
+  <meta property="og:image" content="{{ $ogImage }}" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="The Drink Is Right — Mobile Bartending New York City & Beyond" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="{{ $ogTitle }}" />
+  <meta name="twitter:description" content="{{ $desc }}" />
+  <meta name="twitter:image" content="{{ $ogImage }}" />
+
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
