@@ -568,10 +568,10 @@ em  { font-style: italic; color: inherit; }
   overflow: hidden;
 }
 
-.drink-img--a { background-image: url('/images/drinks/seasonal.png');  background-size: 45%; background-position: center;  background-repeat: no-repeat; }
-.drink-img--b { background-image: url('/images/drinks/signature.png'); background-size: 45%; background-position: center; background-repeat: no-repeat; }
-.drink-img--c { background-image: url('/images/drinks/classic.png'); background-size: 45%; background-position: center; background-repeat: no-repeat; }
-.drink-img--d { background-image: url('/images/drinks/mocktail.png'); background-size: 45%; background-position: center; background-repeat: no-repeat; }
+.drink-img--a { background-image: url('/images/drinks/seasonal.png');  background-position: center; background-repeat: no-repeat; }
+.drink-img--b { background-image: url('/images/drinks/signature.png'); background-size: 50%; background-position: center; background-repeat: no-repeat; }
+.drink-img--c { background-image: url('/images/drinks/classic-test.png');background-size: 80%; background-position: center; background-repeat: no-repeat; }
+.drink-img--d { background-image: url('/images/drinks/mocktail.png'); background-size: 40%; background-position: center; background-repeat: no-repeat; }
 
 .drink-tag {
   position: absolute;
@@ -1280,6 +1280,7 @@ em  { font-style: italic; color: inherit; }
 }
 
 .form-row--2 { grid-template-columns: 1fr 1fr; }
+.form-row--3 { grid-template-columns: 1fr 1fr 1fr; }
 
 .form-group {
   display: flex;
@@ -1321,7 +1322,8 @@ em  { font-style: italic; color: inherit; }
 
 /* Select and date default text color */
 .form-group select,
-.form-group input[type="date"] { color: #fff; }
+.form-group input[type="date"],
+.form-group input[type="time"] { color: #fff; }
 
 /* Once user types or selects, stay white */
 .form-group input:not(:placeholder-shown),
@@ -1342,8 +1344,9 @@ em  { font-style: italic; color: inherit; }
 
 .form-group textarea { resize: vertical; min-height: 120px; }
 
-/* Date input color fix */
-.form-group input[type="date"] { color-scheme: dark; }
+/* Date/time input color fix */
+.form-group input[type="date"],
+.form-group input[type="time"] { color-scheme: dark; }
 
 /* Force dark color-scheme on book page date input always */
 #date { color-scheme: dark; }
@@ -1365,6 +1368,7 @@ em  { font-style: italic; color: inherit; }
 /* Mobile */
 @media (max-width: 640px) {
   .form-row--2 { grid-template-columns: 1fr; }
+  .form-row--3 { grid-template-columns: 1fr; }
 }
 
 .careers-body {
@@ -2250,7 +2254,6 @@ body:has(.notfound-section) .site-header {
 }
 
 @media (hover: hover) {
-
   .drink-img:hover .drink-hover-name {
     opacity: 1;
   }

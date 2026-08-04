@@ -107,7 +107,7 @@ if (document.getElementById('book-step-1')) {
   });
 
   if (skipBtn) {
-    skipBtn.addEventListener('click', function() { goToStep2(null, null); });
+    skipBtn.addEventListener('click', function() { goToStep2('Not Sure Yet', null); });
   }
 
   if (changeBtn) {
