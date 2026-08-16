@@ -2064,20 +2064,6 @@ em  { font-style: italic; color: inherit; }
   color: var(--gold);
 }
 
-.pkg-exclusion-note {
-  margin: 0 1.5rem 1rem;
-  padding: 0.55rem 0.75rem;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  text-align: center;
-  color: #8a6914;
-  background: rgba(201,168,76,0.12);
-  border: 1px solid rgba(201,168,76,0.4);
-  border-radius: 4px;
-}
-
 .pkg-tier-footer {
   display: flex;
   justify-content: space-between;
