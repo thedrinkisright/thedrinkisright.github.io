@@ -1246,6 +1246,20 @@ em  { font-style: italic; color: inherit; }
   margin: 6px 0 0;
 }
 
+.tier-select-note {
+  margin: 0.35rem 0 0;
+  padding: 0.55rem 0.75rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--gold-light);
+  background: rgba(201,168,76,0.12);
+  border: 1px solid rgba(201,168,76,0.45);
+  border-radius: 4px;
+}
+
 .tier-select-btn {
   margin-top: 0.25rem;
   text-align: center;
