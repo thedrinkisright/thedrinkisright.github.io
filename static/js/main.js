@@ -80,7 +80,7 @@ if (document.getElementById('book-step-1')) {
   function goToStep2(tierName, tierPrice) {
     if (tierName) {
       tierInput.value = tierName;
-      chipName.textContent = tierName;
+      chipName.textContent = tierName === 'Not Sure Yet' ? "We'll help you choose" : tierName;
       chipPrice.textContent = tierPrice ? '— ' + tierPrice : '';
       chip.hidden = false;
     } else {
@@ -112,6 +112,14 @@ if (document.getElementById('book-step-1')) {
 
   if (changeBtn) {
     changeBtn.addEventListener('click', goToStep1);
+  }
+
+  var step1Progress = document.querySelector('.book-progress-step[data-step="1"]');
+  if (step1Progress) {
+    step1Progress.style.cursor = 'pointer';
+    step1Progress.addEventListener('click', function() {
+      if (step2 && !step2.hidden) goToStep1();
+    });
   }
 
   // Deep link support: /book?tier=Full%20Bar jumps straight to step 2
@@ -162,6 +170,63 @@ if (document.querySelector('.book-form')) {
     });
   }
 
+  var dateInput = document.getElementById('date');
+  var hoursInput = document.getElementById('event_hours');
+
+  function todayISO() {
+    var d = new Date();
+    var month = String(d.getMonth() + 1).padStart(2, '0');
+    var day = String(d.getDate()).padStart(2, '0');
+    return d.getFullYear() + '-' + month + '-' + day;
+  }
+
+  function attachFieldError(input, message) {
+    var err = document.createElement('p');
+    err.className = 'form-error';
+    err.style.cssText = 'color:#E24B4A;font-size:0.78rem;margin-top:0.35rem;display:none;';
+    err.textContent = message;
+    if (input && input.parentNode) {
+      var wrap = input.closest('.form-group') || input.parentNode;
+      wrap.appendChild(err);
+    }
+    return err;
+  }
+
+  function showFieldError(input, errEl, show) {
+    if (errEl) errEl.style.display = show ? 'block' : 'none';
+    if (input) input.style.borderColor = show ? '#E24B4A' : '';
+  }
+
+  var dateError = attachFieldError(dateInput, 'Please choose today or a future date.');
+  var hoursError = attachFieldError(hoursInput, 'Enter a whole number of hours greater than 0.');
+
+  if (dateInput) {
+    dateInput.min = todayISO();
+    dateInput.addEventListener('change', function() {
+      var today = todayISO();
+      var past = this.value && this.value < today;
+      showFieldError(this, dateError, past);
+    });
+  }
+
+  function hoursInvalid(requireValue) {
+    if (!hoursInput) return false;
+    if (!hoursInput.value) return !!requireValue;
+    if (!/^[1-9]\d*$/.test(hoursInput.value.trim())) return true;
+    return parseInt(hoursInput.value, 10) < 1;
+  }
+
+  if (hoursInput) {
+    hoursInput.addEventListener('input', function() {
+      this.value = this.value.replace(/[^\d]/g, '');
+      if (this.value === '0') this.value = '';
+      showFieldError(this, hoursError, hoursInvalid(false));
+    });
+    hoursInput.addEventListener('blur', function() {
+      showFieldError(this, hoursError, hoursInvalid(false));
+    });
+  }
+
   bookForm.addEventListener('submit', function(e) {
     e.preventDefault();
 
@@ -174,6 +239,20 @@ if (document.querySelector('.book-form')) {
         phoneInput.focus();
         return;
       }
+    }
+
+    if (dateInput && dateInput.value && dateInput.value < todayISO()) {
+      showFieldError(dateInput, dateError, true);
+      dateInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      dateInput.focus();
+      return;
+    }
+
+    if (hoursInvalid(true)) {
+      showFieldError(hoursInput, hoursError, true);
+      hoursInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      hoursInput.focus();
+      return;
     }
 
     var submitBtn = bookForm.querySelector('[type="submit"]');

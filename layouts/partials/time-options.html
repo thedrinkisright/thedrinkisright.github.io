@@ -1,0 +1,11 @@
+<option value="" disabled selected>{{ . }}</option>
+{{- /* 10:00 AM – 9:00 PM in 30-minute steps */}}
+{{- range $i := seq 0 22 }}
+  {{- $totalMins := add 600 (mul $i 30) }}
+  {{- $h24 := div $totalMins 60 }}
+  {{- $mins := mod $totalMins 60 }}
+  {{- $h12 := mod $h24 12 }}
+  {{- if eq $h12 0 }}{{ $h12 = 12 }}{{ end }}
+  {{- $ampm := cond (lt $h24 12) "AM" "PM" }}
+  <option value="{{ printf "%02d:%02d" $h24 $mins }}">{{ printf "%d:%02d %s" $h12 $mins $ampm }}</option>
+{{- end }}
