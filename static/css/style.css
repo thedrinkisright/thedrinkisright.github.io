@@ -1423,6 +1423,12 @@ em  { font-style: italic; color: inherit; }
 
 .form-submit { text-align: center; }
 
+.form-status {
+  color: #E24B4A;
+  font-size: 0.85rem;
+  margin: 0.75rem 0 0;
+}
+
 .form-note {
   margin-top: 1rem;
   font-size: 0.8rem;
@@ -2175,17 +2181,18 @@ em  { font-style: italic; color: inherit; }
 }
 
 .thankyou-section {
-  min-height: 70vh;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #111;
+  background: #000;
   text-align: center;
+  padding: calc(var(--nav-h) + 3rem) clamp(1.2rem, 4vw, 2.5rem) 5rem;
 }
 
 .thankyou-inner {
   max-width: 560px;
-  padding: 2rem;
+  padding: 2rem 0;
 }
 
 .thankyou-inner h1 {
@@ -2207,10 +2214,6 @@ em  { font-style: italic; color: inherit; }
   gap: 12px;
   justify-content: center;
   flex-wrap: wrap;
-}
-
-body:has(.thankyou-section) .site-header {
-  display: none;
 }
 
 .pkg-bottom-cta {

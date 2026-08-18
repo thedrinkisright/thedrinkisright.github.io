@@ -160,19 +160,65 @@ if (document.querySelector('.book-form')) {
         this.style.borderColor = '';
       }
     });
+  }
 
-    // Block submit if invalid
-    bookForm.addEventListener('submit', function(e) {
+  bookForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    if (phoneInput) {
       var digits = phoneInput.value.replace(/\D/g, '');
       if (digits.length !== 10) {
-        e.preventDefault();
         phoneError.style.display = 'block';
         phoneInput.style.borderColor = '#E24B4A';
         phoneInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
         phoneInput.focus();
+        return;
+      }
+    }
+
+    var submitBtn = bookForm.querySelector('[type="submit"]');
+    var statusEl = document.getElementById('book-form-status');
+    var originalLabel = submitBtn ? submitBtn.textContent : '';
+
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending…';
+    }
+    if (statusEl) {
+      statusEl.hidden = true;
+      statusEl.textContent = '';
+    }
+
+    fetch(bookForm.action, {
+      method: 'POST',
+      body: new FormData(bookForm),
+      headers: { 'Accept': 'application/json' }
+    }).then(function(res) {
+      if (res.ok) {
+        try { sessionStorage.setItem('tdrBookingComplete', '1'); } catch (err) {}
+        window.location.href = '/thank-you/';
+        return;
+      }
+      return res.json().then(function(data) {
+        var msg = 'Something went wrong. Please try again or call us.';
+        if (data && data.errors && data.errors[0] && data.errors[0].message) {
+          msg = data.errors[0].message;
+        }
+        throw new Error(msg);
+      }, function() {
+        throw new Error('Something went wrong. Please try again or call us.');
+      });
+    }).catch(function(err) {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalLabel;
+      }
+      if (statusEl) {
+        statusEl.hidden = false;
+        statusEl.textContent = err.message || 'Something went wrong. Please try again or call us.';
       }
     });
-  }
+  });
 }
 
 

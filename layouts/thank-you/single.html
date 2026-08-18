@@ -1,5 +1,5 @@
 {{ define "main" }}
-<section class="thankyou-section">
+<section class="thankyou-section" id="thankyou-section" data-nav-theme="dark" hidden>
   <div class="thankyou-inner">
     <p class="eyebrow">We Got It</p>
     <h1>You're on our radar.</h1>
@@ -10,4 +10,16 @@
     </div>
   </div>
 </section>
+<script>
+  (function () {
+    try {
+      if (sessionStorage.getItem('tdrBookingComplete') === '1') {
+        var el = document.getElementById('thankyou-section');
+        if (el) el.hidden = false;
+        return;
+      }
+    } catch (err) {}
+    window.location.replace('/');
+  })();
+</script>
 {{ end }}
