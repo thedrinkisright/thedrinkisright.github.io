@@ -173,11 +173,20 @@ if (document.querySelector('.book-form')) {
   var dateInput = document.getElementById('date');
   var hoursInput = document.getElementById('event_hours');
 
-  function todayISO() {
-    var d = new Date();
+  function toISODate(d) {
     var month = String(d.getMonth() + 1).padStart(2, '0');
     var day = String(d.getDate()).padStart(2, '0');
     return d.getFullYear() + '-' + month + '-' + day;
+  }
+
+  function todayISO() {
+    return toISODate(new Date());
+  }
+
+  function tomorrowISO() {
+    var d = new Date();
+    d.setDate(d.getDate() + 1);
+    return toISODate(d);
   }
 
   function attachFieldError(input, message) {
@@ -197,15 +206,13 @@ if (document.querySelector('.book-form')) {
     if (input) input.style.borderColor = show ? '#E24B4A' : '';
   }
 
-  var dateError = attachFieldError(dateInput, 'Please choose today or a future date.');
+  var dateError = attachFieldError(dateInput, 'Please choose a date after today.');
   var hoursError = attachFieldError(hoursInput, 'Enter a whole number of hours greater than 0.');
 
   if (dateInput) {
-    dateInput.min = todayISO();
+    dateInput.min = tomorrowISO();
     dateInput.addEventListener('change', function() {
-      var today = todayISO();
-      var past = this.value && this.value < today;
-      showFieldError(this, dateError, past);
+      showFieldError(this, dateError, this.value && this.value <= todayISO());
     });
   }
 
@@ -241,7 +248,7 @@ if (document.querySelector('.book-form')) {
       }
     }
 
-    if (dateInput && dateInput.value && dateInput.value < todayISO()) {
+    if (dateInput && dateInput.value && dateInput.value <= todayISO()) {
       showFieldError(dateInput, dateError, true);
       dateInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
       dateInput.focus();
@@ -319,7 +326,13 @@ if (document.querySelector('.book-form')) {
     var val = params.get(param);
     if (!val) return;
     var el = document.querySelector('[name="' + fieldMap[param] + '"]');
-    if (el) el.value = val;
+    if (!el) return;
+    if (param === 'date') {
+      var now = new Date();
+      var today = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+      if (val <= today) return;
+    }
+    el.value = val;
   });
 }
 

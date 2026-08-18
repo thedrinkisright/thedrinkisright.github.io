@@ -174,7 +174,7 @@
           <div class="form-group">
             <label for="date">Date <span class="required">*</span></label>
             <div class="date-input-wrap">
-              <input type="text" id="date" name="event_date" placeholder="Select a date" onfocus="this.type='date'; this.min=new Date().toISOString().slice(0,10); try{this.showPicker()}catch(e){}" onblur="if(!this.value)this.type='text'" onchange="if(!this.value)this.type='text'" required />
+              <input type="text" id="date" name="event_date" placeholder="Select a date" onfocus="this.type='date'; try{this.showPicker()}catch(e){}" onblur="if(!this.value)this.type='text'" onchange="if(!this.value)this.type='text'" required />
               <button type="button" class="date-icon-btn" onclick="var d=document.getElementById('date');d.type='date';d.focus();try{d.showPicker()}catch(e){}" tabindex="-1" aria-label="Open calendar">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
               </button>
@@ -191,7 +191,7 @@
           <div class="form-group">
             <label for="event_hours">Hours <span class="required">*</span></label>
             <div class="hours-input-wrap">
-              <input type="number" id="event_hours" name="event_hours" min="1" step="1" inputmode="numeric" placeholder="4" enterkeyhint="next" required />
+              <input type="number" id="event_hours" name="event_hours" min="1" step="1" value="3" inputmode="numeric" placeholder="3" enterkeyhint="next" required />
               <span class="hours-suffix">hrs</span>
             </div>
             <p class="form-hint">Most events run 3–5 hours</p>
@@ -214,7 +214,6 @@
           <div class="form-group">
             <label for="location">Location <span class="required">*</span></label>
             <input type="text" id="location" name="location" placeholder="Brooklyn, a venue name, or a full address" autocomplete="street-address" enterkeyhint="next" required />
-            <p class="form-hint">Neighborhood is enough for now — we can get the exact address later</p>
           </div>
         </div>
         <div class="form-row">
