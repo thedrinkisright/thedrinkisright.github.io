@@ -261,8 +261,8 @@ function updateNavTheme() {
 window.addEventListener('scroll', updateNavTheme, { passive: true });
 updateNavTheme(); // run once on load
 
-// ---- Scroll-away nav (home, careers, and book pages) ----
-if (document.querySelector('.hero') || document.querySelector('.careers-body') || document.querySelector('.book-form') || document.querySelector('.about-body') || document.querySelector('.pkg-page') || document.querySelector('.menu-body')) {
+// ---- Scroll-away nav (careers, book, about, packages) ----
+if (document.querySelector('.careers-body') || document.querySelector('.book-form') || document.querySelector('.about-body') || document.querySelector('.pkg-page') || document.querySelector('.menu-body')) {
   // Auto-hide nav and position form on /book page
   if (document.querySelector('.book-form')) {
     setTimeout(function() {
