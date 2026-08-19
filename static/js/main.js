@@ -381,6 +381,14 @@ if (document.querySelector('.careers-body')) {
 
 // Use scroll position to find which section the nav is currently over
 const themeSections = Array.from(document.querySelectorAll('[data-nav-theme]'));
+const tickerWrap = document.querySelector('.ticker-wrap');
+const isHomeHero = document.querySelector('.hero') && tickerWrap;
+
+function updateNavOverHero() {
+  if (!header || !isHomeHero) return;
+  var pastTicker = tickerWrap.getBoundingClientRect().bottom <= 0;
+  header.classList.toggle('nav-over-hero', !pastTicker);
+}
 
 function updateNavTheme() {
   if (isScrollingTo) return; // don't override during smooth scroll
@@ -394,13 +402,15 @@ function updateNavTheme() {
     }
   }
   setNavTheme(currentTheme);
+  updateNavOverHero();
 }
 
 window.addEventListener('scroll', updateNavTheme, { passive: true });
 updateNavTheme(); // run once on load
+updateNavOverHero();
 
-// ---- Scroll-away nav (careers, book, about, packages) ----
-if (document.querySelector('.careers-body') || document.querySelector('.book-form') || document.querySelector('.about-body') || document.querySelector('.pkg-page') || document.querySelector('.menu-body')) {
+// ---- Scroll-away nav (homepage, careers, book, about, packages) ----
+if (document.querySelector('.hero') || document.querySelector('.careers-body') || document.querySelector('.book-form') || document.querySelector('.about-body') || document.querySelector('.pkg-page') || document.querySelector('.menu-body')) {
   // Auto-hide nav and position form on /book page
   if (document.querySelector('.book-form')) {
     setTimeout(function() {

@@ -195,6 +195,11 @@ em  { font-style: italic; color: inherit; }
   box-shadow: none;
 }
 
+/* Homepage: let the hero photo show through until past the ticker */
+.site-header.nav-dark.nav-over-hero {
+  background: transparent;
+}
+
 /* Logo: white on dark, black on light */
 .site-header.nav-dark .nav-logo-img  { filter: brightness(0) invert(1); }
 .site-header.scrolled .nav-logo-img  { filter: brightness(0); }
@@ -360,7 +365,15 @@ em  { font-style: italic; color: inherit; }
 .hero-bg {
   position: absolute;
   inset: 0;
-  background: #000;
+  background: #000 url('/images/hero-bar-brown.jpg') center 42% / cover no-repeat;
+}
+
+.hero-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 40%, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.18) 52%, rgba(0,0,0,0.28) 100%);
+  pointer-events: none;
 }
 
 
