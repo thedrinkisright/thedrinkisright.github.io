@@ -365,14 +365,14 @@ em  { font-style: italic; color: inherit; }
 .hero-bg {
   position: absolute;
   inset: 0;
-  background: #000 url('/images/hero-bar-brown.jpg') center 42% / cover no-repeat;
+  background: #000 url('/images/hero-bar-black.jpg') center 42% / cover no-repeat;
 }
 
 .hero-bg::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at 50% 40%, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.18) 52%, rgba(0,0,0,0.28) 100%);
+  background: radial-gradient(ellipse at 50% 40%, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.18) 55%, rgba(0,0,0,0.28) 100%);
   pointer-events: none;
 }
 
