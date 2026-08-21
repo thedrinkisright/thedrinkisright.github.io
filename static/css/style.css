@@ -1192,6 +1192,14 @@ em  { font-style: italic; color: inherit; }
   margin: 0;
 }
 
+.tier-select-includes {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--gold);
+  line-height: 1.4;
+}
+
 .tier-select-price {
   color: var(--gold);
   font-size: 1rem;
