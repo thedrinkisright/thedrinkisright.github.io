@@ -26,8 +26,13 @@
 <link rel="apple-touch-icon" href="/images/favicon-light-180.png">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  {{ if eq .Section "careers" }}
+  <meta name="theme-color" content="#FDFBF8" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  {{ else }}
   <meta name="theme-color" content="#161414" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  {{ end }}
   <meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{ .Site.Params.description }}{{ end }}" />
   <!-- Prevent bfcache — always reload fresh from top on back button -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
