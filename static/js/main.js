@@ -26,6 +26,8 @@ function smoothScrollTo(targetY, onDone) {
   requestAnimationFrame(step);
 }
 
+var MIN_BOOKING_HOURS = 3;
+
 // ---- Homepage mini form: carry values to /book via URL params ----
 var ctaBtn = document.getElementById('cta-book-btn');
 if (ctaBtn) {
@@ -62,6 +64,186 @@ if (document.getElementById('book-step-1')) {
   var chip = document.getElementById('selected-package-chip');
   var chipName = document.getElementById('selected-package-name');
   var chipPrice = document.getElementById('selected-package-price');
+  var estimateEl = document.getElementById('book-estimate');
+  var estimateAmount = document.getElementById('book-estimate-amount');
+  var estimateBreakdown = document.getElementById('book-estimate-breakdown');
+  var estimateElBottom = document.getElementById('book-estimate-bottom');
+  var estimateAmountBottom = document.getElementById('book-estimate-amount-bottom');
+  var estimateBreakdownBottom = document.getElementById('book-estimate-breakdown-bottom');
+  var estimatedTotalInput = document.getElementById('estimated_total');
+  var estimateBreakdownInput = document.getElementById('estimate_breakdown');
+  var bartenderCountInput = document.getElementById('bartender_count');
+  var hoursInputLive = document.getElementById('event_hours');
+  var guestsSelect = document.getElementById('guests');
+  var selectedHourly = 0;
+  var selectedTier = '';
+  var BASE_HOURS = MIN_BOOKING_HOURS;
+
+  // 80–100 — blended team rate (package + staffing); 100+ is custom quote
+  var BLENDED_TEAM_HOURLY = {
+    '80–100': {
+      'Bartender': 200,
+      'Basic Bar': 240,
+      'Full Bar': 310
+    }
+  };
+
+  function formatMoney(n) {
+    return '$' + Math.round(n).toLocaleString('en-US');
+  }
+
+  function startingFrom(hourly) {
+    return formatMoney(hourly * BASE_HOURS);
+  }
+
+  // Fill "Starting from" on cards from data-hourly so HTML stays in sync
+  tierCards.forEach(function(card) {
+    var hourly = parseInt(card.dataset.hourly, 10);
+    if (!hourly) return;
+    var priceEl = card.querySelector('.tier-select-price strong');
+    if (priceEl) priceEl.textContent = startingFrom(hourly);
+  });
+
+  function guestPricingFromSelect(select) {
+    if (!select || !select.value) {
+      return { guestBand: 'Up to 25', guestHourly: 0, bartenders: 1, isCustomQuote: false };
+    }
+    var opt = select.options[select.selectedIndex];
+    return {
+      guestBand: select.value,
+      guestHourly: parseInt(opt.getAttribute('data-guest-hourly') || '0', 10),
+      bartenders: parseInt(opt.getAttribute('data-bartenders') || '1', 10),
+      isCustomQuote: opt.getAttribute('data-custom-quote') === '1'
+    };
+  }
+
+  function calcEstimate(hourly, hours, guestPricing, tierName) {
+    if (guestPricing.isCustomQuote) {
+      return {
+        isCustomQuote: true,
+        total: null,
+        hourly: 0,
+        guestHourly: 0,
+        supplyHourly: 0,
+        extraBartenders: 0,
+        extraBartenderHourly: 0,
+        isTeamRate: false,
+        effectiveHourly: 0,
+        hours: hours,
+        guestBand: guestPricing.guestBand,
+        bartenders: 0
+      };
+    }
+
+    var bandRates = BLENDED_TEAM_HOURLY[guestPricing.guestBand];
+    var blended = bandRates && bandRates[tierName];
+    if (blended) {
+      return {
+        isCustomQuote: false,
+        total: blended * hours,
+        hourly: blended,
+        guestHourly: 0,
+        supplyHourly: 0,
+        extraBartenders: Math.max(0, guestPricing.bartenders - 1),
+        extraBartenderHourly: 0,
+        isTeamRate: true,
+        effectiveHourly: blended,
+        hours: hours,
+        guestBand: guestPricing.guestBand,
+        bartenders: guestPricing.bartenders
+      };
+    }
+
+    // ≤80 — tier hourly + guest add (1 bartender)
+    var effectiveHourly = hourly + guestPricing.guestHourly;
+    return {
+      isCustomQuote: false,
+      total: effectiveHourly * hours,
+      hourly: hourly,
+      guestHourly: guestPricing.guestHourly,
+      supplyHourly: 0,
+      extraBartenders: 0,
+      extraBartenderHourly: 0,
+      isTeamRate: false,
+      effectiveHourly: effectiveHourly,
+      hours: hours,
+      guestBand: guestPricing.guestBand,
+      bartenders: guestPricing.bartenders
+    };
+  }
+
+  function updateEstimate() {
+    if (!selectedHourly) {
+      if (estimateEl) estimateEl.hidden = true;
+      if (estimateElBottom) estimateElBottom.hidden = true;
+      if (estimatedTotalInput) estimatedTotalInput.value = '';
+      if (estimateBreakdownInput) estimateBreakdownInput.value = '';
+      if (bartenderCountInput) bartenderCountInput.value = '';
+      return;
+    }
+
+    var hours = hoursInputLive && hoursInputLive.value
+      ? parseInt(hoursInputLive.value, 10)
+      : BASE_HOURS;
+    if (!hours || hours < MIN_BOOKING_HOURS) hours = MIN_BOOKING_HOURS;
+
+    var guestPricing = guestPricingFromSelect(guestsSelect);
+    var result = calcEstimate(selectedHourly, hours, guestPricing, selectedTier);
+
+    var totalText;
+    var breakdownText;
+
+    if (result.isCustomQuote) {
+      totalText = 'TBD';
+      breakdownText = 'For 100+ guests we\'ll confirm staffing and pricing after we review your event.';
+    } else {
+      totalText = formatMoney(result.total);
+      var ratePart;
+      if (result.isTeamRate) {
+        ratePart = formatMoney(result.hourly) + '/hr team rate';
+      } else {
+        ratePart = formatMoney(result.hourly) + '/hr';
+        if (result.guestHourly > 0) {
+          ratePart += ' + ' + formatMoney(result.guestHourly) + '/hr guests';
+        }
+      }
+      var hoursLabel = result.hours + (result.hours === 1 ? ' hr' : ' hrs');
+      var bartenderLabel = result.bartenders === 1 ? '1 bartender' : result.bartenders + ' bartenders';
+      var bartenderNote = result.isTeamRate
+        ? bartenderLabel + ' included in estimate'
+        : bartenderLabel + ' (staffing)';
+      breakdownText = [
+        ratePart,
+        hoursLabel,
+        bartenderNote,
+        result.guestBand + ' guests'
+      ].join(' · ');
+    }
+
+    function paintEstimate(panel, amountEl, breakdownEl) {
+      if (panel) panel.hidden = false;
+      if (amountEl) {
+        amountEl.textContent = totalText;
+        amountEl.classList.remove('is-flash');
+        void amountEl.offsetWidth;
+        amountEl.classList.add('is-flash');
+      }
+      if (breakdownEl) breakdownEl.textContent = breakdownText;
+    }
+
+    paintEstimate(estimateEl, estimateAmount, estimateBreakdown);
+    paintEstimate(estimateElBottom, estimateAmountBottom, estimateBreakdownBottom);
+
+    if (estimatedTotalInput) estimatedTotalInput.value = totalText;
+    if (estimateBreakdownInput) estimateBreakdownInput.value = breakdownText;
+    if (bartenderCountInput) {
+      bartenderCountInput.value = result.isCustomQuote ? '' : String(result.bartenders);
+    }
+
+    if (chipPrice) {
+      chipPrice.textContent = '— from ' + startingFrom(selectedHourly);
+    }
+  }
 
   function scrollToBookTop() {
     var bookInner = document.querySelector('.book-inner');
@@ -77,11 +259,13 @@ if (document.getElementById('book-step-1')) {
     });
   }
 
-  function goToStep2(tierName, tierPrice) {
+  function goToStep2(tierName, hourly) {
+    selectedHourly = hourly || 0;
+    selectedTier = tierName || '';
     if (tierName) {
       tierInput.value = tierName;
       chipName.textContent = tierName === 'Not Sure Yet' ? "We'll help you choose" : tierName;
-      chipPrice.textContent = tierPrice ? '— ' + tierPrice : '';
+      chipPrice.textContent = hourly ? '— from ' + startingFrom(hourly) : '';
       chip.hidden = false;
     } else {
       tierInput.value = '';
@@ -90,6 +274,7 @@ if (document.getElementById('book-step-1')) {
     step1.hidden = true;
     step2.hidden = false;
     setActiveProgress(2);
+    updateEstimate();
     scrollToBookTop();
   }
 
@@ -97,21 +282,42 @@ if (document.getElementById('book-step-1')) {
     step2.hidden = true;
     step1.hidden = false;
     setActiveProgress(1);
+    selectedHourly = 0;
+    selectedTier = '';
+    if (estimateEl) estimateEl.hidden = true;
+    if (estimateElBottom) estimateElBottom.hidden = true;
     scrollToBookTop();
   }
 
   tierCards.forEach(function(card) {
     card.addEventListener('click', function() {
-      goToStep2(card.dataset.tier, card.dataset.price);
+      var hourly = parseInt(card.dataset.hourly, 10) || 0;
+      goToStep2(card.dataset.tier, hourly);
     });
   });
 
   if (skipBtn) {
-    skipBtn.addEventListener('click', function() { goToStep2('Not Sure Yet', null); });
+    skipBtn.addEventListener('click', function() { goToStep2('Not Sure Yet', 0); });
   }
 
   if (changeBtn) {
     changeBtn.addEventListener('click', goToStep1);
+  }
+
+  if (hoursInputLive) {
+    hoursInputLive.min = MIN_BOOKING_HOURS;
+    hoursInputLive.addEventListener('input', updateEstimate);
+    hoursInputLive.addEventListener('change', updateEstimate);
+    hoursInputLive.addEventListener('blur', function() {
+      var n = parseInt(this.value, 10);
+      if (!this.value || isNaN(n) || n < MIN_BOOKING_HOURS) {
+        this.value = String(MIN_BOOKING_HOURS);
+      }
+      updateEstimate();
+    });
+  }
+  if (guestsSelect) {
+    guestsSelect.addEventListener('change', updateEstimate);
   }
 
   var step1Progress = document.querySelector('.book-progress-step[data-step="1"]');
@@ -130,7 +336,7 @@ if (document.getElementById('book-step-1')) {
       if (card.dataset.tier.toLowerCase() === tierParam.toLowerCase()) matchCard = card;
     });
     if (matchCard) {
-      goToStep2(matchCard.dataset.tier, matchCard.dataset.price);
+      goToStep2(matchCard.dataset.tier, parseInt(matchCard.dataset.hourly, 10) || 0);
     }
   }
 }
@@ -207,7 +413,7 @@ if (document.querySelector('.book-form')) {
   }
 
   var dateError = attachFieldError(dateInput, 'Please choose a date after today.');
-  var hoursError = attachFieldError(hoursInput, 'Enter a whole number of hours greater than 0.');
+  var hoursError = attachFieldError(hoursInput, 'Minimum booking is 3 hours.');
 
   if (dateInput) {
     dateInput.min = tomorrowISO();
@@ -220,16 +426,21 @@ if (document.querySelector('.book-form')) {
     if (!hoursInput) return false;
     if (!hoursInput.value) return !!requireValue;
     if (!/^[1-9]\d*$/.test(hoursInput.value.trim())) return true;
-    return parseInt(hoursInput.value, 10) < 1;
+    return parseInt(hoursInput.value, 10) < MIN_BOOKING_HOURS;
   }
 
   if (hoursInput) {
+    hoursInput.min = MIN_BOOKING_HOURS;
     hoursInput.addEventListener('input', function() {
       this.value = this.value.replace(/[^\d]/g, '');
       if (this.value === '0') this.value = '';
       showFieldError(this, hoursError, hoursInvalid(false));
     });
     hoursInput.addEventListener('blur', function() {
+      var n = parseInt(this.value, 10);
+      if (!this.value || isNaN(n) || n < MIN_BOOKING_HOURS) {
+        this.value = String(MIN_BOOKING_HOURS);
+      }
       showFieldError(this, hoursError, hoursInvalid(false));
     });
   }
@@ -509,3 +720,36 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     }
   });
 });
+
+// ---- /book location: Google Places Autocomplete ----
+window.initBookPlacesAutocomplete = function initBookPlacesAutocomplete() {
+  var input = document.getElementById('location');
+  if (!input || !window.google || !google.maps || !google.maps.places) return;
+  if (input.dataset.placesReady === '1') return;
+  input.dataset.placesReady = '1';
+
+  var autocomplete = new google.maps.places.Autocomplete(input, {
+    fields: ['formatted_address', 'name', 'place_id', 'geometry'],
+    componentRestrictions: { country: ['us'] }
+  });
+
+  // Bias toward NYC / Long Island / nearby NJ (not strict — other US addresses still work)
+  autocomplete.setBounds(new google.maps.LatLngBounds(
+    { lat: 40.45, lng: -74.35 },
+    { lat: 41.25, lng: -71.75 }
+  ));
+
+  autocomplete.addListener('place_changed', function() {
+    var place = autocomplete.getPlace();
+    if (!place) return;
+    if (place.formatted_address) {
+      input.value = place.formatted_address;
+    } else if (place.name) {
+      input.value = place.name;
+    }
+  });
+};
+
+if (window.google && google.maps && google.maps.places) {
+  window.initBookPlacesAutocomplete();
+}

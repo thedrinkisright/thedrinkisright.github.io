@@ -74,5 +74,8 @@
   </main>
   {{ partial "footer.html" . }}
   <script src="{{ "/js/main.js" | relURL }}"></script>
+  {{ if and (eq .Section "book") .Site.Params.googleMapsApiKey }}
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ .Site.Params.googleMapsApiKey }}&libraries=places&callback=initBookPlacesAutocomplete&loading=async"></script>
+  {{ end }}
 </body>
 </html>

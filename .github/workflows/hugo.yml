@@ -41,6 +41,7 @@ jobs:
         env:
           HUGO_CACHEDIR: ${{ runner.temp }}/hugo_cache
           HUGO_ENVIRONMENT: production
+          HUGO_PARAMS_GOOGLEMAPSAPIKEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
         run: |
           hugo \
             --gc \

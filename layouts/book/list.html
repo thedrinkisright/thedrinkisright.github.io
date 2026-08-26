@@ -24,16 +24,18 @@
         <p class="eyebrow">Step 1 of 2</p>
         <h1 class="book-title"><em>Choose Your Package</em></h1>
         <p class="book-sub">Pick the tier that fits — we can always adjust once we connect.</p>
+        <p class="book-dry-hire-note">Note: The Drink Is Right is TIPS certified and insured.<br />We do not provide alcohol. Alcohol is provided by the client.</p>
       </div>
 
       <div class="tier-select-grid">
 
-        <button type="button" class="tier-select-card" data-tier="Bartender">
+        <button type="button" class="tier-select-card" data-tier="Bartender" data-hourly="110">
           <div class="tier-select-top">
             <span class="tier-select-label">Tier 01</span>
             <span class="pkg-badge">Labor only</span>
           </div>
           <h3 class="tier-select-name">Bartender</h3>
+          <p class="tier-select-price">Starting from <strong>$330</strong></p>
           <ul class="tier-select-items">
             <li>Bartending Tools</li>
             <li>Garnishes</li>
@@ -42,16 +44,18 @@
             <li>Alcohol Shopping List</li>
             <li>Custom Cocktail Menu</li>
           </ul>
+          <p class="tier-select-note">Ice, cups, mixers, juices &amp; sodas not included</p>
           <span class="btn btn-sm btn-gold tier-select-btn">Select Package →</span>
-          <p class="tier-select-rates">Rates vary by event type &amp; attendance</p>
+          <p class="tier-select-rates">Based on 3 hrs · small guest count</p>
         </button>
 
-        <button type="button" class="tier-select-card" data-tier="Basic Bar">
+        <button type="button" class="tier-select-card" data-tier="Basic Bar" data-hourly="150">
           <div class="tier-select-top">
             <span class="tier-select-label">Tier 02</span>
             <span class="pkg-badge">Bar + equipment</span>
           </div>
           <h3 class="tier-select-name">Basic Bar</h3>
+          <p class="tier-select-price">Starting from <strong>$450</strong></p>
           <p class="tier-select-includes">Everything in Bartender, plus:</p>
           <ul class="tier-select-items">
             <li>Steel Frame Bar Table</li>
@@ -61,24 +65,28 @@
             <li>Beer Cooler</li>
             <li>Ice Cooler</li>
           </ul>
+          <p class="tier-select-note">Ice, cups, mixers, juices &amp; sodas not included</p>
           <span class="btn btn-sm btn-gold tier-select-btn">Select Package →</span>
-          <p class="tier-select-rates">Rates vary by event type &amp; attendance</p>
+          <p class="tier-select-rates">Based on 3 hrs · small guest count</p>
         </button>
 
-        <button type="button" class="tier-select-card tier-select-card--featured" data-tier="Full Bar">
+        <button type="button" class="tier-select-card tier-select-card--featured" data-tier="Full Bar" data-hourly="210">
           <div class="tier-select-top">
             <span class="tier-select-label">Tier 03</span>
             <span class="pkg-badge pkg-badge--gold">Most popular</span>
           </div>
           <h3 class="tier-select-name">Full Bar</h3>
+          <p class="tier-select-price">Starting from <strong>$630</strong></p>
           <p class="tier-select-includes">Everything in Basic Bar, plus:</p>
           <ul class="tier-select-items">
             <li>Ice</li>
             <li>Disposable Cups</li>
             <li>Mixers</li>
+            <li>Juices</li>
+            <li>Sodas</li>
           </ul>
           <span class="btn btn-sm btn-gold tier-select-btn">Select Package →</span>
-          <p class="tier-select-rates">Rates vary by event type &amp; attendance</p>
+          <p class="tier-select-rates">Based on 3 hrs · small guest count</p>
         </button>
 
       </div>
@@ -97,7 +105,7 @@
       <div class="book-header">
         <p class="eyebrow">Step 2 of 2</p>
         <h1 class="book-title"><em>Your Event Details</em></h1>
-        <p class="book-sub">A few details is all we need — we'll reply within 24 hours with availability and a quote.</p>
+        <p class="book-sub">Adjust hours and guest count to see your estimate update — final quote confirmed when we reply.</p>
       </div>
 
       <div class="selected-package-chip" id="selected-package-chip" hidden>
@@ -108,12 +116,25 @@
         <button type="button" id="change-package-btn">Change package</button>
       </div>
 
+      <aside class="book-estimate" id="book-estimate" hidden aria-live="polite">
+        <div class="book-estimate-top">
+          <span class="book-estimate-label">Estimated total</span>
+          <span class="book-estimate-amount" id="book-estimate-amount">—</span>
+        </div>
+        <p class="book-estimate-breakdown" id="book-estimate-breakdown"></p>
+        <p class="book-estimate-note">Estimate only — confirmed after we connect. Travel fees or extras may apply.</p>
+        <p class="book-estimate-note">This estimate is for our service only — alcohol is provided by you.</p>
+      </aside>
+
     <form class="book-form" action="https://formspree.io/f/maqvdgrb" method="POST">
 
       <input type="hidden" name="_subject" value="New Booking Inquiry — The Drink Is Right" />
       <input type="hidden" name="_next" value="https://thedrinkisright.com/thank-you" />
       <input type="text" name="_gotcha" style="display:none" />
       <input type="hidden" id="service_tier" name="service_tier" value="" />
+      <input type="hidden" id="estimated_total" name="estimated_total" value="" />
+      <input type="hidden" id="estimate_breakdown" name="estimate_breakdown" value="" />
+      <input type="hidden" id="bartender_count" name="bartender_count" value="" />
 
       <fieldset class="form-section">
         <legend>Your info</legend>
@@ -143,7 +164,9 @@
             <select id="event_type" name="event_type" required>
               <option value="" disabled selected>Select one</option>
               <option value="Birthday Party">Birthday Party</option>
+              <option value="Engagement">Engagement</option>
               <option value="Wedding">Wedding</option>
+              <option value="Rehearsal Dinner">Rehearsal Dinner</option>
               <option value="Retirement Party">Retirement Party</option>
               <option value="Anniversary">Anniversary</option>
               <option value="Corporate Event">Corporate Event</option>
@@ -173,10 +196,10 @@
           <div class="form-group">
             <label for="event_hours">Hours <span class="required">*</span></label>
             <div class="hours-input-wrap">
-              <input type="number" id="event_hours" name="event_hours" min="1" step="1" value="3" inputmode="numeric" placeholder="3" enterkeyhint="next" required />
+              <input type="number" id="event_hours" name="event_hours" min="3" step="1" value="3" inputmode="numeric" placeholder="3" enterkeyhint="next" required />
               <span class="hours-suffix">hrs</span>
             </div>
-            <p class="form-hint">Most events run 3–5 hours</p>
+            <p class="form-hint">3-hour minimum · most events run 3–5 hours</p>
           </div>
         </div>
         <div class="form-row">
@@ -184,18 +207,18 @@
             <label for="guests">Guest Count <span class="required">*</span></label>
             <select id="guests" name="guests" required>
               <option value="" disabled selected>About how many people?</option>
-              <option value="Under 25">Under 25</option>
-              <option value="25–50">25–50</option>
-              <option value="50–80">50–80</option>
-              <option value="80–100">80–100</option>
-              <option value="100+">100+</option>
+              <option value="Up to 25" data-guest-hourly="0" data-bartenders="1">Up to 25</option>
+              <option value="25–50" data-guest-hourly="30" data-bartenders="1">25–50</option>
+              <option value="50–80" data-guest-hourly="60" data-bartenders="1">50–80</option>
+              <option value="80–100" data-guest-hourly="80" data-bartenders="2">80–100</option>
+              <option value="100+" data-custom-quote="1">100+ — custom quote</option>
             </select>
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
             <label for="location">Location <span class="required">*</span></label>
-            <input type="text" id="location" name="location" placeholder="Brooklyn, a venue name, or a full address" autocomplete="street-address" enterkeyhint="next" required />
+            <input type="text" id="location" name="location" placeholder="Start typing an address or venue" autocomplete="off" enterkeyhint="next" required />
           </div>
         </div>
         <div class="form-row">
@@ -205,6 +228,23 @@
           </div>
         </div>
       </fieldset>
+
+      <aside class="book-booking-terms">
+        <span class="book-estimate-label">Booking terms</span>
+        <p><span class="book-terms-note-label">Note:</span> A $100 non-refundable deposit is required to book and lock a date/time slot for our services.</p>
+        <p>Full payment is due two weeks prior to the event date.</p>
+        <p>For Wedding, Rehearsal Dinner, Engagement, and Bridal Shower bookings, full payment is due one month prior to the event date.</p>
+      </aside>
+
+      <aside class="book-estimate" id="book-estimate-bottom" hidden aria-live="polite">
+        <div class="book-estimate-top">
+          <span class="book-estimate-label">Estimated total</span>
+          <span class="book-estimate-amount" id="book-estimate-amount-bottom">—</span>
+        </div>
+        <p class="book-estimate-breakdown" id="book-estimate-breakdown-bottom"></p>
+        <p class="book-estimate-note">Estimate only — confirmed after we connect. Travel fees or extras may apply.</p>
+        <p class="book-estimate-note">This estimate is for our service only — alcohol is provided by you.</p>
+      </aside>
 
       <div class="form-row form-submit">
         <button type="submit" class="btn btn-gold btn-full">Send Booking Request →</button>

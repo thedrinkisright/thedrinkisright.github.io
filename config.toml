@@ -13,6 +13,9 @@ cacheDir = "/tmp/hugo_cache"
   quoteURL    = "https://forms.gle/rXCxw14ytjveiWHK7"
   location    = "Serving NYC & Surrounding Areas"
   images      = ["images/og-share.jpg"]
+  # Google Maps JavaScript API key (enable Maps JavaScript API + Places API).
+  # Restrict the key to your domain(s). Leave empty to keep a plain text location field.
+  googleMapsApiKey = ""
 
 [markup.goldmark.renderer]
   unsafe = true

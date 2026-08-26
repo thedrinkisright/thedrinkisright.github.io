@@ -1082,6 +1082,15 @@ em  { font-style: italic; color: inherit; }
   margin: 0 auto;
 }
 
+.book-dry-hire-note {
+  margin: 1rem auto 0;
+  max-width: 560px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--gold);
+}
+
 /* ---- Step progress indicator ---- */
 .book-progress {
   display: flex;
@@ -1202,9 +1211,15 @@ em  { font-style: italic; color: inherit; }
 
 .tier-select-price {
   color: var(--gold);
-  font-size: 1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: -0.35rem 0 0;
+}
+
+.tier-select-price strong {
+  font-size: 1.15rem;
   font-weight: 700;
-  margin: -0.5rem 0 0;
+  letter-spacing: 0.01em;
 }
 
 .tier-select-sub {
@@ -1331,6 +1346,103 @@ em  { font-style: italic; color: inherit; }
 
 .selected-package-chip button:hover { color: var(--gold); }
 
+/* ---- Live estimate (step 2) ---- */
+.book-estimate {
+  max-width: 640px;
+  margin: 0 auto 2rem;
+  padding: 1.15rem 1.35rem;
+  background: linear-gradient(135deg, rgba(201,168,76,0.16), rgba(201,168,76,0.06));
+  border: 1px solid rgba(201,168,76,0.45);
+  border-radius: 4px;
+}
+
+.book-form .book-estimate {
+  max-width: 100%;
+  margin: 0 0 0.25rem;
+}
+
+.book-booking-terms {
+  max-width: 100%;
+  margin: 0;
+  padding: 1.15rem 1.35rem;
+  background: linear-gradient(135deg, rgba(201,168,76,0.16), rgba(201,168,76,0.06));
+  border: 1px solid rgba(201,168,76,0.45);
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.book-booking-terms p {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: rgba(250,247,242,0.85);
+}
+
+.book-terms-note-label {
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.book-estimate-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.book-estimate-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(250,247,242,0.65);
+}
+
+.book-estimate-amount {
+  font-size: 1.85rem;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.01em;
+  line-height: 1;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.book-estimate-amount.is-flash {
+  animation: estimate-flash 0.35s ease;
+}
+
+@keyframes estimate-flash {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.06); color: var(--gold-light, #e4c76a); }
+  100% { transform: scale(1); }
+}
+
+.book-estimate-breakdown {
+  margin: 0.55rem 0 0;
+  font-size: 0.82rem;
+  color: rgba(250,247,242,0.72);
+  line-height: 1.45;
+}
+
+.book-estimate-note {
+  margin: 0.65rem 0 0;
+  font-size: 0.72rem;
+  color: rgba(250,247,242,0.45);
+  line-height: 1.4;
+}
+
+/* Google Places dropdown above book UI */
+.pac-container {
+  z-index: 10000;
+  font-family: 'DM Sans', sans-serif;
+  border-radius: 8px;
+  margin-top: 4px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(22, 20, 20, 0.12);
+}
+
 @media (max-width: 860px) {
   .tier-select-grid { grid-template-columns: 1fr; }
 }
@@ -1339,6 +1451,8 @@ em  { font-style: italic; color: inherit; }
   .book-progress { max-width: 300px; margin-bottom: 2.25rem; }
   .book-progress-label { font-size: 0.62rem; }
   .selected-package-chip { flex-direction: column; align-items: flex-start; gap: 0.6rem; }
+  .book-estimate-top { flex-direction: column; align-items: flex-start; gap: 0.35rem; }
+  .book-estimate-amount { font-size: 1.6rem; }
 }
 
 /* Form layout */
