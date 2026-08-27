@@ -195,20 +195,19 @@
           <div class="form-group">
             <label for="event_hours">Hours <span class="required">*</span></label>
             <div class="hours-input-wrap">
-              <input type="number" id="event_hours" name="event_hours" min="3" step="1" value="3" inputmode="numeric" placeholder="3" enterkeyhint="next" required />
+              <input type="number" id="event_hours" name="event_hours" min="2" max="6" step="1" value="3" inputmode="numeric" placeholder="3" enterkeyhint="next" required />
               <span class="hours-suffix">hrs</span>
             </div>
-            <p class="form-hint">3-hour minimum · most events run 3–5 hours</p>
+            <p class="form-hint">2-hour minimum · 6-hour maximum</p>
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
             <label for="guests">Guest Count <span class="required">*</span></label>
             <select id="guests" name="guests" required>
-              <option value="" disabled selected>About how many people?</option>
-              <option value="Up to 25" data-guest-hourly="0" data-bartenders="1">Up to 25</option>
+              <option value="Up to 25" data-guest-hourly="0" data-bartenders="1" selected>Up to 25</option>
               <option value="25–50" data-guest-hourly="30" data-bartenders="1">25–50</option>
-              <option value="50–80" data-guest-hourly="60" data-bartenders="1">50–80</option>
+              <option value="50–80" data-guest-hourly="60" data-bartenders="2">50–80</option>
               <option value="80–100" data-guest-hourly="80" data-bartenders="2">80–100</option>
               <option value="100+" data-custom-quote="1">100+ — custom quote</option>
             </select>

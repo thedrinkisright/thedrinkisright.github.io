@@ -5,6 +5,9 @@ title = "The Drink Is Right"
 # GitHub Pages image cache location
 cacheDir = "/tmp/hugo_cache"
 
+# No category/tag archive pages (empty taxonomies)
+disableKinds = ["taxonomy", "term"]
+
 [params]
   tagline     = "The Right Drink For Every Experience"
   description = "Elevated mobile bartending for weddings, birthdays & private events across NYC."

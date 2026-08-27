@@ -26,7 +26,10 @@ function smoothScrollTo(targetY, onDone) {
   requestAnimationFrame(step);
 }
 
-var MIN_BOOKING_HOURS = 3;
+var MIN_BOOKING_HOURS = 2;
+var MAX_BOOKING_HOURS = 6;
+var STARTING_FROM_HOURS = 3;
+var DEFAULT_BOOKING_HOURS = 3;
 
 // ---- Homepage mini form: carry values to /book via URL params ----
 var ctaBtn = document.getElementById('cta-book-btn');
@@ -77,7 +80,6 @@ if (document.getElementById('book-step-1')) {
   var guestsSelect = document.getElementById('guests');
   var selectedHourly = 0;
   var selectedTier = '';
-  var BASE_HOURS = MIN_BOOKING_HOURS;
 
   // 80–100 — blended team rate (package + staffing); 100+ is custom quote
   var BLENDED_TEAM_HOURLY = {
@@ -93,7 +95,7 @@ if (document.getElementById('book-step-1')) {
   }
 
   function startingFrom(hourly) {
-    return formatMoney(hourly * BASE_HOURS);
+    return formatMoney(hourly * STARTING_FROM_HOURS);
   }
 
   // Fill "Starting from" on cards from data-hourly so HTML stays in sync
@@ -115,6 +117,13 @@ if (document.getElementById('book-step-1')) {
       bartenders: parseInt(opt.getAttribute('data-bartenders') || '1', 10),
       isCustomQuote: opt.getAttribute('data-custom-quote') === '1'
     };
+  }
+
+  function requiredBartenders(guestBand, hours) {
+    if (guestBand === '100+') return 0;
+    var fromGuests = (guestBand === '50–80' || guestBand === '80–100') ? 2 : 1;
+    var fromHours = hours >= 4 ? 2 : 1;
+    return Math.max(fromGuests, fromHours);
   }
 
   function calcEstimate(hourly, hours, guestPricing, tierName) {
@@ -144,17 +153,17 @@ if (document.getElementById('book-step-1')) {
         hourly: blended,
         guestHourly: 0,
         supplyHourly: 0,
-        extraBartenders: Math.max(0, guestPricing.bartenders - 1),
+        extraBartenders: Math.max(0, requiredBartenders(guestPricing.guestBand, hours) - 1),
         extraBartenderHourly: 0,
         isTeamRate: true,
         effectiveHourly: blended,
         hours: hours,
         guestBand: guestPricing.guestBand,
-        bartenders: guestPricing.bartenders
+        bartenders: requiredBartenders(guestPricing.guestBand, hours)
       };
     }
 
-    // ≤80 — tier hourly + guest add (1 bartender)
+    // No blended team rate — tier hourly + guest add
     var effectiveHourly = hourly + guestPricing.guestHourly;
     return {
       isCustomQuote: false,
@@ -168,7 +177,7 @@ if (document.getElementById('book-step-1')) {
       effectiveHourly: effectiveHourly,
       hours: hours,
       guestBand: guestPricing.guestBand,
-      bartenders: guestPricing.bartenders
+      bartenders: requiredBartenders(guestPricing.guestBand, hours)
     };
   }
 
@@ -184,8 +193,9 @@ if (document.getElementById('book-step-1')) {
 
     var hours = hoursInputLive && hoursInputLive.value
       ? parseInt(hoursInputLive.value, 10)
-      : BASE_HOURS;
+      : DEFAULT_BOOKING_HOURS;
     if (!hours || hours < MIN_BOOKING_HOURS) hours = MIN_BOOKING_HOURS;
+    if (hours > MAX_BOOKING_HOURS) hours = MAX_BOOKING_HOURS;
 
     var guestPricing = guestPricingFromSelect(guestsSelect);
     var result = calcEstimate(selectedHourly, hours, guestPricing, selectedTier);
@@ -211,7 +221,7 @@ if (document.getElementById('book-step-1')) {
       var bartenderLabel = result.bartenders === 1 ? '1 bartender' : result.bartenders + ' bartenders';
       var bartenderNote = result.isTeamRate
         ? bartenderLabel + ' included in estimate'
-        : bartenderLabel + ' (staffing)';
+        : bartenderLabel;
       breakdownText = [
         ratePart,
         hoursLabel,
@@ -306,12 +316,15 @@ if (document.getElementById('book-step-1')) {
 
   if (hoursInputLive) {
     hoursInputLive.min = MIN_BOOKING_HOURS;
+    hoursInputLive.max = MAX_BOOKING_HOURS;
     hoursInputLive.addEventListener('input', updateEstimate);
     hoursInputLive.addEventListener('change', updateEstimate);
     hoursInputLive.addEventListener('blur', function() {
       var n = parseInt(this.value, 10);
       if (!this.value || isNaN(n) || n < MIN_BOOKING_HOURS) {
         this.value = String(MIN_BOOKING_HOURS);
+      } else if (n > MAX_BOOKING_HOURS) {
+        this.value = String(MAX_BOOKING_HOURS);
       }
       updateEstimate();
     });
@@ -413,7 +426,7 @@ if (document.querySelector('.book-form')) {
   }
 
   var dateError = attachFieldError(dateInput, 'Please choose a date after today.');
-  var hoursError = attachFieldError(hoursInput, 'Minimum booking is 3 hours.');
+  var hoursError = attachFieldError(hoursInput, 'Bookings are 2–6 hours.');
 
   if (dateInput) {
     dateInput.min = tomorrowISO();
@@ -426,11 +439,13 @@ if (document.querySelector('.book-form')) {
     if (!hoursInput) return false;
     if (!hoursInput.value) return !!requireValue;
     if (!/^[1-9]\d*$/.test(hoursInput.value.trim())) return true;
-    return parseInt(hoursInput.value, 10) < MIN_BOOKING_HOURS;
+    var n = parseInt(hoursInput.value, 10);
+    return n < MIN_BOOKING_HOURS || n > MAX_BOOKING_HOURS;
   }
 
   if (hoursInput) {
     hoursInput.min = MIN_BOOKING_HOURS;
+    hoursInput.max = MAX_BOOKING_HOURS;
     hoursInput.addEventListener('input', function() {
       this.value = this.value.replace(/[^\d]/g, '');
       if (this.value === '0') this.value = '';
@@ -440,6 +455,8 @@ if (document.querySelector('.book-form')) {
       var n = parseInt(this.value, 10);
       if (!this.value || isNaN(n) || n < MIN_BOOKING_HOURS) {
         this.value = String(MIN_BOOKING_HOURS);
+      } else if (n > MAX_BOOKING_HOURS) {
+        this.value = String(MAX_BOOKING_HOURS);
       }
       showFieldError(this, hoursError, hoursInvalid(false));
     });
