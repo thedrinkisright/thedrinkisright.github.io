@@ -30,6 +30,12 @@ var MIN_BOOKING_HOURS = 2;
 var MAX_BOOKING_HOURS = 6;
 var STARTING_FROM_HOURS = 3;
 var DEFAULT_BOOKING_HOURS = 3;
+// 2-hour events billed at 2.5 hrs — covers setup, breakdown, and travel time
+var SHORT_EVENT_BILLABLE_HOURS = 2.5;
+
+function billableHours(hours) {
+  return hours === MIN_BOOKING_HOURS ? SHORT_EVENT_BILLABLE_HOURS : hours;
+}
 
 // ---- Homepage mini form: carry values to /book via URL params ----
 var ctaBtn = document.getElementById('cta-book-btn');
@@ -146,10 +152,11 @@ if (document.getElementById('book-step-1')) {
 
     var bandRates = BLENDED_TEAM_HOURLY[guestPricing.guestBand];
     var blended = bandRates && bandRates[tierName];
+    var billed = billableHours(hours);
     if (blended) {
       return {
         isCustomQuote: false,
-        total: blended * hours,
+        total: blended * billed,
         hourly: blended,
         guestHourly: 0,
         supplyHourly: 0,
@@ -158,6 +165,8 @@ if (document.getElementById('book-step-1')) {
         isTeamRate: true,
         effectiveHourly: blended,
         hours: hours,
+        billableHours: billed,
+        shortEventMinimum: hours === MIN_BOOKING_HOURS,
         guestBand: guestPricing.guestBand,
         bartenders: requiredBartenders(guestPricing.guestBand, hours)
       };
@@ -167,7 +176,7 @@ if (document.getElementById('book-step-1')) {
     var effectiveHourly = hourly + guestPricing.guestHourly;
     return {
       isCustomQuote: false,
-      total: effectiveHourly * hours,
+      total: effectiveHourly * billed,
       hourly: hourly,
       guestHourly: guestPricing.guestHourly,
       supplyHourly: 0,
@@ -176,6 +185,8 @@ if (document.getElementById('book-step-1')) {
       isTeamRate: false,
       effectiveHourly: effectiveHourly,
       hours: hours,
+      billableHours: billed,
+      shortEventMinimum: hours === MIN_BOOKING_HOURS,
       guestBand: guestPricing.guestBand,
       bartenders: requiredBartenders(guestPricing.guestBand, hours)
     };
@@ -204,7 +215,7 @@ if (document.getElementById('book-step-1')) {
     var breakdownText;
 
     if (result.isCustomQuote) {
-      totalText = 'TBD';
+      totalText = 'Custom Quote';
       breakdownText = 'For 100+ guests we\'ll confirm staffing and pricing after we review your event.';
     } else {
       totalText = formatMoney(result.total);
