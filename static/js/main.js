@@ -87,8 +87,13 @@ if (document.getElementById('book-step-1')) {
   var selectedHourly = 0;
   var selectedTier = '';
 
-  // 80–100 — blended team rate (package + staffing); 100+ is custom quote
+  // 50+ — blended team rate (2 bartenders included); 100+ is custom quote
   var BLENDED_TEAM_HOURLY = {
+    '50–80': {
+      'Bartender': 185,
+      'Basic Bar': 225,
+      'Full Bar': 280
+    },
     '80–100': {
       'Bartender': 200,
       'Basic Bar': 240,
@@ -125,11 +130,9 @@ if (document.getElementById('book-step-1')) {
     };
   }
 
-  function requiredBartenders(guestBand, hours) {
-    if (guestBand === '100+') return 0;
-    var fromGuests = (guestBand === '50–80' || guestBand === '80–100') ? 2 : 1;
-    var fromHours = hours >= 4 ? 2 : 1;
-    return Math.max(fromGuests, fromHours);
+  function requiredBartenders(guestPricing) {
+    if (guestPricing.isCustomQuote) return 0;
+    return guestPricing.bartenders;
   }
 
   function calcEstimate(hourly, hours, guestPricing, tierName) {
@@ -160,7 +163,7 @@ if (document.getElementById('book-step-1')) {
         hourly: blended,
         guestHourly: 0,
         supplyHourly: 0,
-        extraBartenders: Math.max(0, requiredBartenders(guestPricing.guestBand, hours) - 1),
+        extraBartenders: Math.max(0, requiredBartenders(guestPricing) - 1),
         extraBartenderHourly: 0,
         isTeamRate: true,
         effectiveHourly: blended,
@@ -168,11 +171,11 @@ if (document.getElementById('book-step-1')) {
         billableHours: billed,
         shortEventMinimum: hours === MIN_BOOKING_HOURS,
         guestBand: guestPricing.guestBand,
-        bartenders: requiredBartenders(guestPricing.guestBand, hours)
+        bartenders: requiredBartenders(guestPricing)
       };
     }
 
-    // No blended team rate — tier hourly + guest add
+    // ≤50 — tier hourly + guest add
     var effectiveHourly = hourly + guestPricing.guestHourly;
     return {
       isCustomQuote: false,
@@ -188,7 +191,7 @@ if (document.getElementById('book-step-1')) {
       billableHours: billed,
       shortEventMinimum: hours === MIN_BOOKING_HOURS,
       guestBand: guestPricing.guestBand,
-      bartenders: requiredBartenders(guestPricing.guestBand, hours)
+      bartenders: requiredBartenders(guestPricing)
     };
   }
 

@@ -205,12 +205,13 @@
           <div class="form-group">
             <label for="guests">Guest Count <span class="required">*</span></label>
             <select id="guests" name="guests" required>
-              <option value="Up to 25" data-guest-hourly="0" data-bartenders="1" selected>Up to 25</option>
-              <option value="25–50" data-guest-hourly="30" data-bartenders="1">25–50</option>
-              <option value="50–80" data-guest-hourly="60" data-bartenders="2">50–80</option>
-              <option value="80–100" data-guest-hourly="80" data-bartenders="2">80–100</option>
-              <option value="100+" data-custom-quote="1">100+</option>
+              <option value="Up to 25" data-guest-hourly="0" data-bartenders="1" selected>Up to 25 · 1 bartender</option>
+              <option value="25–50" data-guest-hourly="30" data-bartenders="1">25–50 · 1 bartender</option>
+              <option value="50–80" data-guest-hourly="60" data-bartenders="2">50–80 · 2 bartenders</option>
+              <option value="80–100" data-guest-hourly="80" data-bartenders="2">80–100 · 2 bartenders</option>
+              <option value="100+" data-custom-quote="1" data-bartenders="0">100+</option>
             </select>
+            <p class="form-hint">Up to 50 guests: 1 bartender · 50–100 guests: 2 bartenders</p>
           </div>
         </div>
         <div class="form-row">
