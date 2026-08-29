@@ -26,15 +26,13 @@ function smoothScrollTo(targetY, onDone) {
   requestAnimationFrame(step);
 }
 
-var MIN_BOOKING_HOURS = 2;
+var MIN_BOOKING_HOURS = 3;
 var MAX_BOOKING_HOURS = 6;
 var STARTING_FROM_HOURS = 3;
 var DEFAULT_BOOKING_HOURS = 3;
-// 2-hour events billed at 2.5 hrs — covers setup, breakdown, and travel time
-var SHORT_EVENT_BILLABLE_HOURS = 2.5;
 
 function billableHours(hours) {
-  return hours === MIN_BOOKING_HOURS ? SHORT_EVENT_BILLABLE_HOURS : hours;
+  return hours;
 }
 
 // ---- Homepage mini form: carry values to /book via URL params ----
@@ -384,7 +382,6 @@ if (document.getElementById('book-step-1')) {
         effectiveHourly: blended,
         hours: hours,
         billableHours: billed,
-        shortEventMinimum: hours === MIN_BOOKING_HOURS,
         guestBand: guestPricing.guestBand,
         bartenders: requiredBartenders(guestPricing)
       };
@@ -404,7 +401,6 @@ if (document.getElementById('book-step-1')) {
       effectiveHourly: effectiveHourly,
       hours: hours,
       billableHours: billed,
-      shortEventMinimum: hours === MIN_BOOKING_HOURS,
       guestBand: guestPricing.guestBand,
       bartenders: requiredBartenders(guestPricing)
     };
@@ -419,11 +415,19 @@ if (document.getElementById('book-step-1')) {
     return hours + (hours === 1 ? ' hour' : ' hours');
   }
 
+  function holidayBreakdownLine(holiday, holidayFee) {
+    var label = 'Holiday Upcharge: ' + holiday.label;
+    if (holidayFee != null) {
+      return label + ' · +' + holiday.percent + '% (' + formatMoney(holidayFee) + ')';
+    }
+    return label + ' · holiday fee applies';
+  }
+
   function buildEstimateBreakdown(result, holiday, holidayFee) {
     if (result.isCustomQuote) {
       var customText = '100+ guests\nWe\'ll follow up with a custom quote.';
       if (holiday) {
-        customText += '\n' + holiday.label + ' · holiday fee applies';
+        customText += '\n' + holidayBreakdownLine(holiday, null);
       }
       return customText;
     }
@@ -433,15 +437,10 @@ if (document.getElementById('book-step-1')) {
     var hourlyRate = result.isTeamRate ? result.hourly : result.effectiveHourly;
     var bartenderLabel = result.bartenders === 1 ? '1 bartender' : result.bartenders + ' bartenders';
     var line2 = bartenderLabel + ' for ' + formatMoney(hourlyRate) + '/hr';
-    if (result.shortEventMinimum) line2 += ' · billed as 2.5 hours';
 
     var text = line1 + '\n' + line2;
     if (holiday) {
-      if (holidayFee != null) {
-        text += '\n' + holiday.label + ' · +' + holiday.percent + '% (' + formatMoney(holidayFee) + ')';
-      } else {
-        text += '\n' + holiday.label + ' · holiday fee applies';
-      }
+      text += '\n' + holidayBreakdownLine(holiday, holidayFee);
     }
     return text;
   }
@@ -678,7 +677,7 @@ if (document.querySelector('.book-form')) {
   }
 
   var dateError = attachFieldError(dateInput, 'Please choose a date after today.');
-  var hoursError = attachFieldError(hoursInput, 'Bookings are 2–6 hours.');
+  var hoursError = attachFieldError(hoursInput, 'Bookings are 3–6 hours.');
 
   if (dateInput) {
     dateInput.min = tomorrowISO();

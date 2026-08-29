@@ -29,13 +29,13 @@
 
       <div class="tier-select-grid">
 
-        <button type="button" class="tier-select-card" data-tier="Bartender" data-hourly="110">
+        <button type="button" class="tier-select-card" data-tier="Bartender" data-hourly="120">
           <div class="tier-select-top">
             <span class="tier-select-label">Tier 01</span>
             <span class="pkg-badge">Labor only</span>
           </div>
           <h3 class="tier-select-name">Bartender</h3>
-          <p class="tier-select-price">Starting from <strong>$330</strong></p>
+          <p class="tier-select-price">Starting from <strong>$360</strong></p>
           <ul class="tier-select-items">
             <li>Bartending Tools</li>
             <li>Garnishes</li>
@@ -46,16 +46,18 @@
           </ul>
           <p class="tier-select-note">Ice, cups, mixers, juices &amp; sodas not included</p>
           <span class="btn btn-sm btn-gold tier-select-btn">Select Package →</span>
-          <p class="tier-select-rates">Based on 3 hrs · small guest count</p>
+          <div class="tier-select-rates-wrap">
+            <p class="tier-select-rates">3 hrs · up to 25 guests</p>
+          </div>
         </button>
 
-        <button type="button" class="tier-select-card" data-tier="Basic Bar" data-hourly="150">
+        <button type="button" class="tier-select-card" data-tier="Basic Bar" data-hourly="160">
           <div class="tier-select-top">
             <span class="tier-select-label">Tier 02</span>
             <span class="pkg-badge">Bar + equipment</span>
           </div>
           <h3 class="tier-select-name">Basic Bar</h3>
-          <p class="tier-select-price">Starting from <strong>$450</strong></p>
+          <p class="tier-select-price">Starting from <strong>$480</strong></p>
           <p class="tier-select-includes">Everything in Bartender, plus:</p>
           <ul class="tier-select-items">
             <li>Steel Frame Bar Table</li>
@@ -67,16 +69,18 @@
           </ul>
           <p class="tier-select-note">Ice, cups, mixers, juices &amp; sodas not included</p>
           <span class="btn btn-sm btn-gold tier-select-btn">Select Package →</span>
-          <p class="tier-select-rates">Based on 3 hrs · small guest count</p>
+          <div class="tier-select-rates-wrap">
+            <p class="tier-select-rates">3 hrs · up to 25 guests</p>
+          </div>
         </button>
 
-        <button type="button" class="tier-select-card tier-select-card--featured" data-tier="Full Bar" data-hourly="210">
+        <button type="button" class="tier-select-card tier-select-card--featured" data-tier="Full Bar" data-hourly="230">
           <div class="tier-select-top">
             <span class="tier-select-label">Tier 03</span>
             <span class="pkg-badge pkg-badge--gold">Most popular</span>
           </div>
           <h3 class="tier-select-name">Full Bar</h3>
-          <p class="tier-select-price">Starting from <strong>$630</strong></p>
+          <p class="tier-select-price">Starting from <strong>$690</strong></p>
           <p class="tier-select-includes">Everything in Basic Bar, plus:</p>
           <ul class="tier-select-items">
             <li>Ice</li>
@@ -86,7 +90,9 @@
             <li>Sodas</li>
           </ul>
           <span class="btn btn-sm btn-gold tier-select-btn">Select Package →</span>
-          <p class="tier-select-rates">Based on 3 hrs · small guest count</p>
+          <div class="tier-select-rates-wrap">
+            <p class="tier-select-rates">3 hrs · up to 25 guests</p>
+          </div>
         </button>
 
       </div>
@@ -121,7 +127,7 @@
             <span class="book-estimate-amount" id="book-estimate-amount">—</span>
           </div>
           <p class="book-estimate-breakdown" id="book-estimate-breakdown"></p>
-          <p class="book-estimate-note">Estimate only — confirmed after we connect. Travel fees or extras may apply.</p>
+          <p class="book-estimate-note">Estimate only — confirmed after we connect. Travel or venue extras may apply and will be noted in your quote.</p>
         </div>
       </div>
 
@@ -197,10 +203,10 @@
           <div class="form-group">
             <label for="event_hours">Hours <span class="required">*</span></label>
             <div class="hours-input-wrap">
-              <input type="number" id="event_hours" name="event_hours" min="2" max="6" step="1" value="3" inputmode="numeric" placeholder="3" enterkeyhint="next" required />
+              <input type="number" id="event_hours" name="event_hours" min="3" max="6" step="1" value="3" inputmode="numeric" placeholder="3" enterkeyhint="next" required />
               <span class="hours-suffix">hrs</span>
             </div>
-            <p class="form-hint">2-hour minimum · 6-hour maximum</p>
+            <p class="form-hint">3-hour minimum · 6-hour maximum</p>
           </div>
         </div>
         <div class="form-row form-row--2">
@@ -248,7 +254,7 @@
           <span class="book-estimate-amount" id="book-estimate-amount-bottom">—</span>
         </div>
         <p class="book-estimate-breakdown" id="book-estimate-breakdown-bottom"></p>
-        <p class="book-estimate-note">Estimate only — confirmed after we connect. Travel fees or extras may apply.</p>
+        <p class="book-estimate-note">Estimate only — confirmed after we connect. Travel or venue extras may apply and will be noted in your quote.</p>
       </aside>
 
       <div class="form-row form-submit">
