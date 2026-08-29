@@ -1189,15 +1189,7 @@ em  { font-style: italic; color: inherit; }
 .tier-select-top {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-}
-
-.tier-select-label {
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: rgba(250,247,242,0.5);
+  justify-content: flex-end;
 }
 
 .tier-select-name {
