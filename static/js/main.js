@@ -716,6 +716,64 @@ if (document.querySelector('.book-form')) {
     });
   }
 
+  var drinkingGuestsInput = document.getElementById('guests_drinking_21_plus');
+  var guestsSelectForm = document.getElementById('guests');
+
+  function guestBandMaxGuests(select) {
+    if (!select || !select.value) return null;
+    var opt = select.options[select.selectedIndex];
+    if (opt.getAttribute('data-custom-quote') === '1') return null;
+    var max = opt.getAttribute('data-max-guests');
+    return max ? parseInt(max, 10) : null;
+  }
+
+  function drinkingGuestsErrorMessage() {
+    if (!drinkingGuestsInput || !drinkingGuestsInput.value.trim()) {
+      return 'Please enter total guests drinking (21+).';
+    }
+    var max = guestBandMaxGuests(guestsSelectForm);
+    var band = guestsSelectForm ? guestsSelectForm.value : 'selected';
+    if (max !== null) {
+      return 'Total guests drinking (21+) can\'t exceed ' + max + ' for a ' + band + ' event.';
+    }
+    return 'Please enter a valid number of total guests drinking (21+).';
+  }
+
+  function drinkingGuestsInvalid() {
+    if (!drinkingGuestsInput || !drinkingGuestsInput.value.trim()) return true;
+    if (!/^[1-9]\d*$/.test(drinkingGuestsInput.value.trim())) return true;
+    var n = parseInt(drinkingGuestsInput.value, 10);
+    var max = guestBandMaxGuests(guestsSelectForm);
+    return max !== null && n > max;
+  }
+
+  var drinkingGuestsError = attachFieldError(
+    drinkingGuestsInput,
+    'Please enter total guests drinking (21+).'
+  );
+
+  function validateDrinkingGuests() {
+    if (!drinkingGuestsInput) return false;
+    var invalid = drinkingGuestsInvalid();
+    if (invalid && drinkingGuestsError) {
+      drinkingGuestsError.textContent = drinkingGuestsErrorMessage();
+    }
+    showFieldError(drinkingGuestsInput, drinkingGuestsError, invalid);
+    return invalid;
+  }
+
+  if (drinkingGuestsInput) {
+    drinkingGuestsInput.addEventListener('input', function() {
+      this.value = this.value.replace(/[^\d]/g, '');
+      if (this.value === '0') this.value = '';
+      validateDrinkingGuests();
+    });
+    drinkingGuestsInput.addEventListener('blur', validateDrinkingGuests);
+  }
+  if (guestsSelectForm) {
+    guestsSelectForm.addEventListener('change', validateDrinkingGuests);
+  }
+
   bookForm.addEventListener('submit', function(e) {
     e.preventDefault();
 
@@ -741,6 +799,12 @@ if (document.querySelector('.book-form')) {
       showFieldError(hoursInput, hoursError, true);
       hoursInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
       hoursInput.focus();
+      return;
+    }
+
+    if (validateDrinkingGuests()) {
+      drinkingGuestsInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      drinkingGuestsInput.focus();
       return;
     }
 
