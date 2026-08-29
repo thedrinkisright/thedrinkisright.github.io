@@ -425,7 +425,7 @@ if (document.getElementById('book-step-1')) {
 
   function buildEstimateBreakdown(result, holiday, holidayFee) {
     if (result.isCustomQuote) {
-      var customText = '100+ guests\nWe\'ll follow up with a custom quote.';
+      var customText = '100+ guests\nWe will contact you with further information.';
       if (holiday) {
         customText += '\n' + holidayBreakdownLine(holiday, null);
       }
@@ -773,10 +773,22 @@ if (document.querySelector('.book-form')) {
       if (this.value === '0') this.value = '';
       clearDrinkingGuestsError();
     });
-    drinkingGuestsInput.addEventListener('blur', clearDrinkingGuestsError);
+    drinkingGuestsInput.addEventListener('blur', function() {
+      if (this.value.trim()) {
+        validateDrinkingGuests(true);
+      } else {
+        clearDrinkingGuestsError();
+      }
+    });
   }
   if (guestsSelectForm) {
-    guestsSelectForm.addEventListener('change', clearDrinkingGuestsError);
+    guestsSelectForm.addEventListener('change', function() {
+      if (drinkingGuestsInput && drinkingGuestsInput.value.trim()) {
+        validateDrinkingGuests(true);
+      } else {
+        clearDrinkingGuestsError();
+      }
+    });
   }
 
   bookForm.addEventListener('submit', function(e) {
