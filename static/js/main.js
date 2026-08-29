@@ -72,7 +72,6 @@ if (document.getElementById('book-step-1')) {
   var tierInput = document.getElementById('service_tier');
   var chip = document.getElementById('selected-package-chip');
   var chipName = document.getElementById('selected-package-name');
-  var chipPrice = document.getElementById('selected-package-price');
   var estimateEl = document.getElementById('book-estimate');
   var estimateAmount = document.getElementById('book-estimate-amount');
   var estimateBreakdown = document.getElementById('book-estimate-breakdown');
@@ -82,8 +81,11 @@ if (document.getElementById('book-step-1')) {
   var estimatedTotalInput = document.getElementById('estimated_total');
   var estimateBreakdownInput = document.getElementById('estimate_breakdown');
   var bartenderCountInput = document.getElementById('bartender_count');
+  var holidayUpchargeInput = document.getElementById('holiday_upcharge');
   var hoursInputLive = document.getElementById('event_hours');
   var guestsSelect = document.getElementById('guests');
+  var dateInputLive = document.getElementById('date');
+  var dateHolidayHint = document.getElementById('date-holiday-hint');
   var selectedHourly = 0;
   var selectedTier = '';
 
@@ -100,6 +102,219 @@ if (document.getElementById('book-step-1')) {
       'Full Bar': 310
     }
   };
+
+  var HOLIDAY_PEAK_PERCENT = 20;
+  var HOLIDAY_HIGH_PERCENT = 15;
+
+  function parseISODateLocal(iso) {
+    if (!iso) return null;
+    var parts = iso.split('-');
+    if (parts.length !== 3) return null;
+    return new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+  }
+
+  function isSameCalendarDay(a, b) {
+    return a.getFullYear() === b.getFullYear()
+      && a.getMonth() === b.getMonth()
+      && a.getDate() === b.getDate();
+  }
+
+  function addCalendarDays(date, days) {
+    var next = new Date(date);
+    next.setDate(next.getDate() + days);
+    return next;
+  }
+
+  function nthWeekdayOfMonth(year, monthIndex, weekday, occurrence) {
+    var cursor = new Date(year, monthIndex, 1);
+    var count = 0;
+    while (cursor.getMonth() === monthIndex) {
+      if (cursor.getDay() === weekday) {
+        count++;
+        if (count === occurrence) return new Date(cursor);
+      }
+      cursor.setDate(cursor.getDate() + 1);
+    }
+    return null;
+  }
+
+  function lastWeekdayOfMonth(year, monthIndex, weekday) {
+    var cursor = new Date(year, monthIndex + 1, 0);
+    while (cursor.getDay() !== weekday) {
+      cursor.setDate(cursor.getDate() - 1);
+    }
+    return cursor;
+  }
+
+  function memorialDay(year) {
+    return lastWeekdayOfMonth(year, 4, 1);
+  }
+
+  function laborDay(year) {
+    return nthWeekdayOfMonth(year, 8, 1, 1);
+  }
+
+  function thanksgivingDay(year) {
+    return nthWeekdayOfMonth(year, 10, 4, 4);
+  }
+
+  function easterSunday(year) {
+    var a = year % 19;
+    var b = Math.floor(year / 100);
+    var c = year % 100;
+    var d = Math.floor(b / 4);
+    var e = b % 4;
+    var f = Math.floor((b + 8) / 25);
+    var g = Math.floor((b - f + 1) / 3);
+    var h = (19 * a + b - d - g + 15) % 30;
+    var i = Math.floor(c / 4);
+    var k = c % 4;
+    var l = (32 + 2 * e + 2 * i - h - k) % 7;
+    var m = Math.floor((a + 11 * h + 22 * l) / 451);
+    var month = Math.floor((h + l - 7 * m + 114) / 31);
+    var day = ((h + l - 7 * m + 114) % 31) + 1;
+    return new Date(year, month - 1, day);
+  }
+
+  function mlkDay(year) {
+    return nthWeekdayOfMonth(year, 0, 1, 3);
+  }
+
+  function presidentsDay(year) {
+    return nthWeekdayOfMonth(year, 1, 1, 3);
+  }
+
+  function mothersDay(year) {
+    return nthWeekdayOfMonth(year, 4, 0, 2);
+  }
+
+  function fathersDay(year) {
+    return nthWeekdayOfMonth(year, 5, 0, 3);
+  }
+
+  function columbusDay(year) {
+    return nthWeekdayOfMonth(year, 9, 1, 2);
+  }
+
+  function isMemorialDayWeekend(date) {
+    var monday = memorialDay(date.getFullYear());
+    return isSameCalendarDay(date, addCalendarDays(monday, -2))
+      || isSameCalendarDay(date, addCalendarDays(monday, -1))
+      || isSameCalendarDay(date, monday);
+  }
+
+  function isLaborDayWeekend(date) {
+    var monday = laborDay(date.getFullYear());
+    return isSameCalendarDay(date, addCalendarDays(monday, -2))
+      || isSameCalendarDay(date, addCalendarDays(monday, -1))
+      || isSameCalendarDay(date, monday);
+  }
+
+  function getHolidayUpcharge(isoDate) {
+    var date = parseISODateLocal(isoDate);
+    if (!date) return null;
+
+    var month = date.getMonth() + 1;
+    var day = date.getDate();
+    var year = date.getFullYear();
+    var thanksgiving = thanksgivingDay(year);
+    var easter = easterSunday(year);
+
+    // Peak (+20%) — highest-demand event dates
+    if (month === 12 && day === 31) {
+      return { label: "New Year's Eve", percent: HOLIDAY_PEAK_PERCENT };
+    }
+    if (month === 7 && day === 4) {
+      return { label: 'Independence Day', percent: HOLIDAY_PEAK_PERCENT };
+    }
+    if (isSameCalendarDay(date, addCalendarDays(thanksgiving, -1))) {
+      return { label: 'Thanksgiving Eve', percent: HOLIDAY_PEAK_PERCENT };
+    }
+    if (month === 2 && day === 14) {
+      return { label: "Valentine's Day", percent: HOLIDAY_PEAK_PERCENT };
+    }
+    if (month === 3 && day === 17) {
+      return { label: "St. Patrick's Day", percent: HOLIDAY_PEAK_PERCENT };
+    }
+    if (month === 10 && day === 31) {
+      return { label: 'Halloween', percent: HOLIDAY_PEAK_PERCENT };
+    }
+    if (isSameCalendarDay(date, easter)) {
+      return { label: 'Easter Sunday', percent: HOLIDAY_PEAK_PERCENT };
+    }
+
+    // High (+15%) — federal holidays and major event dates
+    if (month === 1 && day === 1) {
+      return { label: "New Year's Day", percent: HOLIDAY_HIGH_PERCENT };
+    }
+    if (isSameCalendarDay(date, mlkDay(year))) {
+      return { label: 'Martin Luther King Jr. Day', percent: HOLIDAY_HIGH_PERCENT };
+    }
+    if (isSameCalendarDay(date, presidentsDay(year))) {
+      return { label: "Presidents' Day", percent: HOLIDAY_HIGH_PERCENT };
+    }
+    if (isSameCalendarDay(date, addCalendarDays(easter, -2))) {
+      return { label: 'Good Friday', percent: HOLIDAY_HIGH_PERCENT };
+    }
+    if (isSameCalendarDay(date, mothersDay(year))) {
+      return { label: "Mother's Day", percent: HOLIDAY_HIGH_PERCENT };
+    }
+    if (month === 6 && day === 19) {
+      return { label: 'Juneteenth', percent: HOLIDAY_HIGH_PERCENT };
+    }
+    if (isSameCalendarDay(date, fathersDay(year))) {
+      return { label: "Father's Day", percent: HOLIDAY_HIGH_PERCENT };
+    }
+    if (month === 7 && day === 3) {
+      return { label: 'Independence Day Eve', percent: HOLIDAY_HIGH_PERCENT };
+    }
+    if (isMemorialDayWeekend(date)) {
+      return { label: 'Memorial Day weekend', percent: HOLIDAY_HIGH_PERCENT };
+    }
+    if (isLaborDayWeekend(date)) {
+      return { label: 'Labor Day weekend', percent: HOLIDAY_HIGH_PERCENT };
+    }
+    if (isSameCalendarDay(date, columbusDay(year))) {
+      return { label: 'Columbus Day', percent: HOLIDAY_HIGH_PERCENT };
+    }
+    if (month === 11 && day === 11) {
+      return { label: 'Veterans Day', percent: HOLIDAY_HIGH_PERCENT };
+    }
+    if (isSameCalendarDay(date, thanksgiving)) {
+      return { label: 'Thanksgiving', percent: HOLIDAY_HIGH_PERCENT };
+    }
+    if (isSameCalendarDay(date, addCalendarDays(thanksgiving, 1))) {
+      return { label: 'Black Friday', percent: HOLIDAY_HIGH_PERCENT };
+    }
+    if (month === 12 && day === 24) {
+      return { label: 'Christmas Eve', percent: HOLIDAY_HIGH_PERCENT };
+    }
+    if (month === 12 && day === 25) {
+      return { label: 'Christmas Day', percent: HOLIDAY_HIGH_PERCENT };
+    }
+
+    return null;
+  }
+
+  function formatHolidayUpchargeField(holiday, fee) {
+    if (!holiday) return '';
+    if (fee == null) return holiday.label + ' (+' + holiday.percent + '%)';
+    return holiday.label + ' (+' + holiday.percent + '%, ' + formatMoney(fee) + ')';
+  }
+
+  function updateHolidayDateHint() {
+    if (!dateHolidayHint) return;
+    var holiday = dateInputLive && dateInputLive.value
+      ? getHolidayUpcharge(dateInputLive.value)
+      : null;
+    if (!holiday) {
+      dateHolidayHint.hidden = true;
+      dateHolidayHint.textContent = '';
+      return;
+    }
+    dateHolidayHint.textContent = holiday.label + ' — a +' + holiday.percent + '% upcharge applies to your estimate.';
+    dateHolidayHint.hidden = false;
+  }
 
   function formatMoney(n) {
     return '$' + Math.round(n).toLocaleString('en-US');
@@ -195,6 +410,42 @@ if (document.getElementById('book-step-1')) {
     };
   }
 
+  function formatGuestBand(guestBand) {
+    if (guestBand === 'Up to 25') return 'up to 25 guests';
+    return guestBand + ' guests';
+  }
+
+  function formatHoursLabel(hours) {
+    return hours + (hours === 1 ? ' hour' : ' hours');
+  }
+
+  function buildEstimateBreakdown(result, holiday, holidayFee) {
+    if (result.isCustomQuote) {
+      var customText = '100+ guests\nWe\'ll follow up with a custom quote.';
+      if (holiday) {
+        customText += '\n' + holiday.label + ' · holiday fee applies';
+      }
+      return customText;
+    }
+
+    var line1 = formatHoursLabel(result.hours) + ' for ' + formatGuestBand(result.guestBand);
+
+    var hourlyRate = result.isTeamRate ? result.hourly : result.effectiveHourly;
+    var bartenderLabel = result.bartenders === 1 ? '1 bartender' : result.bartenders + ' bartenders';
+    var line2 = bartenderLabel + ' for ' + formatMoney(hourlyRate) + '/hr';
+    if (result.shortEventMinimum) line2 += ' · billed as 2.5 hours';
+
+    var text = line1 + '\n' + line2;
+    if (holiday) {
+      if (holidayFee != null) {
+        text += '\n' + holiday.label + ' · +' + holiday.percent + '% (' + formatMoney(holidayFee) + ')';
+      } else {
+        text += '\n' + holiday.label + ' · holiday fee applies';
+      }
+    }
+    return text;
+  }
+
   function updateEstimate() {
     if (!selectedHourly) {
       if (estimateEl) estimateEl.hidden = true;
@@ -202,6 +453,8 @@ if (document.getElementById('book-step-1')) {
       if (estimatedTotalInput) estimatedTotalInput.value = '';
       if (estimateBreakdownInput) estimateBreakdownInput.value = '';
       if (bartenderCountInput) bartenderCountInput.value = '';
+      if (holidayUpchargeInput) holidayUpchargeInput.value = '';
+      updateHolidayDateHint();
       return;
     }
 
@@ -213,35 +466,22 @@ if (document.getElementById('book-step-1')) {
 
     var guestPricing = guestPricingFromSelect(guestsSelect);
     var result = calcEstimate(selectedHourly, hours, guestPricing, selectedTier);
+    var holiday = dateInputLive && dateInputLive.value
+      ? getHolidayUpcharge(dateInputLive.value)
+      : null;
+    updateHolidayDateHint();
 
     var totalText;
     var breakdownText;
+    var holidayFee = null;
 
     if (result.isCustomQuote) {
       totalText = 'Custom Quote';
-      breakdownText = 'For 100+ guests we\'ll confirm staffing and pricing after we review your event.';
+      breakdownText = buildEstimateBreakdown(result, holiday, null);
     } else {
-      totalText = formatMoney(result.total);
-      var ratePart;
-      if (result.isTeamRate) {
-        ratePart = formatMoney(result.hourly) + '/hr team rate';
-      } else {
-        ratePart = formatMoney(result.hourly) + '/hr';
-        if (result.guestHourly > 0) {
-          ratePart += ' + ' + formatMoney(result.guestHourly) + '/hr guests';
-        }
-      }
-      var hoursLabel = result.hours + (result.hours === 1 ? ' hr' : ' hrs');
-      var bartenderLabel = result.bartenders === 1 ? '1 bartender' : result.bartenders + ' bartenders';
-      var bartenderNote = result.isTeamRate
-        ? bartenderLabel + ' included in estimate'
-        : bartenderLabel;
-      breakdownText = [
-        ratePart,
-        hoursLabel,
-        bartenderNote,
-        result.guestBand + ' guests'
-      ].join(' · ');
+      holidayFee = holiday ? Math.round(result.total * holiday.percent / 100) : null;
+      totalText = formatMoney(result.total + (holidayFee || 0));
+      breakdownText = buildEstimateBreakdown(result, holiday, holidayFee);
     }
 
     function paintEstimate(panel, amountEl, breakdownEl) {
@@ -263,9 +503,8 @@ if (document.getElementById('book-step-1')) {
     if (bartenderCountInput) {
       bartenderCountInput.value = result.isCustomQuote ? '' : String(result.bartenders);
     }
-
-    if (chipPrice) {
-      chipPrice.textContent = '— from ' + startingFrom(selectedHourly);
+    if (holidayUpchargeInput) {
+      holidayUpchargeInput.value = formatHolidayUpchargeField(holiday, holidayFee);
     }
   }
 
@@ -289,7 +528,6 @@ if (document.getElementById('book-step-1')) {
     if (tierName) {
       tierInput.value = tierName;
       chipName.textContent = tierName === 'Not Sure Yet' ? "We'll help you choose" : tierName;
-      chipPrice.textContent = hourly ? '— from ' + startingFrom(hourly) : '';
       chip.hidden = false;
     } else {
       tierInput.value = '';
@@ -446,6 +684,8 @@ if (document.querySelector('.book-form')) {
     dateInput.min = tomorrowISO();
     dateInput.addEventListener('change', function() {
       showFieldError(this, dateError, this.value && this.value <= todayISO());
+      updateHolidayDateHint();
+      updateEstimate();
     });
   }
 

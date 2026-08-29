@@ -995,6 +995,11 @@ em  { font-style: italic; color: inherit; }
   color: rgba(250,247,242,0.42);
 }
 
+.form-hint--holiday {
+  margin-top: 0.35rem;
+  color: rgba(201,168,76,0.9);
+}
+
 /* White calendar icon on desktop for text-type date inputs */
 /* Calendar icon handled by real buttons on both date inputs */
 
@@ -1308,15 +1313,43 @@ em  { font-style: italic; color: inherit; }
 /* ---- Step 2: selected package chip ---- */
 .selected-package-chip {
   display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  max-width: 640px;
+  margin: 0 auto 2rem;
+  padding: 1.15rem 1.35rem;
+  background: linear-gradient(135deg, rgba(201,168,76,0.16), rgba(201,168,76,0.06));
+  border: 1px solid rgba(201,168,76,0.45);
+  border-radius: 4px;
+}
+
+.selected-package-chip-head {
+  display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  max-width: 640px;
-  margin: 0 auto 2rem;
-  background: rgba(201,168,76,0.08);
-  border: 1px solid rgba(201,168,76,0.35);
-  border-radius: 3px;
-  padding: 0.9rem 1.25rem;
+}
+
+.selected-package-estimate {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid rgba(201,168,76,0.25);
+}
+
+.selected-package-estimate .book-estimate-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.selected-package-estimate .book-estimate-breakdown {
+  margin: 0.55rem 0 0;
+}
+
+.selected-package-estimate .book-estimate-note {
+  margin: 0.45rem 0 0;
 }
 
 .selected-package-text {
@@ -1325,11 +1358,6 @@ em  { font-style: italic; color: inherit; }
 }
 
 .selected-package-text strong { color: var(--gold); }
-
-.selected-package-text span {
-  color: rgba(250,247,242,0.6);
-  margin-left: 0.4rem;
-}
 
 .selected-package-chip button {
   background: none;
@@ -1422,8 +1450,9 @@ em  { font-style: italic; color: inherit; }
 .book-estimate-breakdown {
   margin: 0.55rem 0 0;
   font-size: 0.82rem;
-  color: rgba(250,247,242,0.72);
-  line-height: 1.45;
+  line-height: 1.55;
+  color: rgba(250,247,242,0.85);
+  white-space: pre-line;
 }
 
 .book-estimate-note {
@@ -1450,7 +1479,8 @@ em  { font-style: italic; color: inherit; }
 @media (max-width: 640px) {
   .book-progress { max-width: 300px; margin-bottom: 2.25rem; }
   .book-progress-label { font-size: 0.62rem; }
-  .selected-package-chip { flex-direction: column; align-items: flex-start; gap: 0.6rem; }
+  .selected-package-chip-head { flex-direction: column; align-items: flex-start; gap: 0.6rem; }
+  .selected-package-chip { gap: 0; }
   .book-estimate-top { flex-direction: column; align-items: flex-start; gap: 0.35rem; }
   .book-estimate-amount { font-size: 1.6rem; }
 }
