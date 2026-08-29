@@ -752,13 +752,19 @@ if (document.querySelector('.book-form')) {
     'Please enter total guests drinking (21+).'
   );
 
-  function validateDrinkingGuests() {
+  function clearDrinkingGuestsError() {
+    showFieldError(drinkingGuestsInput, drinkingGuestsError, false);
+  }
+
+  function validateDrinkingGuests(showErrors) {
     if (!drinkingGuestsInput) return false;
     var invalid = drinkingGuestsInvalid();
-    if (invalid && drinkingGuestsError) {
-      drinkingGuestsError.textContent = drinkingGuestsErrorMessage();
+    if (showErrors) {
+      if (invalid && drinkingGuestsError) {
+        drinkingGuestsError.textContent = drinkingGuestsErrorMessage();
+      }
+      showFieldError(drinkingGuestsInput, drinkingGuestsError, invalid);
     }
-    showFieldError(drinkingGuestsInput, drinkingGuestsError, invalid);
     return invalid;
   }
 
@@ -766,12 +772,12 @@ if (document.querySelector('.book-form')) {
     drinkingGuestsInput.addEventListener('input', function() {
       this.value = this.value.replace(/[^\d]/g, '');
       if (this.value === '0') this.value = '';
-      validateDrinkingGuests();
+      clearDrinkingGuestsError();
     });
-    drinkingGuestsInput.addEventListener('blur', validateDrinkingGuests);
+    drinkingGuestsInput.addEventListener('blur', clearDrinkingGuestsError);
   }
   if (guestsSelectForm) {
-    guestsSelectForm.addEventListener('change', validateDrinkingGuests);
+    guestsSelectForm.addEventListener('change', clearDrinkingGuestsError);
   }
 
   bookForm.addEventListener('submit', function(e) {
@@ -802,7 +808,7 @@ if (document.querySelector('.book-form')) {
       return;
     }
 
-    if (validateDrinkingGuests()) {
+    if (validateDrinkingGuests(true)) {
       drinkingGuestsInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
       drinkingGuestsInput.focus();
       return;
