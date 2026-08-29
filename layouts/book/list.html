@@ -121,13 +121,13 @@
           </span>
           <button type="button" id="change-package-btn">Change package</button>
         </div>
-        <div class="selected-package-estimate" id="book-estimate" hidden aria-live="polite">
-          <div class="book-estimate-top">
-            <span class="book-estimate-label">Estimated total</span>
-            <span class="book-estimate-amount" id="book-estimate-amount">—</span>
+        <div class="selected-package-estimate" id="selected-package-estimate" hidden aria-live="polite">
+          <div class="selected-package-estimate-top">
+            <span class="selected-package-estimate-label">Estimated total</span>
+            <span class="selected-package-estimate-amount" id="selected-package-estimate-amount">—</span>
           </div>
-          <p class="book-estimate-breakdown" id="book-estimate-breakdown"></p>
-          <p class="book-estimate-note">Estimate only — confirmed after we connect. Travel or venue extras may apply and will be noted in your quote.</p>
+          <p class="selected-package-estimate-breakdown" id="selected-package-estimate-breakdown"></p>
+          <p class="selected-package-estimate-note">Estimate only — confirmed after we connect. Travel or venue extras may apply and will be noted in your quote.</p>
         </div>
       </div>
 
@@ -240,7 +240,7 @@
       </fieldset>
 
       <aside class="book-booking-terms">
-        <span class="book-estimate-label">Booking terms</span>
+        <span class="book-terms-heading">Booking terms</span>
         <p><span class="book-terms-note-label">Note:</span> A $100 non-refundable deposit is required to book and lock a date/time slot for our services.</p>
         <p>Full payment is due two weeks prior to the event date.</p>
         <p>For Wedding, Rehearsal Dinner, Engagement, and Bridal Shower bookings, full payment is due one month prior to the event date.</p>
@@ -248,13 +248,21 @@
         <p>Events on major holidays will be upcharged.</p>
       </aside>
 
-      <aside class="book-estimate" id="book-estimate-bottom" hidden aria-live="polite">
-        <div class="book-estimate-top">
-          <span class="book-estimate-label">Estimated total</span>
-          <span class="book-estimate-amount" id="book-estimate-amount-bottom">—</span>
+      <aside class="selected-package-chip selected-package-chip--bottom" id="selected-package-chip-bottom" hidden aria-live="polite">
+        <div class="selected-package-chip-head">
+          <span class="selected-package-text">
+            Package: <strong id="selected-package-name-bottom"></strong>
+          </span>
+          <button type="button" id="change-package-btn-bottom">Change package</button>
         </div>
-        <p class="book-estimate-breakdown" id="book-estimate-breakdown-bottom"></p>
-        <p class="book-estimate-note">Estimate only — confirmed after we connect. Travel or venue extras may apply and will be noted in your quote.</p>
+        <div class="selected-package-estimate" id="selected-package-estimate-bottom" hidden>
+          <div class="selected-package-estimate-top">
+            <span class="selected-package-estimate-label">Estimated total</span>
+            <span class="selected-package-estimate-amount" id="selected-package-estimate-amount-bottom">—</span>
+          </div>
+          <p class="selected-package-estimate-breakdown" id="selected-package-estimate-breakdown-bottom"></p>
+          <p class="selected-package-estimate-note">Estimate only — confirmed after we connect. Travel or venue extras may apply and will be noted in your quote.</p>
+        </div>
       </aside>
 
       <div class="form-row form-submit">

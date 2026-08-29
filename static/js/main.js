@@ -67,15 +67,18 @@ if (document.getElementById('book-step-1')) {
   var tierCards = document.querySelectorAll('.tier-select-card');
   var skipBtn = document.getElementById('tier-skip-btn');
   var changeBtn = document.getElementById('change-package-btn');
+  var changeBtnBottom = document.getElementById('change-package-btn-bottom');
   var tierInput = document.getElementById('service_tier');
   var chip = document.getElementById('selected-package-chip');
+  var chipBottom = document.getElementById('selected-package-chip-bottom');
   var chipName = document.getElementById('selected-package-name');
-  var estimateEl = document.getElementById('book-estimate');
-  var estimateAmount = document.getElementById('book-estimate-amount');
-  var estimateBreakdown = document.getElementById('book-estimate-breakdown');
-  var estimateElBottom = document.getElementById('book-estimate-bottom');
-  var estimateAmountBottom = document.getElementById('book-estimate-amount-bottom');
-  var estimateBreakdownBottom = document.getElementById('book-estimate-breakdown-bottom');
+  var chipNameBottom = document.getElementById('selected-package-name-bottom');
+  var estimateEl = document.getElementById('selected-package-estimate');
+  var estimateAmount = document.getElementById('selected-package-estimate-amount');
+  var estimateBreakdown = document.getElementById('selected-package-estimate-breakdown');
+  var estimateElBottom = document.getElementById('selected-package-estimate-bottom');
+  var estimateAmountBottom = document.getElementById('selected-package-estimate-amount-bottom');
+  var estimateBreakdownBottom = document.getElementById('selected-package-estimate-breakdown-bottom');
   var estimatedTotalInput = document.getElementById('estimated_total');
   var estimateBreakdownInput = document.getElementById('estimate_breakdown');
   var bartenderCountInput = document.getElementById('bartender_count');
@@ -521,16 +524,27 @@ if (document.getElementById('book-step-1')) {
     });
   }
 
+  function setPackageDisplayName(tierName) {
+    var displayName = tierName === 'Not Sure Yet' ? "We'll help you choose" : tierName;
+    if (chipName) chipName.textContent = displayName;
+    if (chipNameBottom) chipNameBottom.textContent = displayName;
+  }
+
+  function setPackageChipVisible(show) {
+    if (chip) chip.hidden = !show;
+    if (chipBottom) chipBottom.hidden = !show;
+  }
+
   function goToStep2(tierName, hourly) {
     selectedHourly = hourly || 0;
     selectedTier = tierName || '';
     if (tierName) {
       tierInput.value = tierName;
-      chipName.textContent = tierName === 'Not Sure Yet' ? "We'll help you choose" : tierName;
-      chip.hidden = false;
+      setPackageDisplayName(tierName);
+      setPackageChipVisible(true);
     } else {
       tierInput.value = '';
-      chip.hidden = true;
+      setPackageChipVisible(false);
     }
     step1.hidden = true;
     step2.hidden = false;
@@ -547,6 +561,7 @@ if (document.getElementById('book-step-1')) {
     selectedTier = '';
     if (estimateEl) estimateEl.hidden = true;
     if (estimateElBottom) estimateElBottom.hidden = true;
+    setPackageChipVisible(false);
     scrollToBookTop();
   }
 
@@ -563,6 +578,10 @@ if (document.getElementById('book-step-1')) {
 
   if (changeBtn) {
     changeBtn.addEventListener('click', goToStep1);
+  }
+
+  if (changeBtnBottom) {
+    changeBtnBottom.addEventListener('click', goToStep1);
   }
 
   if (hoursInputLive) {
