@@ -3,167 +3,58 @@
 <section class="book-body" data-nav-theme="dark">
   <div class="book-inner">
 
-    <div class="book-progress" id="book-progress">
-      <div class="book-progress-step is-active" data-step="1">
+    <nav class="book-progress book-progress--wizard" id="book-progress" aria-label="Booking progress">
+      <button type="button" class="book-progress-step is-active" data-step="1" aria-current="step">
         <span class="book-progress-num">1</span>
-        <span class="book-progress-label">Choose Package</span>
-      </div>
-      <div class="book-progress-bar"><span></span></div>
-      <div class="book-progress-step" data-step="2">
+        <span class="book-progress-label">Event</span>
+      </button>
+      <span class="book-progress-connector" aria-hidden="true"></span>
+      <button type="button" class="book-progress-step" data-step="2" disabled>
         <span class="book-progress-num">2</span>
-        <span class="book-progress-label">Your Details</span>
-      </div>
-    </div>
+        <span class="book-progress-label">Time</span>
+      </button>
+      <span class="book-progress-connector" aria-hidden="true"></span>
+      <button type="button" class="book-progress-step" data-step="3" disabled>
+        <span class="book-progress-num">3</span>
+        <span class="book-progress-label">Staff</span>
+      </button>
+      <span class="book-progress-connector" aria-hidden="true"></span>
+      <button type="button" class="book-progress-step" data-step="4" disabled>
+        <span class="book-progress-num">4</span>
+        <span class="book-progress-label">Service</span>
+      </button>
+      <span class="book-progress-connector" aria-hidden="true"></span>
+      <button type="button" class="book-progress-step" data-step="5" disabled>
+        <span class="book-progress-num">5</span>
+        <span class="book-progress-label">Contact</span>
+      </button>
+      <span class="book-progress-connector" aria-hidden="true"></span>
+      <button type="button" class="book-progress-step" data-step="6" disabled>
+        <span class="book-progress-num">6</span>
+        <span class="book-progress-label">Review</span>
+      </button>
+    </nav>
 
-    <!-- ============================================================
-         STEP 1 — PACKAGE PICKER
-         ============================================================ -->
-    <div class="book-step" id="book-step-1">
-
-      <div class="book-header">
-        <p class="eyebrow">Step 1 of 2</p>
-        <h1 class="book-title"><em>Choose Your Package</em></h1>
-        <p class="book-sub">Pick the package that fits — we can always adjust once we connect.</p>
-        <p class="book-dry-hire-note">We're insured and certified. You purchase the alcohol, we handle everything else.</p>
-      </div>
-
-      <div class="tier-select-grid">
-
-        <button type="button" class="tier-select-card" data-tier="Bartender" data-hourly="120">
-          <div class="tier-select-top">
-            <span class="pkg-badge">Labor only</span>
-          </div>
-          <h3 class="tier-select-name">Bartender</h3>
-          <p class="tier-select-price">Starting from <strong>$360</strong></p>
-          <ul class="tier-select-items">
-            <li>Bartending Tools</li>
-            <li>Garnishes</li>
-            <li>Bar Napkins</li>
-            <li>Cocktail Straws</li>
-            <li>Alcohol Shopping List</li>
-            <li>Custom Cocktail Menu</li>
-          </ul>
-          <p class="tier-select-note">Ice, cups, mixers, juices &amp; sodas not included</p>
-          <span class="btn btn-sm btn-gold tier-select-btn">Select Package →</span>
-          <div class="tier-select-rates-wrap">
-            <p class="tier-select-rates">3 hrs · up to 25 guests</p>
-          </div>
-        </button>
-
-        <button type="button" class="tier-select-card" data-tier="Basic Bar" data-hourly="160">
-          <div class="tier-select-top">
-            <span class="pkg-badge">Bar + equipment</span>
-          </div>
-          <h3 class="tier-select-name">Basic Bar</h3>
-          <p class="tier-select-price">Starting from <strong>$480</strong></p>
-          <p class="tier-select-includes">Everything in Bartender, plus:</p>
-          <ul class="tier-select-items">
-            <li>Steel Frame Bar Table</li>
-            <li>Back Table</li>
-            <li>Garbage Bin</li>
-            <li>Wine Chiller</li>
-            <li>Beer Cooler</li>
-            <li>Ice Cooler</li>
-          </ul>
-          <p class="tier-select-note">Ice, cups, mixers, juices &amp; sodas not included</p>
-          <span class="btn btn-sm btn-gold tier-select-btn">Select Package →</span>
-          <div class="tier-select-rates-wrap">
-            <p class="tier-select-rates">3 hrs · up to 25 guests</p>
-          </div>
-        </button>
-
-        <button type="button" class="tier-select-card tier-select-card--featured" data-tier="Full Bar" data-hourly="230">
-          <div class="tier-select-top">
-            <span class="pkg-badge pkg-badge--gold">Most popular</span>
-          </div>
-          <h3 class="tier-select-name">Full Bar</h3>
-          <p class="tier-select-price">Starting from <strong>$690</strong></p>
-          <p class="tier-select-includes">Everything in Basic Bar, plus:</p>
-          <ul class="tier-select-items">
-            <li>Ice</li>
-            <li>Disposable Cups</li>
-            <li>Mixers</li>
-            <li>Juices</li>
-            <li>Sodas</li>
-          </ul>
-          <span class="btn btn-sm btn-gold tier-select-btn">Select Package →</span>
-          <div class="tier-select-rates-wrap">
-            <p class="tier-select-rates">3 hrs · up to 25 guests</p>
-          </div>
-        </button>
-
-      </div>
-
-      <p class="tier-select-skip">
-        Not sure which one fits? <button type="button" id="tier-skip-btn">Skip and tell us about your event →</button>
-      </p>
-
-    </div>
-
-    <!-- ============================================================
-         STEP 2 — CONTACT / EVENT DETAILS FORM
-         ============================================================ -->
-    <div class="book-step" id="book-step-2" hidden>
-
-      <div class="book-header">
-        <p class="eyebrow">Step 2 of 2</p>
-        <h1 class="book-title"><em>Your Event Details</em></h1>
-        <p class="book-sub">Adjust hours and guest count to see your estimate update — final quote confirmed when we reply.</p>
-      </div>
-
-      <div class="selected-package-chip" id="selected-package-chip" hidden>
-        <div class="selected-package-chip-head">
-          <span class="selected-package-text">
-            Package: <strong id="selected-package-name"></strong>
-          </span>
-          <button type="button" id="change-package-btn">Change package</button>
-        </div>
-        <div class="selected-package-estimate" id="selected-package-estimate" hidden aria-live="polite">
-          <div class="selected-package-estimate-top">
-            <span class="selected-package-estimate-label">Estimated total</span>
-            <span class="selected-package-estimate-amount" id="selected-package-estimate-amount">—</span>
-          </div>
-          <p class="selected-package-estimate-breakdown" id="selected-package-estimate-breakdown"></p>
-          <p class="selected-package-estimate-note">Estimate only — confirmed after we connect. Travel or venue extras may apply and will be noted in your quote.</p>
-        </div>
-      </div>
-
-    <form class="book-form" action="https://formspree.io/f/maqvdgrb" method="POST">
+    <form class="book-form" action="https://formspree.io/f/maqvdgrb" method="POST" novalidate>
 
       <input type="hidden" name="_subject" value="New Booking Inquiry — The Drink Is Right" />
       <input type="hidden" name="_next" value="https://thedrinkisright.com/thank-you" />
-      <input type="text" name="_gotcha" style="display:none" />
+      <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
       <input type="hidden" id="service_tier" name="service_tier" value="" />
       <input type="hidden" id="estimated_total" name="estimated_total" value="" />
       <input type="hidden" id="estimate_breakdown" name="estimate_breakdown" value="" />
-      <input type="hidden" id="bartender_count" name="bartender_count" value="" />
       <input type="hidden" id="holiday_upcharge" name="holiday_upcharge" value="" />
 
-      <fieldset class="form-section">
-        <legend>Your info</legend>
+      <!-- STEP 1 — EVENT BASICS -->
+      <div class="book-wizard-step" id="book-wizard-step-1" data-wizard-step="1">
+        <div class="book-header">
+          <p class="eyebrow">Step 1 of 6</p>
+          <h1 class="book-title"><em>Tell Us About Your Event</em></h1>
+          <p class="book-sub">Fast and simple — no credit card required.</p>
+        </div>
         <div class="form-row form-row--2">
           <div class="form-group">
-            <label for="name">Full Name <span class="required">*</span></label>
-            <input type="text" id="name" name="name" placeholder="Jane Smith" autocomplete="name" enterkeyhint="next" required />
-          </div>
-          <div class="form-group">
-            <label for="email">Email <span class="required">*</span></label>
-            <input type="email" id="email" name="email" placeholder="you@email.com" autocomplete="email" enterkeyhint="next" required />
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="phone">Phone <span class="required">*</span></label>
-            <input type="tel" id="phone" name="phone" placeholder="(929) 000-0000" autocomplete="tel" inputmode="tel" enterkeyhint="next" required />
-          </div>
-        </div>
-      </fieldset>
-
-      <fieldset class="form-section">
-        <legend>The event</legend>
-        <div class="form-row form-row--2">
-          <div class="form-group">
-            <label for="event_type">Occasion <span class="required">*</span></label>
+            <label for="event_type">Type of Event <span class="required">*</span></label>
             <select id="event_type" name="event_type" required>
               <option value="" disabled selected>Select one</option>
               <option value="Birthday Party">🎂 Birthday Party</option>
@@ -180,7 +71,7 @@
             </select>
           </div>
           <div class="form-group">
-            <label for="date">Date <span class="required">*</span></label>
+            <label for="date">Event Date <span class="required">*</span></label>
             <div class="date-input-wrap">
               <input type="text" id="date" name="event_date" placeholder="Select a date" onfocus="this.type='date'; try{this.showPicker()}catch(e){}" onblur="if(!this.value)this.type='text'" onchange="if(!this.value)this.type='text'" required />
               <button type="button" class="date-icon-btn" onclick="var d=document.getElementById('date');d.type='date';d.focus();try{d.showPicker()}catch(e){}" tabindex="-1" aria-label="Open calendar">
@@ -190,15 +81,65 @@
             <p class="form-hint form-hint--holiday" id="date-holiday-hint" hidden></p>
           </div>
         </div>
+        <div class="form-row">
+          <div class="form-group form-group--choices" id="venue-type-group">
+            <span class="form-choice-label" id="venue-type-label">Where will the event be held? <span class="required">*</span></span>
+            <div class="form-choice-grid form-choice-grid--venue" role="radiogroup" aria-labelledby="venue-type-label">
+              <label class="form-choice-tile">
+                <input type="radio" name="venue_type" value="Private Home" required />
+                <span>Private Home</span>
+              </label>
+              <label class="form-choice-tile">
+                <input type="radio" name="venue_type" value="Event Venue" />
+                <span>Event Venue</span>
+              </label>
+              <label class="form-choice-tile">
+                <input type="radio" name="venue_type" value="Office / Business" />
+                <span>Office / Business</span>
+              </label>
+              <label class="form-choice-tile">
+                <input type="radio" name="venue_type" value="Air BnB" />
+                <span>Air BnB</span>
+              </label>
+              <label class="form-choice-tile">
+                <input type="radio" name="venue_type" value="Rooftop / Outdoor" />
+                <span>Rooftop / Outdoor</span>
+              </label>
+              <label class="form-choice-tile">
+                <input type="radio" name="venue_type" value="Other" />
+                <span>Other</span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="event_zip">Event ZIP Code <span class="required">*</span></label>
+            <input type="text" id="event_zip" name="event_zip" inputmode="numeric" maxlength="10" placeholder="e.g. 10001" autocomplete="postal-code" enterkeyhint="next" required />
+            <p class="form-hint">Used to confirm travel and availability</p>
+          </div>
+        </div>
+        <div class="book-wizard-nav">
+          <button type="button" class="btn btn-gold book-wizard-next" data-next="2">Next Step →</button>
+        </div>
+      </div>
+
+      <!-- STEP 2 — TIME -->
+      <div class="book-wizard-step" id="book-wizard-step-2" data-wizard-step="2" hidden>
+        <div class="book-header">
+          <p class="eyebrow">Step 2 of 6</p>
+          <h1 class="book-title"><em>Bar Schedule</em></h1>
+          <p class="book-sub">When should the bar open, and for how long?</p>
+        </div>
         <div class="form-row form-row--2">
           <div class="form-group">
-            <label for="event_start_time">Start Time <span class="required">*</span></label>
+            <label for="event_start_time">Bar Start Time <span class="required">*</span></label>
             <select id="event_start_time" name="event_start_time" required>
               {{ partial "time-options.html" "Select a time" }}
             </select>
           </div>
           <div class="form-group">
-            <label for="event_hours">Hours <span class="required">*</span></label>
+            <label for="event_hours">How many hours of service? <span class="required">*</span></label>
             <div class="hours-input-wrap">
               <input type="number" id="event_hours" name="event_hours" min="3" max="6" step="1" value="3" inputmode="numeric" placeholder="3" enterkeyhint="next" required />
               <span class="hours-suffix">hrs</span>
@@ -206,26 +147,383 @@
             <p class="form-hint">3-hour minimum · 6-hour maximum</p>
           </div>
         </div>
+        <div class="form-row form-row--2" id="event-arrival-wrap" hidden>
+          <div class="form-group">
+            <label for="event_arrival_time_display">Arrival Time</label>
+            <input type="text" id="event_arrival_time_display" name="arrival_time" class="form-input-readonly" readonly tabindex="-1" aria-describedby="event-arrival-hint" />
+            <p class="form-hint" id="event-arrival-hint">We arrive 1 hr 30 min before bar start</p>
+          </div>
+        </div>
+        <div class="book-wizard-nav book-wizard-nav--split">
+          <button type="button" class="btn btn-outline-white book-wizard-back" data-back="1">← Back</button>
+          <button type="button" class="btn btn-gold book-wizard-next" data-next="3">Next Step →</button>
+        </div>
+      </div>
+
+      <!-- STEP 3 — STAFF + TIP JAR -->
+      <div class="book-wizard-step" id="book-wizard-step-3" data-wizard-step="3" hidden>
+        <div class="book-header">
+          <p class="eyebrow">Step 3 of 6</p>
+          <h1 class="book-title"><em>Guests &amp; Staff</em></h1>
+          <p class="book-sub">We'll recommend staffing based on drinking guests — you can adjust.</p>
+        </div>
+        <div class="form-row">
+          <div class="form-group form-group--slider guest-slider-card">
+            <div class="guest-slider-head">
+              <label for="guests_drinking_21_plus">Select Number of Drinking Guests <span class="required">*</span></label>
+              <div class="guest-slider-value-pill" id="guests-drinking-display" aria-live="polite">25 drinking guests</div>
+            </div>
+            <input type="range" id="guests_drinking_21_plus" name="guests_drinking_21_plus" min="0" max="250" step="5" value="25" required aria-describedby="guests-drinking-hint" aria-valuemin="0" aria-valuemax="250" aria-valuenow="25" />
+            <div class="guest-slider-scale" aria-hidden="true">
+              <span>0</span>
+              <span>25</span>
+              <span>50</span>
+              <span>75</span>
+              <span>100</span>
+              <span>125</span>
+              <span>150</span>
+              <span>175</span>
+              <span>200</span>
+              <span>225</span>
+              <span>250</span>
+            </div>
+            <p class="form-hint" id="guests-drinking-hint">Move the slider in increments of 5. We'll recommend the appropriate number of bartenders for your event.</p>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group form-group--choices bartender-count-group" id="bartender-count-group">
+            <div class="bartender-count-head">
+              <span class="bartender-count-label" id="bartender-count-label">Number of Bartenders <span class="required">*</span></span>
+              <button type="button" class="bartender-count-info" aria-label="Staffing tip" title="We'll recommend staffing based on your drinking guest count — you can still choose a different number.">i</button>
+            </div>
+            <div class="bartender-count-grid" role="radiogroup" aria-labelledby="bartender-count-label">
+              <label class="bartender-count-tile">
+                <input type="radio" name="bartender_count" value="1" required />
+                <span>1 Bartender</span>
+              </label>
+              <label class="bartender-count-tile">
+                <input type="radio" name="bartender_count" value="2" />
+                <span>2 Bartenders</span>
+              </label>
+              <label class="bartender-count-tile">
+                <input type="radio" name="bartender_count" value="3" />
+                <span>3 Bartenders</span>
+              </label>
+              <label class="bartender-count-tile">
+                <input type="radio" name="bartender_count" value="4" />
+                <span>4 Bartenders</span>
+              </label>
+              <label class="bartender-count-tile">
+                <input type="radio" name="bartender_count" value="5" />
+                <span>5 Bartenders</span>
+              </label>
+              <label class="bartender-count-tile">
+                <input type="radio" name="bartender_count" value="6" />
+                <span>6 Bartenders</span>
+              </label>
+            </div>
+            <p class="form-hint" id="bartender-recommend-hint">Move the guest slider for a staffing recommendation</p>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group form-group--choices" id="tip-jar-group">
+            <span class="form-choice-label" id="tip-jar-label">Tip jar preference <span class="required">*</span></span>
+            <div class="form-choice-grid form-choice-grid--tip" role="radiogroup" aria-labelledby="tip-jar-label">
+              <label class="form-choice-tile form-choice-tile--large">
+                <input type="radio" name="tip_jar" value="Tip Jar Allowed" required />
+                <span>Tip Jar Allowed</span>
+              </label>
+              <label class="form-choice-tile form-choice-tile--large">
+                <input type="radio" name="tip_jar" value="No Tip Jar Allowed" />
+                <span>No Tip Jar Allowed</span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="book-wizard-nav book-wizard-nav--split">
+          <button type="button" class="btn btn-outline-white book-wizard-back" data-back="2">← Back</button>
+          <button type="button" class="btn btn-gold book-wizard-next" data-next="4">Next Step →</button>
+        </div>
+      </div>
+
+      <!-- STEP 4 — SERVICE PATH + ADD-ONS -->
+      <div class="book-wizard-step" id="book-wizard-step-4" data-wizard-step="4" hidden>
+        <div class="book-header">
+          <p class="eyebrow">Step 4 of 6</p>
+          <h1 class="book-title"><em>Build Your Bar</em></h1>
+          <p class="book-sub">Start with bartender only, or add mixers, supplies &amp; rentals.</p>
+          <p class="book-dry-hire-note">You purchase the alcohol — we bring the tools and anything you add below.</p>
+        </div>
+
+        <input type="hidden" id="package_path" name="package_path" value="" />
+        <input type="hidden" id="selected_addons" name="selected_addons" value="" />
+        <input type="hidden" id="addons_total" name="addons_total" value="" />
+
+        <div class="package-path-layout">
+          <div class="package-path-grid" role="group" aria-label="Service options">
+            <button type="button" class="package-path-card" id="path-addons-btn" data-path="addons">
+              <span class="package-path-eyebrow">Customize</span>
+              <span class="package-path-title">Choose Your Add-Ons</span>
+              <span class="package-path-copy">Pick mixers, supplies &amp; rentals à la carte — pay only for what you need.</span>
+            </button>
+            <button type="button" class="package-path-card package-path-card--featured" id="path-bartender-btn" data-path="bartender">
+              <span class="pkg-badge pkg-badge--gold">Best price</span>
+              <span class="package-path-eyebrow">Service only</span>
+              <span class="package-path-title">Bartender Only</span>
+              <span class="package-path-copy">Professional bartender, bar tools, napkins &amp; straws, plus a personalized shopping list.</span>
+            </button>
+          </div>
+
+          <div class="book-step-4-flow" id="book-step-4-flow">
+            <div class="book-wizard-nav book-wizard-nav--step4-back" id="book-step-4-nav-top">
+              <button type="button" class="btn btn-outline-white book-wizard-back" data-back="3">← Back</button>
+            </div>
+
+            <div class="addons-panel addons-panel--compact" id="addons-panel" hidden>
+              <div class="addons-panel-head">
+                <h2 class="addons-panel-title">Optional Add-Ons &amp; Rentals</h2>
+                <p class="addons-panel-sub">Tap a category, then + to add. Prices update for your drinking guest count.</p>
+              </div>
+
+              <div class="addons-category-chips" role="tablist" aria-label="Add-on categories">
+                <button type="button" class="addons-category-chip is-active" role="tab" aria-selected="true" data-addons-category="mixers">Mixers</button>
+                <button type="button" class="addons-category-chip" role="tab" aria-selected="false" data-addons-category="equipment">Equipment</button>
+                <button type="button" class="addons-category-chip" role="tab" aria-selected="false" data-addons-category="supplies">Supplies</button>
+              </div>
+
+              <div class="addons-catalog" id="addons-catalog">
+          <section class="addons-section" data-addons-category="mixers">
+            <div class="addons-list">
+              <article class="addon-card addon-card--featured" data-addon-id="all_inclusive" data-price="15" data-unit="guest" data-group="core-mixers">
+                <div class="addon-card-media addon-card-media--all-inclusive" role="img" aria-label="All-Inclusive Package"></div>
+                <div class="addon-card-body">
+                  <span class="addon-badge">Best value</span>
+                  <h4 class="addon-card-name">All-Inclusive Package</h4>
+                  <p class="addon-card-price"><strong>$15.00</strong> <span>/per guest</span> <span class="addon-card-line-total" hidden></span></p>
+                  <p class="addon-card-guest-basis" hidden>Based on <span class="addon-card-guest-count">0</span> guests</p>
+                  <p class="addon-card-desc">Includes Mixers, Soft Drinks, Garnishes, Waters, Ice, Cups, Straws, Napkins &amp; Cooler. You provide the alcohol.</p>
+                </div>
+                <button type="button" class="addon-toggle" aria-label="Add All-Inclusive Package" aria-pressed="false">+</button>
+              </article>
+              <article class="addon-card" data-addon-id="juices_limes" data-price="2" data-unit="guest" data-group="core-mixers">
+                <div class="addon-card-media addon-card-media--juices" role="img" aria-label="Juices &amp; Limes"></div>
+                <div class="addon-card-body">
+                  <h4 class="addon-card-name">Juices &amp; Limes</h4>
+                  <p class="addon-card-price"><strong>$2.00</strong> <span>/per guest</span> <span class="addon-card-line-total" hidden></span></p>
+                  <p class="addon-card-guest-basis" hidden>Based on <span class="addon-card-guest-count">0</span> guests</p>
+                  <p class="addon-card-desc">Includes Cranberry Juice, Pineapple Juice, Orange Juice, Club Soda, Tonic &amp; Limes for mixed cocktails.</p>
+                </div>
+                <button type="button" class="addon-toggle" aria-label="Add Juices &amp; Limes" aria-pressed="false">+</button>
+              </article>
+              <article class="addon-card" data-addon-id="premium_mixers" data-price="3.5" data-unit="guest" data-group="core-mixers">
+                <div class="addon-card-media addon-card-media--premium" role="img" aria-label="Premium Mixers &amp; Garnishes"></div>
+                <div class="addon-card-body">
+                  <h4 class="addon-card-name">Premium Mixers &amp; Garnishes</h4>
+                  <p class="addon-card-price"><strong>$3.50</strong> <span>/per guest</span> <span class="addon-card-line-total" hidden></span></p>
+                  <p class="addon-card-guest-basis" hidden>Based on <span class="addon-card-guest-count">0</span> guests</p>
+                  <p class="addon-card-desc">Includes Margarita Mix, Sour Mix, Grenadine, Simple Syrup, Lemon &amp; Lime Juice, Oranges, Lemons, Cherries &amp; Olives for mixed cocktails.</p>
+                </div>
+                <button type="button" class="addon-toggle" aria-label="Add Premium Mixers &amp; Garnishes" aria-pressed="false">+</button>
+              </article>
+              <article class="addon-card" data-addon-id="deluxe_garnish" data-price="2.5" data-unit="guest">
+                <div class="addon-card-media addon-card-media--garnish" role="img" aria-label="Deluxe Garnish Package"></div>
+                <div class="addon-card-body">
+                  <h4 class="addon-card-name">Deluxe Garnish Package</h4>
+                  <p class="addon-card-price"><strong>$2.50</strong> <span>/per guest</span> <span class="addon-card-line-total" hidden></span></p>
+                  <p class="addon-card-guest-basis" hidden>Based on <span class="addon-card-guest-count">0</span> guests</p>
+                  <p class="addon-card-desc">Includes Fresh Mint, Tajin, Pineapple, Strawberries, Jalapeños &amp; Grapefruits for cocktail garnishes.</p>
+                </div>
+                <button type="button" class="addon-toggle" aria-label="Add Deluxe Garnish Package" aria-pressed="false">+</button>
+              </article>
+              <article class="addon-card" data-addon-id="soft_drinks" data-price="2.5" data-unit="guest" data-group="core-mixers">
+                <div class="addon-card-media addon-card-media--soda" role="img" aria-label="Soft Drinks Package"></div>
+                <div class="addon-card-body">
+                  <h4 class="addon-card-name">Soft Drinks Package</h4>
+                  <p class="addon-card-price"><strong>$2.50</strong> <span>/per guest</span> <span class="addon-card-line-total" hidden></span></p>
+                  <p class="addon-card-guest-basis" hidden>Based on <span class="addon-card-guest-count">0</span> guests</p>
+                  <p class="addon-card-desc">Includes Coca-Cola, Sprite &amp; Ginger Ale for mixed cocktails, and soft drinks for non-alcohol drinking guests.</p>
+                </div>
+                <button type="button" class="addon-toggle" aria-label="Add Soft Drinks Package" aria-pressed="false">+</button>
+              </article>
+              <article class="addon-card" data-addon-id="bottled_waters" data-price="1" data-unit="guest" data-group="core-mixers">
+                <div class="addon-card-media addon-card-media--water" role="img" aria-label="Bottled Waters"></div>
+                <div class="addon-card-body">
+                  <h4 class="addon-card-name">Bottled Waters</h4>
+                  <p class="addon-card-price"><strong>$1.00</strong> <span>/per guest</span> <span class="addon-card-line-total" hidden></span></p>
+                  <p class="addon-card-guest-basis" hidden>Based on <span class="addon-card-guest-count">0</span> guests</p>
+                  <p class="addon-card-desc">Includes Bottled Waters for your guests.</p>
+                </div>
+                <button type="button" class="addon-toggle" aria-label="Add Bottled Waters" aria-pressed="false">+</button>
+              </article>
+              <article class="addon-card" data-addon-id="frozen_mixers" data-price="3" data-unit="guest">
+                <div class="addon-card-media addon-card-media--frozen" role="img" aria-label="Frozen Mixers Package"></div>
+                <div class="addon-card-body">
+                  <h4 class="addon-card-name">Frozen Mixers Package</h4>
+                  <p class="addon-card-price"><strong>$3.00</strong> <span>/per guest</span> <span class="addon-card-line-total" hidden></span></p>
+                  <p class="addon-card-guest-basis" hidden>Based on <span class="addon-card-guest-count">0</span> guests</p>
+                  <p class="addon-card-desc">Includes Strawberry Daiquiri Mix, Piña Colada Mix, Cherries, Limes &amp; a Bar Blender for frozen cocktails. This package does not include ice.</p>
+                </div>
+                <button type="button" class="addon-toggle" aria-label="Add Frozen Mixers Package" aria-pressed="false">+</button>
+              </article>
+              <article class="addon-card" data-addon-id="mocktails" data-price="3" data-unit="guest">
+                <div class="addon-card-media addon-card-media--mocktails" role="img" aria-label="Mocktails Mixers Package"></div>
+                <div class="addon-card-body">
+                  <h4 class="addon-card-name">Mocktails Mixers Package</h4>
+                  <p class="addon-card-price"><strong>$3.00</strong> <span>/per guest</span> <span class="addon-card-line-total" hidden></span></p>
+                  <p class="addon-card-guest-basis" hidden>Based on <span class="addon-card-guest-count">0</span> guests</p>
+                  <p class="addon-card-desc">Ingredients for three non-alcohol mocktails for your guest count: NOjito (virgin mojito), Blue Lagoon Mocktail &amp; Classic Shirley Temple.</p>
+                </div>
+                <button type="button" class="addon-toggle" aria-label="Add Mocktails Mixers Package" aria-pressed="false">+</button>
+              </article>
+            </div>
+          </section>
+
+          <section class="addons-section" data-addons-category="equipment" hidden>
+            <div class="addons-list">
+              <article class="addon-card" data-addon-id="bar_4ft" data-price="75" data-unit="each" data-max-qty="2">
+                <div class="addon-card-media addon-card-media--bar" role="img" aria-label="4ft Bar Rental"></div>
+                <div class="addon-card-body">
+                  <h4 class="addon-card-name">4ft Bar Rental</h4>
+                  <p class="addon-card-price"><strong>$75.00</strong> <span>/each</span></p>
+                  <p class="addon-card-desc">Our 4' Bar Table w/Linen accommodates 1 bartender.</p>
+                  <div class="addon-qty" hidden>
+                    <span class="addon-qty-label">How many?</span>
+                    <div class="addon-qty-controls">
+                      <button type="button" class="addon-qty-btn" data-qty-delta="-1" aria-label="Decrease quantity">−</button>
+                      <span class="addon-qty-value">1</span>
+                      <button type="button" class="addon-qty-btn" data-qty-delta="1" aria-label="Increase quantity">+</button>
+                    </div>
+                  </div>
+                </div>
+                <button type="button" class="addon-toggle" aria-label="Add 4ft Bar Rental" aria-pressed="false">+</button>
+              </article>
+              <article class="addon-card" data-addon-id="cooler" data-price="50" data-unit="each" data-max-qty="4">
+                <div class="addon-card-media addon-card-media--cooler" role="img" aria-label="Cooler Rental"></div>
+                <div class="addon-card-body">
+                  <h4 class="addon-card-name">Cooler Rental</h4>
+                  <p class="addon-card-price"><strong>$50.00</strong> <span>/each</span></p>
+                  <p class="addon-card-desc">You will need storage for clean ice and to chill beer/wine (if applicable).</p>
+                  <div class="addon-qty" hidden>
+                    <span class="addon-qty-label">How many?</span>
+                    <div class="addon-qty-controls">
+                      <button type="button" class="addon-qty-btn" data-qty-delta="-1" aria-label="Decrease quantity">−</button>
+                      <span class="addon-qty-value">1</span>
+                      <button type="button" class="addon-qty-btn" data-qty-delta="1" aria-label="Increase quantity">+</button>
+                    </div>
+                  </div>
+                </div>
+                <button type="button" class="addon-toggle" aria-label="Add Cooler Rental" aria-pressed="false">+</button>
+              </article>
+              <article class="addon-card" data-addon-id="ice_tub" data-price="25" data-unit="each" data-max-qty="4">
+                <div class="addon-card-media addon-card-media--tub" role="img" aria-label="Ice Tub Rental"></div>
+                <div class="addon-card-body">
+                  <h4 class="addon-card-name">Ice Tub Rental</h4>
+                  <p class="addon-card-price"><strong>$25.00</strong> <span>/each</span></p>
+                  <p class="addon-card-desc">Ice Tubs are rigid 17gal tubs that are a cheaper solution to coolers and can be used to chill beer, wine, water or soft drinks.</p>
+                  <p class="addon-card-note"><strong>Recommendation:</strong> We suggest 1 ice tub per 30 guests to chill beer/wine. If you do not add ice tub(s), you will be responsible for providing them (or coolers).</p>
+                  <div class="addon-qty" hidden>
+                    <span class="addon-qty-label">How many?</span>
+                    <div class="addon-qty-controls">
+                      <button type="button" class="addon-qty-btn" data-qty-delta="-1" aria-label="Decrease quantity">−</button>
+                      <span class="addon-qty-value">1</span>
+                      <button type="button" class="addon-qty-btn" data-qty-delta="1" aria-label="Increase quantity">+</button>
+                    </div>
+                  </div>
+                </div>
+                <button type="button" class="addon-toggle" aria-label="Add Ice Tub Rental" aria-pressed="false">+</button>
+              </article>
+            </div>
+          </section>
+
+          <section class="addons-section" data-addons-category="supplies" hidden>
+            <div class="addons-list">
+              <article class="addon-card" data-addon-id="bagged_ice" data-price="2" data-unit="guest" data-group="core-mixers">
+                <div class="addon-card-media addon-card-media--ice" role="img" aria-label="Bagged Ice"></div>
+                <div class="addon-card-body">
+                  <h4 class="addon-card-name">Bagged Ice</h4>
+                  <p class="addon-card-price"><strong>$2.00</strong> <span>/per guest</span> <span class="addon-card-line-total" hidden></span></p>
+                  <p class="addon-card-guest-basis" hidden>Based on <span class="addon-card-guest-count">0</span> guests</p>
+                  <p class="addon-card-desc">Includes clean ice (2lbs per guest) for mixed drinks and extra for chilling beer/wine (cooler not included).</p>
+                  <p class="addon-card-note"><strong>Recommendation:</strong> We suggest 2 pounds of ice per guest. If you do not add the ice package, you will be responsible for providing it.</p>
+                </div>
+                <button type="button" class="addon-toggle" aria-label="Add Bagged Ice" aria-pressed="false">+</button>
+              </article>
+              <article class="addon-card" data-addon-id="cups_straws" data-price="2" data-unit="guest" data-group="core-mixers">
+                <div class="addon-card-media addon-card-media--cups" role="img" aria-label="Cups, Straws &amp; Napkins"></div>
+                <div class="addon-card-body">
+                  <h4 class="addon-card-name">Cups, Straws &amp; Napkins</h4>
+                  <p class="addon-card-price"><strong>$2.00</strong> <span>/per guest</span> <span class="addon-card-line-total" hidden></span></p>
+                  <p class="addon-card-guest-basis" hidden>Based on <span class="addon-card-guest-count">0</span> guests</p>
+                  <p class="addon-card-desc">Includes clear 12oz Cups, 9oz Cups, Cocktail Straws &amp; Napkins for serving cocktails and wine.</p>
+                  <p class="addon-card-note"><strong>Recommendation:</strong> We suggest 5 plastic cups per guest. If you do not add this package, you will be responsible for providing them.</p>
+                </div>
+                <button type="button" class="addon-toggle" aria-label="Add Cups, Straws &amp; Napkins" aria-pressed="false">+</button>
+              </article>
+              <article class="addon-card" data-addon-id="champagne_flutes" data-price="2" data-unit="guest">
+                <div class="addon-card-media addon-card-media--flutes" role="img" aria-label="Plastic Champagne Flutes"></div>
+                <div class="addon-card-body">
+                  <h4 class="addon-card-name">Plastic Champagne Flutes</h4>
+                  <p class="addon-card-price"><strong>$2.00</strong> <span>/per guest</span> <span class="addon-card-line-total" hidden></span></p>
+                  <p class="addon-card-guest-basis" hidden>Based on <span class="addon-card-guest-count">0</span> guests</p>
+                  <p class="addon-card-desc">Includes Plastic Champagne Flutes.</p>
+                  <p class="addon-card-note"><strong>Recommendation:</strong> We suggest 2 champagne flutes per guest. This package does not include champagne.</p>
+                </div>
+                <button type="button" class="addon-toggle" aria-label="Add Plastic Champagne Flutes" aria-pressed="false">+</button>
+              </article>
+            </div>
+          </section>
+              </div>
+            </div>
+
+            <div class="book-wizard-nav book-wizard-nav--split book-wizard-nav--step4-bottom addons-sticky-bar" id="book-step-4-nav-bottom" hidden>
+              <button type="button" class="btn btn-outline-white book-wizard-back" data-back="3">← Back</button>
+              <button type="button" class="btn btn-gold" id="addons-continue-btn">
+                <span class="addons-sticky-label">Add-ons <strong id="addons-sticky-total">$0</strong></span>
+                <span class="addons-sticky-sep" aria-hidden="true">·</span>
+                <span>Continue →</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 5 — CONTACT -->
+      <div class="book-wizard-step" id="book-wizard-step-5" data-wizard-step="5" hidden>
+        <div class="book-header">
+          <p class="eyebrow">Step 5 of 6</p>
+          <h1 class="book-title"><em>Your Info</em></h1>
+          <p class="book-sub">How should we reach you to confirm your booking?</p>
+        </div>
+
+        <div class="selected-package-chip" id="selected-package-chip" hidden>
+          <div class="selected-package-chip-head">
+            <span class="selected-package-text">
+              Package: <strong id="selected-package-name"></strong>
+            </span>
+            <button type="button" id="change-package-btn">Change</button>
+          </div>
+        </div>
+
         <div class="form-row form-row--2">
           <div class="form-group">
-            <label for="guests">Total guest count <span class="required">*</span></label>
-            <select id="guests" name="guests" required>
-              <option value="Up to 25" data-guest-hourly="0" data-bartenders="1" data-max-guests="25" selected>Up to 25 · 1 bartender</option>
-              <option value="25–50" data-guest-hourly="30" data-bartenders="1" data-max-guests="50">25–50 · 1 bartender</option>
-              <option value="50–80" data-guest-hourly="60" data-bartenders="2" data-max-guests="80">50–80 · 2 bartenders</option>
-              <option value="80–100" data-guest-hourly="80" data-bartenders="2" data-max-guests="100">80–100 · 2 bartenders</option>
-              <option value="100+" data-custom-quote="1" data-bartenders="0">100+</option>
-            </select>
+            <label for="name">Full Name <span class="required">*</span></label>
+            <input type="text" id="name" name="name" placeholder="Jane Smith" autocomplete="name" enterkeyhint="next" required />
           </div>
           <div class="form-group">
-            <label for="guests_drinking_21_plus">Total guests drinking (21+) <span class="required">*</span></label>
-            <input type="number" id="guests_drinking_21_plus" name="guests_drinking_21_plus" min="1" max="999" step="1" inputmode="numeric" placeholder="e.g. 35" enterkeyhint="next" required />
+            <label for="email">Email <span class="required">*</span></label>
+            <input type="email" id="email" name="email" placeholder="you@email.com" autocomplete="email" enterkeyhint="next" required />
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label for="location">Location <span class="required">*</span></label>
-            <input type="text" id="location" name="location" placeholder="Start typing an address or venue" autocomplete="off" enterkeyhint="next" required />
+            <label for="phone">Phone <span class="required">*</span></label>
+            <input type="tel" id="phone" name="phone" placeholder="(929) 000-0000" autocomplete="tel" inputmode="tel" enterkeyhint="next" required />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="location">Street address / venue name</label>
+            <input type="text" id="location" name="location" placeholder="Optional — or share after we connect" autocomplete="off" enterkeyhint="next" />
           </div>
         </div>
         <div class="form-row">
@@ -234,43 +532,51 @@
             <textarea id="notes" name="notes" placeholder="Theme, special requests, parking notes..." rows="3"></textarea>
           </div>
         </div>
-      </fieldset>
 
-      <aside class="book-booking-terms">
-        <span class="book-terms-heading">Booking terms</span>
-        <p><span class="book-terms-note-label">Note:</span> A $100 non-refundable deposit is required to book and lock a date/time slot for our services.</p>
-        <p>Full payment is due two weeks prior to the event date.</p>
-        <p>For Wedding, Rehearsal Dinner, Engagement, and Bridal Shower bookings, full payment is due one month prior to the event date.</p>
-        <p>Discount available for returning clients and referrals from past clients.</p>
-        <p>Events on major holidays will be upcharged.</p>
-      </aside>
+        <aside class="book-booking-terms">
+          <span class="book-terms-heading">Booking terms</span>
+          <p><span class="book-terms-note-label">Note:</span> A $100 non-refundable deposit is required to book and lock a date/time slot for our services.</p>
+          <p>Full payment is due two weeks prior to the event date.</p>
+          <p>For Wedding, Rehearsal Dinner, Engagement, and Bridal Shower bookings, full payment is due one month prior to the event date.</p>
+          <p>Discount available for returning clients and referrals from past clients.</p>
+          <p>Events on major holidays will be upcharged.</p>
+        </aside>
 
-      <aside class="selected-package-chip selected-package-chip--bottom" id="selected-package-chip-bottom" hidden aria-live="polite">
-        <div class="selected-package-chip-head">
-          <span class="selected-package-text">
-            Package: <strong id="selected-package-name-bottom"></strong>
-          </span>
-          <button type="button" id="change-package-btn-bottom">Change package</button>
+        <div class="book-wizard-nav book-wizard-nav--split">
+          <button type="button" class="btn btn-outline-white book-wizard-back" data-back="4">← Back</button>
+          <button type="button" class="btn btn-gold book-wizard-next" data-next="6">Review →</button>
         </div>
-        <div class="selected-package-estimate" id="selected-package-estimate-bottom" hidden>
+      </div>
+
+      <!-- STEP 6 — REVIEW -->
+      <div class="book-wizard-step" id="book-wizard-step-6" data-wizard-step="6" hidden>
+        <div class="book-header">
+          <p class="eyebrow">Step 6 of 6</p>
+          <h1 class="book-title"><em>Review &amp; Send</em></h1>
+          <p class="book-sub">Double-check your details, then send your booking request.</p>
+        </div>
+
+        <div class="book-review-summary" id="book-review-summary" aria-live="polite"></div>
+
+        <div class="selected-package-estimate selected-package-estimate--review" id="selected-package-estimate-review" hidden>
           <div class="selected-package-estimate-top">
             <span class="selected-package-estimate-label">Estimated total</span>
-            <span class="selected-package-estimate-amount" id="selected-package-estimate-amount-bottom">—</span>
+            <span class="selected-package-estimate-amount" id="selected-package-estimate-amount">—</span>
           </div>
-          <p class="selected-package-estimate-breakdown" id="selected-package-estimate-breakdown-bottom"></p>
+          <p class="selected-package-estimate-breakdown" id="selected-package-estimate-breakdown"></p>
+          <p class="selected-package-estimate-deposit"><strong>$100 deposit</strong> to book · balance due before your event (see terms above)</p>
           <p class="selected-package-estimate-note">Estimate only — confirmed after we connect. Travel or venue extras may apply and will be noted in your quote.</p>
         </div>
-      </aside>
 
-      <div class="form-row form-submit">
-        <button type="submit" class="btn btn-gold btn-full">Send Booking Request →</button>
+        <div class="book-wizard-nav book-wizard-nav--split book-wizard-nav--submit">
+          <button type="button" class="btn btn-outline-white book-wizard-back" data-back="5">← Back</button>
+          <button type="submit" class="btn btn-gold">Send Booking Request →</button>
+        </div>
         <p class="form-status" id="book-form-status" hidden></p>
         <p class="form-note">We'll typically respond within 24 hours. Prefer to talk? Call <a href="tel:9292358606">(929) 235-8606</a></p>
       </div>
 
     </form>
-
-    </div>
 
   </div>
 </section>

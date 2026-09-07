@@ -35,6 +35,56 @@ function billableHours(hours) {
   return hours;
 }
 
+function parseGuestCountValue(raw) {
+  if (raw == null || String(raw).trim() === '') return null;
+  var value = String(raw).trim();
+  if (!/^[1-9]\d*$/.test(value)) return null;
+  return parseInt(value, 10);
+}
+
+function guestPricingFromCount(count) {
+  var pricing = {
+    guestBand: 'Up to 25',
+    guestHourly: 0,
+    bartenders: 1,
+    isCustomQuote: false,
+    guestCount: count
+  };
+
+  if (count == null || count < 1) {
+    pricing.guestCount = null;
+    return pricing;
+  }
+
+  if (count > 100) {
+    pricing.guestBand = '100+';
+    pricing.bartenders = 0;
+    pricing.isCustomQuote = true;
+    return pricing;
+  }
+
+  if (count > 80) {
+    pricing.guestBand = '80–100';
+    pricing.bartenders = 2;
+    return pricing;
+  }
+
+  if (count > 50) {
+    pricing.guestBand = '50–80';
+    pricing.bartenders = 2;
+    return pricing;
+  }
+
+  if (count > 25) {
+    pricing.guestBand = '25–50';
+    pricing.guestHourly = 30;
+    pricing.bartenders = 1;
+    return pricing;
+  }
+
+  return pricing;
+}
+
 // ---- Homepage mini form: carry values to /book via URL params ----
 var ctaBtn = document.getElementById('cta-book-btn');
 if (ctaBtn) {
@@ -55,40 +105,46 @@ if (ctaBtn) {
 }
 
 // ---- /book page: two-step flow (choose package -> event details) ----
-if (document.getElementById('book-step-1')) {
-  // Reset here (before any deep-link tier gets applied below) so the later
-  // "always reset on load" block doesn't wipe out a deep-linked selection.
+if (document.getElementById('book-wizard-step-1')) {
   var bookFormEarly = document.querySelector('.book-form');
   if (bookFormEarly) bookFormEarly.reset();
 
-  var step1 = document.getElementById('book-step-1');
-  var step2 = document.getElementById('book-step-2');
+  var BOOK_WIZARD_TOTAL = 6;
+  var currentWizardStep = 1;
+  var wizardPanels = document.querySelectorAll('.book-wizard-step');
   var progressSteps = document.querySelectorAll('.book-progress-step');
-  var tierCards = document.querySelectorAll('.tier-select-card');
-  var skipBtn = document.getElementById('tier-skip-btn');
   var changeBtn = document.getElementById('change-package-btn');
-  var changeBtnBottom = document.getElementById('change-package-btn-bottom');
   var tierInput = document.getElementById('service_tier');
+  var packagePathInput = document.getElementById('package_path');
+  var selectedAddonsInput = document.getElementById('selected_addons');
+  var addonsTotalInput = document.getElementById('addons_total');
+  var addonsPanel = document.getElementById('addons-panel');
+  var addonsStickyTotal = document.getElementById('addons-sticky-total');
+  var pathAddonsBtn = document.getElementById('path-addons-btn');
+  var pathBartenderBtn = document.getElementById('path-bartender-btn');
+  var addonsContinueBtn = document.getElementById('addons-continue-btn');
   var chip = document.getElementById('selected-package-chip');
-  var chipBottom = document.getElementById('selected-package-chip-bottom');
   var chipName = document.getElementById('selected-package-name');
-  var chipNameBottom = document.getElementById('selected-package-name-bottom');
-  var estimateEl = document.getElementById('selected-package-estimate');
+  var estimateReviewEl = document.getElementById('selected-package-estimate-review');
   var estimateAmount = document.getElementById('selected-package-estimate-amount');
   var estimateBreakdown = document.getElementById('selected-package-estimate-breakdown');
-  var estimateElBottom = document.getElementById('selected-package-estimate-bottom');
-  var estimateAmountBottom = document.getElementById('selected-package-estimate-amount-bottom');
-  var estimateBreakdownBottom = document.getElementById('selected-package-estimate-breakdown-bottom');
+  var reviewSummaryEl = document.getElementById('book-review-summary');
   var estimatedTotalInput = document.getElementById('estimated_total');
   var estimateBreakdownInput = document.getElementById('estimate_breakdown');
-  var bartenderCountInput = document.getElementById('bartender_count');
+  var bartenderCountGroup = document.getElementById('bartender-count-group');
+  var bartenderCountRadios = document.querySelectorAll('input[name="bartender_count"]');
   var holidayUpchargeInput = document.getElementById('holiday_upcharge');
   var hoursInputLive = document.getElementById('event_hours');
-  var guestsSelect = document.getElementById('guests');
+  var drinkingGuestsLive = document.getElementById('guests_drinking_21_plus');
+  var bartenderRecommendHint = document.getElementById('bartender-recommend-hint');
   var dateInputLive = document.getElementById('date');
   var dateHolidayHint = document.getElementById('date-holiday-hint');
+  var eventTypeInput = document.getElementById('event_type');
   var selectedHourly = 0;
   var selectedTier = '';
+  var selectedPackagePath = '';
+  var selectedAddons = {};
+  var BARTENDER_HOURLY = 120;
 
   // 50+ — blended team rate (2 bartenders included); 100+ is custom quote
   var BLENDED_TEAM_HOURLY = {
@@ -321,33 +377,55 @@ if (document.getElementById('book-step-1')) {
     return '$' + Math.round(n).toLocaleString('en-US');
   }
 
-  function startingFrom(hourly) {
-    return formatMoney(hourly * STARTING_FROM_HOURS);
+  function guestPricingFromInput(input) {
+    return guestPricingFromCount(parseGuestCountValue(input && input.value));
   }
 
-  // Fill "Starting from" on cards from data-hourly so HTML stays in sync
-  tierCards.forEach(function(card) {
-    var hourly = parseInt(card.dataset.hourly, 10);
-    if (!hourly) return;
-    var priceEl = card.querySelector('.tier-select-price strong');
-    if (priceEl) priceEl.textContent = startingFrom(hourly);
-  });
+  function recommendedBartenders(count) {
+    if (count == null || count < 1) return 1;
+    if (count > 100) return 3;
+    if (count > 50) return 2;
+    return 1;
+  }
 
-  function guestPricingFromSelect(select) {
-    if (!select || !select.value) {
-      return { guestBand: 'Up to 25', guestHourly: 0, bartenders: 1, isCustomQuote: false };
+  function getBartenderCountRadio() {
+    return document.querySelector('input[name="bartender_count"]:checked');
+  }
+
+  function setBartenderCountValue(value) {
+    var radio = document.querySelector('input[name="bartender_count"][value="' + value + '"]');
+    if (radio) radio.checked = true;
+  }
+
+  function selectedBartenderCount() {
+    var checked = getBartenderCountRadio();
+    if (!checked || !checked.value) return null;
+    var n = parseInt(checked.value, 10);
+    return isNaN(n) ? null : n;
+  }
+
+  function updateBartenderRecommendation() {
+    var count = parseGuestCountValue(drinkingGuestsLive && drinkingGuestsLive.value);
+    var recommended = recommendedBartenders(count);
+    if (bartenderRecommendHint) {
+      if (count == null || count < 1) {
+        bartenderRecommendHint.textContent = 'Move the guest slider for a staffing recommendation';
+      } else if (count > 100) {
+        bartenderRecommendHint.textContent = 'Recommendation: 3 bartenders (custom quote for 100+)';
+      } else {
+        bartenderRecommendHint.textContent = 'Recommendation: ' + recommended + ' bartender' + (recommended === 1 ? '' : 's');
+      }
     }
-    var opt = select.options[select.selectedIndex];
-    return {
-      guestBand: select.value,
-      guestHourly: parseInt(opt.getAttribute('data-guest-hourly') || '0', 10),
-      bartenders: parseInt(opt.getAttribute('data-bartenders') || '1', 10),
-      isCustomQuote: opt.getAttribute('data-custom-quote') === '1'
-    };
+    if (bartenderCountRadios.length && count != null && count >= 1) {
+      setBartenderCountValue(String(recommended));
+      if (bartenderCountGroup) bartenderCountGroup.classList.remove('is-invalid');
+    }
   }
 
   function requiredBartenders(guestPricing) {
     if (guestPricing.isCustomQuote) return 0;
+    var selected = selectedBartenderCount();
+    if (selected != null) return selected;
     return guestPricing.bartenders;
   }
 
@@ -365,10 +443,12 @@ if (document.getElementById('book-step-1')) {
         effectiveHourly: 0,
         hours: hours,
         guestBand: guestPricing.guestBand,
-        bartenders: 0
+        guestCount: guestPricing.guestCount,
+        bartenders: selectedBartenderCount() || 0
       };
     }
 
+    var bartenders = requiredBartenders(guestPricing);
     var bandRates = BLENDED_TEAM_HOURLY[guestPricing.guestBand];
     var blended = bandRates && bandRates[tierName];
     var billed = billableHours(hours);
@@ -379,14 +459,15 @@ if (document.getElementById('book-step-1')) {
         hourly: blended,
         guestHourly: 0,
         supplyHourly: 0,
-        extraBartenders: Math.max(0, requiredBartenders(guestPricing) - 1),
+        extraBartenders: Math.max(0, bartenders - 1),
         extraBartenderHourly: 0,
         isTeamRate: true,
         effectiveHourly: blended,
         hours: hours,
         billableHours: billed,
         guestBand: guestPricing.guestBand,
-        bartenders: requiredBartenders(guestPricing)
+        guestCount: guestPricing.guestCount,
+        bartenders: bartenders
       };
     }
 
@@ -398,18 +479,22 @@ if (document.getElementById('book-step-1')) {
       hourly: hourly,
       guestHourly: guestPricing.guestHourly,
       supplyHourly: 0,
-      extraBartenders: 0,
+      extraBartenders: Math.max(0, bartenders - 1),
       extraBartenderHourly: 0,
       isTeamRate: false,
       effectiveHourly: effectiveHourly,
       hours: hours,
       billableHours: billed,
       guestBand: guestPricing.guestBand,
-      bartenders: requiredBartenders(guestPricing)
+      guestCount: guestPricing.guestCount,
+      bartenders: bartenders
     };
   }
 
-  function formatGuestBand(guestBand) {
+  function formatGuestBand(guestBand, guestCount) {
+    if (guestCount != null && guestCount > 0) {
+      return guestCount + ' guest' + (guestCount === 1 ? '' : 's');
+    }
     if (guestBand === 'Up to 25') return 'up to 25 guests';
     return guestBand + ' guests';
   }
@@ -428,14 +513,15 @@ if (document.getElementById('book-step-1')) {
 
   function buildEstimateBreakdown(result, holiday, holidayFee) {
     if (result.isCustomQuote) {
-      var customText = '100+ guests\nWe will contact you with further information.';
+      var guestLabel = result.guestCount != null ? result.guestCount + ' guests' : '100+ guests';
+      var customText = guestLabel + '\nWe will contact you with further information.';
       if (holiday) {
         customText += '\n' + holidayBreakdownLine(holiday, null);
       }
       return customText;
     }
 
-    var line1 = formatHoursLabel(result.hours) + ' for ' + formatGuestBand(result.guestBand);
+    var line1 = formatHoursLabel(result.hours) + ' for ' + formatGuestBand(result.guestBand, result.guestCount);
 
     var hourlyRate = result.isTeamRate ? result.hourly : result.effectiveHourly;
     var bartenderLabel = result.bartenders === 1 ? '1 bartender' : result.bartenders + ' bartenders';
@@ -445,17 +531,260 @@ if (document.getElementById('book-step-1')) {
     if (holiday) {
       text += '\n' + holidayBreakdownLine(holiday, holidayFee);
     }
+    var addons = getSelectedAddonsSummary();
+    if (addons.total > 0) {
+      text += '\nAdd-ons: ' + formatMoney(addons.total);
+      if (addons.labels.length) {
+        text += ' (' + addons.labels.join(', ') + ')';
+      }
+    }
     return text;
+  }
+
+  function drinkingGuestCountForAddons() {
+    return parseGuestCountValue(drinkingGuestsLive && drinkingGuestsLive.value) || 0;
+  }
+
+  var ALL_INCLUSIVE_INCLUDED = [
+    'juices_limes',
+    'premium_mixers',
+    'soft_drinks',
+    'bottled_waters',
+    'cooler',
+    'bagged_ice',
+    'cups_straws'
+  ];
+
+  function getSelectedAddonsSummary() {
+    var guests = drinkingGuestCountForAddons();
+    var total = 0;
+    var labels = [];
+    Object.keys(selectedAddons).forEach(function(id) {
+      var card = document.querySelector('.addon-card[data-addon-id="' + id + '"]');
+      if (!card) return;
+      var price = parseFloat(card.dataset.price || '0');
+      var unit = card.dataset.unit || 'guest';
+      var qty = selectedAddons[id] || 1;
+      var line = unit === 'each' ? price * qty : price * guests;
+      total += line;
+      var name = card.querySelector('.addon-card-name');
+      var label = name ? name.textContent : id;
+      if (unit === 'each' && qty > 1) label += ' ×' + qty;
+      labels.push(label);
+    });
+    return { total: total, labels: labels };
+  }
+
+  function syncAddonGuestLineTotals() {
+    var guests = drinkingGuestCountForAddons();
+    document.querySelectorAll('.addon-card[data-unit="guest"]').forEach(function(card) {
+      var lineEl = card.querySelector('.addon-card-line-total');
+      var basisEl = card.querySelector('.addon-card-guest-basis');
+      var countEl = card.querySelector('.addon-card-guest-count');
+      var id = card.dataset.addonId;
+      var show = !!selectedAddons[id] && !card.classList.contains('is-bundled');
+      if (lineEl) {
+        if (!show) {
+          lineEl.hidden = true;
+          lineEl.textContent = '';
+        } else {
+          var price = parseFloat(card.dataset.price || '0');
+          lineEl.textContent = '+' + formatMoney(price * guests);
+          lineEl.hidden = false;
+        }
+      }
+      if (basisEl) {
+        if (countEl) countEl.textContent = String(guests || 0);
+        basisEl.hidden = !show;
+      }
+    });
+    syncAddonsStickyTotal();
+  }
+
+  function syncAddonsStickyTotal() {
+    if (!addonsStickyTotal) return;
+    var total = getSelectedAddonsSummary().total;
+    addonsStickyTotal.textContent = formatMoney(total);
+  }
+
+  function setAddonsCategory(category) {
+    var next = category || 'mixers';
+    document.querySelectorAll('.addons-category-chip').forEach(function(chip) {
+      var active = chip.getAttribute('data-addons-category') === next;
+      chip.classList.toggle('is-active', active);
+      chip.setAttribute('aria-selected', active ? 'true' : 'false');
+    });
+    document.querySelectorAll('.addons-section[data-addons-category]').forEach(function(section) {
+      section.hidden = section.getAttribute('data-addons-category') !== next;
+    });
+  }
+
+  function syncAddonHiddenFields() {
+    var summary = getSelectedAddonsSummary();
+    if (selectedAddonsInput) {
+      selectedAddonsInput.value = summary.labels.join('; ');
+    }
+    if (addonsTotalInput) {
+      addonsTotalInput.value = summary.total ? formatMoney(summary.total) : '';
+    }
+    syncAddonGuestLineTotals();
+  }
+
+  function syncAllInclusiveBundle(selected) {
+    ALL_INCLUSIVE_INCLUDED.forEach(function(id) {
+      var card = document.querySelector('.addon-card[data-addon-id="' + id + '"]');
+      if (!card) return;
+      var toggle = card.querySelector('.addon-toggle');
+      var priceEl = card.querySelector('.addon-card-price');
+      if (priceEl && !priceEl.dataset.originalHtml) {
+        priceEl.dataset.originalHtml = priceEl.innerHTML;
+      }
+      if (selected) {
+        card.classList.add('is-selected', 'is-bundled');
+        if (toggle) {
+          toggle.textContent = '✓';
+          toggle.setAttribute('aria-pressed', 'true');
+          toggle.setAttribute('aria-label', 'Included in All-Inclusive Package');
+        }
+        if (priceEl) {
+          priceEl.classList.add('addon-card-price--covered');
+          priceEl.innerHTML =
+            '<span class="addon-covered-check" aria-hidden="true">✓</span>' +
+            '<span class="addon-covered-label">Covered by All-Inclusive</span>';
+        }
+      } else {
+        card.classList.remove('is-bundled');
+        if (priceEl && priceEl.dataset.originalHtml) {
+          priceEl.classList.remove('addon-card-price--covered');
+          priceEl.innerHTML = priceEl.dataset.originalHtml;
+        }
+        if (!selectedAddons[id]) {
+          card.classList.remove('is-selected');
+          if (toggle) {
+            toggle.textContent = '+';
+            toggle.setAttribute('aria-pressed', 'false');
+            var name = card.querySelector('.addon-card-name');
+            toggle.setAttribute('aria-label', 'Add ' + (name ? name.textContent : id));
+          }
+        }
+      }
+    });
+  }
+
+  function setAddonSelected(card, selected, qty) {
+    var id = card.dataset.addonId;
+    var toggle = card.querySelector('.addon-toggle');
+    var qtyWrap = card.querySelector('.addon-qty');
+    var qtyValue = card.querySelector('.addon-qty-value');
+    if (selected) {
+      selectedAddons[id] = qty || selectedAddons[id] || 1;
+      card.classList.add('is-selected');
+      if (toggle) {
+        toggle.textContent = '✓';
+        toggle.setAttribute('aria-pressed', 'true');
+      }
+      if (qtyWrap && card.dataset.unit === 'each') {
+        qtyWrap.hidden = false;
+        if (qtyValue) qtyValue.textContent = String(selectedAddons[id]);
+      }
+    } else {
+      delete selectedAddons[id];
+      card.classList.remove('is-selected');
+      if (toggle) {
+        toggle.textContent = '+';
+        toggle.setAttribute('aria-pressed', 'false');
+      }
+      if (qtyWrap) qtyWrap.hidden = true;
+    }
+  }
+
+  function clearCoreMixersExcept(keepId) {
+    document.querySelectorAll('.addon-card[data-group="core-mixers"]').forEach(function(card) {
+      if (card.dataset.addonId === keepId) return;
+      if (ALL_INCLUSIVE_INCLUDED.indexOf(card.dataset.addonId) !== -1) return;
+      setAddonSelected(card, false);
+    });
+  }
+
+  function toggleAddonCard(card) {
+    var id = card.dataset.addonId;
+    if (selectedAddons.all_inclusive && ALL_INCLUSIVE_INCLUDED.indexOf(id) !== -1) {
+      return;
+    }
+    var isOn = !!selectedAddons[id];
+    if (!isOn && card.dataset.group === 'core-mixers') {
+      if (id === 'all_inclusive') {
+        clearCoreMixersExcept('all_inclusive');
+        ALL_INCLUSIVE_INCLUDED.forEach(function(bundledId) {
+          var bundledCard = document.querySelector('.addon-card[data-addon-id="' + bundledId + '"]');
+          if (bundledCard) setAddonSelected(bundledCard, false);
+        });
+      } else if (selectedAddons.all_inclusive) {
+        setAddonSelected(document.querySelector('.addon-card[data-addon-id="all_inclusive"]'), false);
+        syncAllInclusiveBundle(false);
+      }
+    }
+    setAddonSelected(card, !isOn, 1);
+    if (id === 'all_inclusive') {
+      syncAllInclusiveBundle(!isOn);
+    }
+    syncAddonHiddenFields();
+    updateEstimate();
+  }
+
+  function updateAddonQty(card, delta) {
+    var id = card.dataset.addonId;
+    if (!selectedAddons[id]) return;
+    var max = parseInt(card.dataset.maxQty || '4', 10);
+    var next = selectedAddons[id] + delta;
+    if (next < 1) {
+      setAddonSelected(card, false);
+    } else {
+      setAddonSelected(card, true, Math.min(max, next));
+    }
+    syncAddonHiddenFields();
+    updateEstimate();
+  }
+
+  function clearAllAddons() {
+    selectedAddons = {};
+    document.querySelectorAll('.addon-card').forEach(function(card) {
+      setAddonSelected(card, false);
+    });
+    syncAllInclusiveBundle(false);
+    syncAddonHiddenFields();
+  }
+
+  function setPathButtonsActive(path) {
+    if (pathAddonsBtn) pathAddonsBtn.classList.toggle('is-active', path === 'addons');
+    if (pathBartenderBtn) pathBartenderBtn.classList.toggle('is-active', path === 'bartender');
+  }
+
+  function showAddonsPanel(show) {
+    if (!addonsPanel) return;
+    addonsPanel.hidden = !show;
+    if (show) {
+      setAddonsCategory('mixers');
+      syncAddonsStickyTotal();
+    }
+  }
+
+  function setStep4PathSelected(selected) {
+    var flow = document.getElementById('book-step-4-flow');
+    var topNav = document.getElementById('book-step-4-nav-top');
+    var bottomNav = document.getElementById('book-step-4-nav-bottom');
+    if (flow) flow.classList.toggle('is-path-selected', !!selected);
+    if (topNav) topNav.hidden = !!selected;
+    if (bottomNav) bottomNav.hidden = !selected;
   }
 
   function updateEstimate() {
     if (!selectedHourly) {
-      if (estimateEl) estimateEl.hidden = true;
-      if (estimateElBottom) estimateElBottom.hidden = true;
+      if (estimateReviewEl) estimateReviewEl.hidden = true;
       if (estimatedTotalInput) estimatedTotalInput.value = '';
       if (estimateBreakdownInput) estimateBreakdownInput.value = '';
-      if (bartenderCountInput) bartenderCountInput.value = '';
       if (holidayUpchargeInput) holidayUpchargeInput.value = '';
+      syncAddonHiddenFields();
       updateHolidayDateHint();
       return;
     }
@@ -466,13 +795,14 @@ if (document.getElementById('book-step-1')) {
     if (!hours || hours < MIN_BOOKING_HOURS) hours = MIN_BOOKING_HOURS;
     if (hours > MAX_BOOKING_HOURS) hours = MAX_BOOKING_HOURS;
 
-    var guestPricing = guestPricingFromSelect(guestsSelect);
-    var result = calcEstimate(selectedHourly, hours, guestPricing, selectedTier);
+    var guestPricing = guestPricingFromInput(drinkingGuestsLive);
+    var result = calcEstimate(selectedHourly, hours, guestPricing, 'Bartender');
     var holiday = dateInputLive && dateInputLive.value
       ? getHolidayUpcharge(dateInputLive.value)
       : null;
     updateHolidayDateHint();
 
+    var addons = getSelectedAddonsSummary();
     var totalText;
     var breakdownText;
     var holidayFee = null;
@@ -482,29 +812,24 @@ if (document.getElementById('book-step-1')) {
       breakdownText = buildEstimateBreakdown(result, holiday, null);
     } else {
       holidayFee = holiday ? Math.round(result.total * holiday.percent / 100) : null;
-      totalText = formatMoney(result.total + (holidayFee || 0));
+      var grand = result.total + (holidayFee || 0) + addons.total;
+      totalText = formatMoney(grand);
       breakdownText = buildEstimateBreakdown(result, holiday, holidayFee);
     }
 
-    function paintEstimate(panel, amountEl, breakdownEl) {
-      if (panel) panel.hidden = false;
-      if (amountEl) {
-        amountEl.textContent = totalText;
-        amountEl.classList.remove('is-flash');
-        void amountEl.offsetWidth;
-        amountEl.classList.add('is-flash');
-      }
-      if (breakdownEl) breakdownEl.textContent = breakdownText;
-    }
+    syncAddonHiddenFields();
 
-    paintEstimate(estimateEl, estimateAmount, estimateBreakdown);
-    paintEstimate(estimateElBottom, estimateAmountBottom, estimateBreakdownBottom);
+    if (estimateReviewEl) estimateReviewEl.hidden = false;
+    if (estimateAmount) {
+      estimateAmount.textContent = totalText;
+      estimateAmount.classList.remove('is-flash');
+      void estimateAmount.offsetWidth;
+      estimateAmount.classList.add('is-flash');
+    }
+    if (estimateBreakdown) estimateBreakdown.textContent = breakdownText;
 
     if (estimatedTotalInput) estimatedTotalInput.value = totalText;
     if (estimateBreakdownInput) estimateBreakdownInput.value = breakdownText;
-    if (bartenderCountInput) {
-      bartenderCountInput.value = result.isCustomQuote ? '' : String(result.bartenders);
-    }
     if (holidayUpchargeInput) {
       holidayUpchargeInput.value = formatHolidayUpchargeField(holiday, holidayFee);
     }
@@ -520,69 +845,195 @@ if (document.getElementById('book-step-1')) {
 
   function setActiveProgress(n) {
     progressSteps.forEach(function(el) {
-      el.classList.toggle('is-active', parseInt(el.dataset.step, 10) <= n);
+      var stepNum = parseInt(el.dataset.step, 10);
+      el.classList.toggle('is-active', stepNum <= n);
+      el.classList.toggle('is-complete', stepNum < n);
+      el.disabled = stepNum > n;
+      if (stepNum === n) {
+        el.setAttribute('aria-current', 'step');
+      } else {
+        el.removeAttribute('aria-current');
+      }
     });
   }
 
   function setPackageDisplayName(tierName) {
     var displayName = tierName === 'Not Sure Yet' ? "We'll help you choose" : tierName;
     if (chipName) chipName.textContent = displayName;
-    if (chipNameBottom) chipNameBottom.textContent = displayName;
   }
 
   function setPackageChipVisible(show) {
     if (chip) chip.hidden = !show;
-    if (chipBottom) chipBottom.hidden = !show;
   }
 
-  function goToStep2(tierName, hourly) {
-    selectedHourly = hourly || 0;
-    selectedTier = tierName || '';
-    if (tierName) {
-      tierInput.value = tierName;
-      setPackageDisplayName(tierName);
-      setPackageChipVisible(true);
-    } else {
-      tierInput.value = '';
-      setPackageChipVisible(false);
+  function formatReviewValue(value) {
+    return value && String(value).trim() ? String(value).trim() : '—';
+  }
+
+  function buildReviewSummary() {
+    if (!reviewSummaryEl) return;
+    var startSelect = document.getElementById('event_start_time');
+    var arrivalDisplay = document.getElementById('event_arrival_time_display');
+    var venueChecked = document.querySelector('input[name="venue_type"]:checked');
+    var tipChecked = document.querySelector('input[name="tip_jar"]:checked');
+    var zipInput = document.getElementById('event_zip');
+    var rows = [
+      { label: 'Type of event', value: eventTypeInput ? eventTypeInput.value : '' },
+      { label: 'Event date', value: dateInputLive ? dateInputLive.value : '' },
+      { label: 'Venue', value: venueChecked ? venueChecked.value : '' },
+      { label: 'ZIP code', value: zipInput ? zipInput.value : '' },
+      { label: 'Bar start time', value: startSelect && startSelect.selectedIndex >= 0 ? startSelect.options[startSelect.selectedIndex].text : '' },
+      { label: 'Arrival', value: arrivalDisplay ? arrivalDisplay.value : '' },
+      { label: 'Hours of service', value: hoursInputLive ? hoursInputLive.value + ' hrs' : '' },
+      { label: 'Drinking guests', value: drinkingGuestsLive ? drinkingGuestsLive.value : '' },
+      { label: 'Bartenders', value: selectedBartenderCount() != null ? String(selectedBartenderCount()) : '' },
+      { label: 'Tip jar', value: tipChecked ? tipChecked.value : '' },
+      { label: 'Service', value: selectedTier || 'Not selected' },
+      { label: 'Add-ons', value: (getSelectedAddonsSummary().labels.join(', ') || (selectedPackagePath === 'bartender' ? 'None' : '')) },
+      { label: 'Name', value: document.getElementById('name') ? document.getElementById('name').value : '' },
+      { label: 'Email', value: document.getElementById('email') ? document.getElementById('email').value : '' },
+      { label: 'Phone', value: document.getElementById('phone') ? document.getElementById('phone').value : '' },
+      { label: 'Address', value: document.getElementById('location') ? document.getElementById('location').value : '' }
+    ];
+    var notesVal = document.getElementById('notes') ? document.getElementById('notes').value.trim() : '';
+    if (notesVal) rows.push({ label: 'Notes', value: notesVal });
+
+    reviewSummaryEl.innerHTML = rows.map(function(row) {
+      return '<div class="book-review-row"><span class="book-review-label">' + row.label + '</span><span class="book-review-value">' + formatReviewValue(row.value) + '</span></div>';
+    }).join('');
+  }
+
+  function goToWizardStep(n) {
+    if (n < 1 || n > BOOK_WIZARD_TOTAL) return;
+    currentWizardStep = n;
+    wizardPanels.forEach(function(panel) {
+      var stepNum = parseInt(panel.dataset.wizardStep, 10);
+      panel.hidden = stepNum !== n;
+    });
+    setActiveProgress(n);
+    if (n === 3) updateBartenderRecommendation();
+    if (n === 4) {
+      syncAddonHiddenFields();
+      if (window.tdrPendingPath === 'bartender') {
+        delete window.tdrPendingPath;
+        chooseBartenderOnly();
+      } else if (window.tdrPendingPath === 'addons') {
+        delete window.tdrPendingPath;
+        chooseAddonsPath();
+      }
     }
-    step1.hidden = true;
-    step2.hidden = false;
-    setActiveProgress(2);
+    if (n === 6) {
+      buildReviewSummary();
+      updateEstimate();
+    }
+    scrollToBookTop();
+  }
+
+  function commitServiceSelection(label) {
+    selectedHourly = BARTENDER_HOURLY;
+    selectedTier = label;
+    if (tierInput) tierInput.value = label;
+    if (packagePathInput) packagePathInput.value = selectedPackagePath;
+    setPackageDisplayName(label);
+    setPackageChipVisible(true);
     updateEstimate();
-    scrollToBookTop();
   }
 
-  function goToStep1() {
-    step2.hidden = true;
-    step1.hidden = false;
-    setActiveProgress(1);
-    selectedHourly = 0;
-    selectedTier = '';
-    if (estimateEl) estimateEl.hidden = true;
-    if (estimateElBottom) estimateElBottom.hidden = true;
-    setPackageChipVisible(false);
-    scrollToBookTop();
+  function chooseBartenderOnly() {
+    selectedPackagePath = 'bartender';
+    setPathButtonsActive('bartender');
+    showAddonsPanel(false);
+    clearAllAddons();
+    commitServiceSelection('Bartender Only');
+    setStep4PathSelected(true);
   }
 
-  tierCards.forEach(function(card) {
-    card.addEventListener('click', function() {
-      var hourly = parseInt(card.dataset.hourly, 10) || 0;
-      goToStep2(card.dataset.tier, hourly);
+  function chooseAddonsPath() {
+    selectedPackagePath = 'addons';
+    setPathButtonsActive('addons');
+    showAddonsPanel(true);
+    commitServiceSelection('Bartender + Add-Ons');
+    setStep4PathSelected(true);
+    if (addonsPanel) {
+      addonsPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  function continueFromAddons() {
+    if (selectedPackagePath === 'bartender') {
+      commitServiceSelection('Bartender Only');
+      goToWizardStep(5);
+      return;
+    }
+    if (selectedPackagePath !== 'addons') {
+      chooseAddonsPath();
+    }
+    commitServiceSelection('Bartender + Add-Ons');
+    goToWizardStep(5);
+  }
+
+  function goToPackageStep() {
+    goToWizardStep(4);
+  }
+
+  if (pathBartenderBtn) {
+    pathBartenderBtn.addEventListener('click', function() {
+      chooseBartenderOnly();
+    });
+  }
+
+  if (pathAddonsBtn) {
+    pathAddonsBtn.addEventListener('click', function() {
+      chooseAddonsPath();
+    });
+  }
+
+  document.querySelectorAll('.addons-category-chip').forEach(function(chip) {
+    chip.addEventListener('click', function() {
+      setAddonsCategory(chip.getAttribute('data-addons-category'));
     });
   });
 
-  if (skipBtn) {
-    skipBtn.addEventListener('click', function() { goToStep2('Not Sure Yet', 0); });
+  if (addonsContinueBtn) {
+    addonsContinueBtn.addEventListener('click', continueFromAddons);
   }
+
+  document.querySelectorAll('.addon-card').forEach(function(card) {
+    var toggle = card.querySelector('.addon-toggle');
+    if (toggle) {
+      toggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        toggleAddonCard(card);
+      });
+    }
+    card.querySelectorAll('.addon-qty-btn').forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        updateAddonQty(card, parseInt(btn.getAttribute('data-qty-delta'), 10) || 0);
+      });
+    });
+  });
 
   if (changeBtn) {
-    changeBtn.addEventListener('click', goToStep1);
+    changeBtn.addEventListener('click', goToPackageStep);
   }
 
-  if (changeBtnBottom) {
-    changeBtnBottom.addEventListener('click', goToStep1);
-  }
+  progressSteps.forEach(function(el) {
+    el.addEventListener('click', function() {
+      var target = parseInt(el.dataset.step, 10);
+      if (!el.disabled && target < currentWizardStep) {
+        goToWizardStep(target);
+      }
+    });
+  });
+
+  window.tdrBookWizard = {
+    goToStep: goToWizardStep,
+    getCurrentStep: function() { return currentWizardStep; },
+    updateEstimate: updateEstimate,
+    updateHolidayDateHint: updateHolidayDateHint
+  };
 
   if (hoursInputLive) {
     hoursInputLive.min = MIN_BOOKING_HOURS;
@@ -599,34 +1050,116 @@ if (document.getElementById('book-step-1')) {
       updateEstimate();
     });
   }
-  if (guestsSelect) {
-    guestsSelect.addEventListener('change', updateEstimate);
+  if (drinkingGuestsLive) {
+    function syncDrinkingGuestsFill() {
+      var min = Number(drinkingGuestsLive.min) || 0;
+      var max = Number(drinkingGuestsLive.max) || 250;
+      var val = Number(drinkingGuestsLive.value) || 0;
+      var pct = max === min ? 0 : ((val - min) / (max - min)) * 100;
+      drinkingGuestsLive.style.background =
+        'linear-gradient(to right, #C9A84C ' + pct + '%, rgba(250,247,242,0.18) ' + pct + '%)';
+    }
+
+    function syncDrinkingGuestsDisplay() {
+      var display = document.getElementById('guests-drinking-display');
+      var value = drinkingGuestsLive.value || '0';
+      var n = parseInt(value, 10);
+      if (display) {
+        display.textContent = value + ' drinking guest' + (n === 1 ? '' : 's');
+      }
+      drinkingGuestsLive.setAttribute('aria-valuenow', value);
+      syncDrinkingGuestsFill();
+      updateBartenderRecommendation();
+      syncAddonHiddenFields();
+      updateEstimate();
+    }
+    drinkingGuestsLive.addEventListener('input', syncDrinkingGuestsDisplay);
+    drinkingGuestsLive.addEventListener('change', syncDrinkingGuestsDisplay);
+    syncDrinkingGuestsDisplay();
   }
 
-  var step1Progress = document.querySelector('.book-progress-step[data-step="1"]');
-  if (step1Progress) {
-    step1Progress.style.cursor = 'pointer';
-    step1Progress.addEventListener('click', function() {
-      if (step2 && !step2.hidden) goToStep1();
+  if (bartenderCountRadios.length) {
+    bartenderCountRadios.forEach(function(radio) {
+      radio.addEventListener('change', function() {
+        if (bartenderCountGroup) {
+          bartenderCountGroup.classList.remove('is-invalid');
+        }
+        updateEstimate();
+      });
     });
   }
 
-  // Deep link support: /book?tier=Full%20Bar jumps straight to step 2
   var tierParam = new URLSearchParams(window.location.search).get('tier');
   if (tierParam) {
-    var matchCard = null;
-    tierCards.forEach(function(card) {
-      if (card.dataset.tier.toLowerCase() === tierParam.toLowerCase()) matchCard = card;
-    });
-    if (matchCard) {
-      goToStep2(matchCard.dataset.tier, parseInt(matchCard.dataset.hourly, 10) || 0);
+    var lower = tierParam.toLowerCase();
+    if (lower.indexOf('bartender') !== -1 || lower === 'bartender only') {
+      window.tdrPendingPath = 'bartender';
+    } else if (lower.indexOf('add') !== -1 || lower === 'full bar' || lower === 'basic bar') {
+      window.tdrPendingPath = 'addons';
     }
   }
+
+  goToWizardStep(1);
 }
 
 // ---- /book page: phone number validation ----
 if (document.querySelector('.book-form')) {
   var bookForm = document.querySelector('.book-form');
+  var ARRIVAL_LEAD_MINUTES = 90;
+
+  function parseTimeToMinutes(value) {
+    if (!value) return null;
+    var parts = value.split(':');
+    if (parts.length !== 2) return null;
+    var hours = parseInt(parts[0], 10);
+    var mins = parseInt(parts[1], 10);
+    if (isNaN(hours) || isNaN(mins)) return null;
+    return hours * 60 + mins;
+  }
+
+  function normalizeMinutes(totalMins) {
+    var day = 24 * 60;
+    return ((totalMins % day) + day) % day;
+  }
+
+  function pad2(n) {
+    return n < 10 ? '0' + n : String(n);
+  }
+
+  function formatTime12(totalMins) {
+    var normalized = normalizeMinutes(totalMins);
+    var hours24 = Math.floor(normalized / 60);
+    var mins = normalized % 60;
+    var hours12 = hours24 % 12;
+    if (hours12 === 0) hours12 = 12;
+    var ampm = hours24 < 12 ? 'AM' : 'PM';
+    return hours12 + ':' + pad2(mins) + ' ' + ampm;
+  }
+
+  function updateArrivalTime() {
+    var startSelect = document.getElementById('event_start_time');
+    var wrap = document.getElementById('event-arrival-wrap');
+    var display = document.getElementById('event_arrival_time_display');
+    if (!startSelect || !wrap || !display) return;
+
+    var startMins = parseTimeToMinutes(startSelect.value);
+    if (startMins == null) {
+      wrap.hidden = true;
+      display.value = '';
+      return;
+    }
+
+    var arrivalMins = startMins - ARRIVAL_LEAD_MINUTES;
+    display.value = formatTime12(arrivalMins) + ' • Setup';
+    wrap.hidden = false;
+  }
+
+  var startTimeSelect = document.getElementById('event_start_time');
+  if (startTimeSelect) {
+    startTimeSelect.addEventListener('change', updateArrivalTime);
+    updateArrivalTime();
+  }
+
   var phoneInput = document.querySelector('input[name="phone"]');
   var phoneError = document.createElement('p');
   phoneError.style.cssText = 'color:#E24B4A;font-size:0.78rem;margin-top:0.35rem;display:none;';
@@ -702,8 +1235,10 @@ if (document.querySelector('.book-form')) {
     dateInput.min = tomorrowISO();
     dateInput.addEventListener('change', function() {
       showFieldError(this, dateError, this.value && this.value <= todayISO());
-      updateHolidayDateHint();
-      updateEstimate();
+      if (window.tdrBookWizard) {
+        window.tdrBookWizard.updateHolidayDateHint();
+        window.tdrBookWizard.updateEstimate();
+      }
     });
   }
 
@@ -735,39 +1270,19 @@ if (document.querySelector('.book-form')) {
   }
 
   var drinkingGuestsInput = document.getElementById('guests_drinking_21_plus');
-  var guestsSelectForm = document.getElementById('guests');
-
-  function guestBandMaxGuests(select) {
-    if (!select || !select.value) return null;
-    var opt = select.options[select.selectedIndex];
-    if (opt.getAttribute('data-custom-quote') === '1') return null;
-    var max = opt.getAttribute('data-max-guests');
-    return max ? parseInt(max, 10) : null;
-  }
-
-  function drinkingGuestsErrorMessage() {
-    if (!drinkingGuestsInput || !drinkingGuestsInput.value.trim()) {
-      return 'Please enter total guests drinking (21+).';
-    }
-    var max = guestBandMaxGuests(guestsSelectForm);
-    var band = guestsSelectForm ? guestsSelectForm.value : 'selected';
-    if (max !== null) {
-      return 'Total guests drinking (21+) can\'t exceed ' + max + ' for a ' + band + ' event.';
-    }
-    return 'Please enter a valid number of total guests drinking (21+).';
-  }
+  var zipInput = document.getElementById('event_zip');
+  var bartenderCountField = document.querySelector('input[name="bartender_count"]');
 
   function drinkingGuestsInvalid() {
-    if (!drinkingGuestsInput || !drinkingGuestsInput.value.trim()) return true;
-    if (!/^[1-9]\d*$/.test(drinkingGuestsInput.value.trim())) return true;
+    if (!drinkingGuestsInput || !drinkingGuestsInput.value) return true;
+    if (!/^[1-9]\d*$/.test(drinkingGuestsInput.value)) return true;
     var n = parseInt(drinkingGuestsInput.value, 10);
-    var max = guestBandMaxGuests(guestsSelectForm);
-    return max !== null && n > max;
+    return n < 5 || n > 250 || n % 5 !== 0;
   }
 
   var drinkingGuestsError = attachFieldError(
     drinkingGuestsInput,
-    'Please enter total guests drinking (21+).'
+    'Please choose number of drinking guests.'
   );
 
   function clearDrinkingGuestsError() {
@@ -778,35 +1293,192 @@ if (document.querySelector('.book-form')) {
     if (!drinkingGuestsInput) return false;
     var invalid = drinkingGuestsInvalid();
     if (showErrors) {
-      if (invalid && drinkingGuestsError) {
-        drinkingGuestsError.textContent = drinkingGuestsErrorMessage();
-      }
       showFieldError(drinkingGuestsInput, drinkingGuestsError, invalid);
     }
     return invalid;
   }
 
-  if (drinkingGuestsInput) {
-    drinkingGuestsInput.addEventListener('input', function() {
-      this.value = this.value.replace(/[^\d]/g, '');
-      if (this.value === '0') this.value = '';
-      clearDrinkingGuestsError();
-    });
-    drinkingGuestsInput.addEventListener('blur', function() {
-      if (this.value.trim()) {
-        validateDrinkingGuests(true);
-      } else {
-        clearDrinkingGuestsError();
-      }
+  function zipInvalid() {
+    if (!zipInput || !zipInput.value.trim()) return true;
+    var digits = zipInput.value.replace(/\D/g, '');
+    return digits.length !== 5 && digits.length !== 9;
+  }
+
+  var zipError = attachFieldError(zipInput, 'Please enter a valid 5-digit ZIP code.');
+
+  function validateZip(showErrors) {
+    if (!zipInput) return false;
+    var invalid = zipInvalid();
+    if (showErrors) showFieldError(zipInput, zipError, invalid);
+    return invalid;
+  }
+
+  if (zipInput) {
+    zipInput.addEventListener('input', function() {
+      this.value = this.value.replace(/[^\d-]/g, '').slice(0, 10);
+      showFieldError(this, zipError, false);
     });
   }
-  if (guestsSelectForm) {
-    guestsSelectForm.addEventListener('change', function() {
-      if (drinkingGuestsInput && drinkingGuestsInput.value.trim()) {
-        validateDrinkingGuests(true);
-      } else {
-        clearDrinkingGuestsError();
+
+  if (drinkingGuestsInput) {
+    drinkingGuestsInput.addEventListener('change', function() {
+      clearDrinkingGuestsError();
+    });
+  }
+
+  function clearChoiceGroupError(groupId) {
+    var group = document.getElementById(groupId);
+    if (group) group.classList.remove('is-invalid');
+  }
+
+  document.querySelectorAll('input[name="venue_type"]').forEach(function(input) {
+    input.addEventListener('change', function() {
+      clearChoiceGroupError('venue-type-group');
+    });
+  });
+
+  document.querySelectorAll('input[name="tip_jar"]').forEach(function(input) {
+    input.addEventListener('change', function() {
+      clearChoiceGroupError('tip-jar-group');
+    });
+  });
+
+  if (window.tdrBookWizard) {
+    var eventTypeField = document.getElementById('event_type');
+    var startTimeField = document.getElementById('event_start_time');
+
+    function focusFirstInvalid(fields) {
+      for (var i = 0; i < fields.length; i++) {
+        if (!fields[i].checkValidity()) {
+          fields[i].reportValidity();
+          fields[i].focus();
+          return true;
+        }
       }
+      return false;
+    }
+
+    function venueTypeSelected() {
+      return !!document.querySelector('input[name="venue_type"]:checked');
+    }
+
+    function tipJarSelected() {
+      return !!document.querySelector('input[name="tip_jar"]:checked');
+    }
+
+    function validateWizardStep1() {
+      if (!eventTypeField || !eventTypeField.value) {
+        if (eventTypeField) {
+          eventTypeField.focus();
+          eventTypeField.reportValidity();
+        }
+        return false;
+      }
+      if (!dateInput || !dateInput.value) {
+        if (dateInput) {
+          dateInput.focus();
+          dateInput.reportValidity();
+        }
+        return false;
+      }
+      if (dateInput.value <= todayISO()) {
+        showFieldError(dateInput, dateError, true);
+        dateInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        dateInput.focus();
+        return false;
+      }
+      showFieldError(dateInput, dateError, false);
+      if (!venueTypeSelected()) {
+        var venueGroup = document.getElementById('venue-type-group');
+        if (venueGroup) {
+          venueGroup.classList.add('is-invalid');
+          venueGroup.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return false;
+      }
+      if (validateZip(true)) {
+        zipInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        zipInput.focus();
+        return false;
+      }
+      return true;
+    }
+
+    function validateWizardStep2() {
+      if (startTimeField && !startTimeField.value) {
+        startTimeField.focus();
+        startTimeField.reportValidity();
+        return false;
+      }
+      if (hoursInvalid(true)) {
+        showFieldError(hoursInput, hoursError, true);
+        hoursInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        hoursInput.focus();
+        return false;
+      }
+      return true;
+    }
+
+    function validateWizardStep3() {
+      if (validateDrinkingGuests(true)) {
+        drinkingGuestsInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        drinkingGuestsInput.focus();
+        return false;
+      }
+      if (!getBartenderCountRadio()) {
+        if (bartenderCountGroup) {
+          bartenderCountGroup.classList.add('is-invalid');
+          bartenderCountGroup.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        if (bartenderCountField) bartenderCountField.focus();
+        return false;
+      }
+      if (!tipJarSelected()) {
+        var tipGroup = document.getElementById('tip-jar-group');
+        if (tipGroup) {
+          tipGroup.classList.add('is-invalid');
+          tipGroup.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return false;
+      }
+      return true;
+    }
+
+    function validateWizardStep5() {
+      var step5 = document.getElementById('book-wizard-step-5');
+      if (!step5) return false;
+      var requiredFields = step5.querySelectorAll('input[required]');
+      if (focusFirstInvalid(requiredFields)) return false;
+      if (phoneInput) {
+        var digits = phoneInput.value.replace(/\D/g, '');
+        if (digits.length !== 10) {
+          phoneError.style.display = 'block';
+          phoneInput.style.borderColor = '#E24B4A';
+          phoneInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          phoneInput.focus();
+          return false;
+        }
+      }
+      return true;
+    }
+
+    document.querySelectorAll('.book-wizard-next').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var next = parseInt(btn.getAttribute('data-next'), 10);
+        var current = window.tdrBookWizard.getCurrentStep();
+        if (current === 1 && !validateWizardStep1()) return;
+        if (current === 2 && !validateWizardStep2()) return;
+        if (current === 3 && !validateWizardStep3()) return;
+        if (current === 5 && !validateWizardStep5()) return;
+        window.tdrBookWizard.goToStep(next);
+      });
+    });
+
+    document.querySelectorAll('.book-wizard-back').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var back = parseInt(btn.getAttribute('data-back'), 10);
+        window.tdrBookWizard.goToStep(back);
+      });
     });
   }
 
