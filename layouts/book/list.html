@@ -1,124 +1,50 @@
 {{ define "main" }}
 
 <section class="book-body" data-nav-theme="dark">
-  <div class="book-inner">
+  <div class="book-inner" id="book-page" data-tier="Full Bar" data-hourly="233">
 
-    <div class="book-progress" id="book-progress">
-      <div class="book-progress-step is-active" data-step="1">
-        <span class="book-progress-num">1</span>
-        <span class="book-progress-label">Choose Package</span>
-      </div>
-      <div class="book-progress-bar"><span></span></div>
-      <div class="book-progress-step" data-step="2">
-        <span class="book-progress-num">2</span>
-        <span class="book-progress-label">Your Details</span>
-      </div>
+    <div class="book-header">
+      <p class="eyebrow">Mobile Bartending</p>
+      <h1 class="book-title"><em>Book Your Bar</em></h1>
+      <p class="book-sub">You stay with your guests. We run the bar.</p>
+      <p class="book-dry-hire-note">We're insured and certified. You purchase the alcohol.</p>
     </div>
 
-    <!-- ============================================================
-         STEP 1 — PACKAGE PICKER
-         ============================================================ -->
-    <div class="book-step" id="book-step-1">
-
-      <div class="book-header">
-        <p class="eyebrow">Step 1 of 2</p>
-        <h1 class="book-title"><em>Choose Your Package</em></h1>
-        <p class="book-sub">Pick the package that fits — we can always adjust once we connect.</p>
-        <p class="book-dry-hire-note">We're insured and certified. You purchase the alcohol, we handle everything else.</p>
+    <div class="book-offer">
+      <div class="book-offer-top">
+        <h2 class="book-offer-name">Full Bar</h2>
+        <p class="book-offer-price">Starting from <strong>$699</strong></p>
       </div>
-
-      <div class="tier-select-grid">
-
-        <button type="button" class="tier-select-card" data-tier="Bartender" data-hourly="120">
-          <div class="tier-select-top">
-            <span class="pkg-badge">Labor only</span>
-          </div>
-          <h3 class="tier-select-name">Bartender</h3>
-          <p class="tier-select-price">Starting from <strong>$360</strong></p>
-          <ul class="tier-select-items">
-            <li>Bartending Tools</li>
-            <li>Garnishes</li>
-            <li>Bar Napkins</li>
-            <li>Cocktail Straws</li>
-            <li>Alcohol Shopping List</li>
-            <li>Custom Cocktail Menu</li>
-          </ul>
-          <p class="tier-select-note">Ice, cups, mixers, juices &amp; sodas not included</p>
-          <span class="btn btn-sm btn-gold tier-select-btn">Select Package →</span>
-          <div class="tier-select-rates-wrap">
-            <p class="tier-select-rates">3 hrs · up to 25 guests</p>
-          </div>
-        </button>
-
-        <button type="button" class="tier-select-card" data-tier="Basic Bar" data-hourly="160">
-          <div class="tier-select-top">
-            <span class="pkg-badge">Bar + equipment</span>
-          </div>
-          <h3 class="tier-select-name">Basic Bar</h3>
-          <p class="tier-select-price">Starting from <strong>$480</strong></p>
-          <p class="tier-select-includes">Everything in Bartender, plus:</p>
-          <ul class="tier-select-items">
-            <li>Steel Frame Bar Table</li>
-            <li>Back Table</li>
-            <li>Garbage Bin</li>
-            <li>Wine Chiller</li>
-            <li>Beer Cooler</li>
-            <li>Ice Cooler</li>
-          </ul>
-          <p class="tier-select-note">Ice, cups, mixers, juices &amp; sodas not included</p>
-          <span class="btn btn-sm btn-gold tier-select-btn">Select Package →</span>
-          <div class="tier-select-rates-wrap">
-            <p class="tier-select-rates">3 hrs · up to 25 guests</p>
-          </div>
-        </button>
-
-        <button type="button" class="tier-select-card tier-select-card--featured" data-tier="Full Bar" data-hourly="230">
-          <div class="tier-select-top">
-            <span class="pkg-badge pkg-badge--gold">Most popular</span>
-          </div>
-          <h3 class="tier-select-name">Full Bar</h3>
-          <p class="tier-select-price">Starting from <strong>$690</strong></p>
-          <p class="tier-select-includes">Everything in Basic Bar, plus:</p>
-          <ul class="tier-select-items">
-            <li>Ice</li>
-            <li>Disposable Cups</li>
-            <li>Mixers</li>
-            <li>Juices</li>
-            <li>Sodas</li>
-          </ul>
-          <span class="btn btn-sm btn-gold tier-select-btn">Select Package →</span>
-          <div class="tier-select-rates-wrap">
-            <p class="tier-select-rates">3 hrs · up to 25 guests</p>
-          </div>
-        </button>
-
-      </div>
-
-      <p class="tier-select-skip">
-        Not sure which one fits? <button type="button" id="tier-skip-btn">Skip and tell us about your event →</button>
-      </p>
-
+      <p class="book-offer-pitch">A complete bar at your event. You purchase the alcohol.</p>
+      <p class="book-offer-includes">What's included</p>
+      <ul class="book-offer-items">
+        <li>Custom cocktail menu</li>
+        <li>Alcohol shopping list</li>
+        <li>Bartending tools &amp; garnishes</li>
+        <li>Bar napkins &amp; cocktail straws</li>
+        <li>Steel frame bar table</li>
+        <li>Back table &amp; garbage bin</li>
+        <li>Wine chiller, beer cooler &amp; ice cooler</li>
+        <li>Ice &amp; disposable cups</li>
+        <li>Mixers, juices &amp; sodas</li>
+      </ul>
+      <p class="book-offer-rates">3 hrs · up to 25 guests</p>
     </div>
 
-    <!-- ============================================================
-         STEP 2 — CONTACT / EVENT DETAILS FORM
-         ============================================================ -->
-    <div class="book-step" id="book-step-2" hidden>
+    <form class="book-form" action="https://formspree.io/f/maqvdgrb" method="POST">
 
-      <div class="book-header">
-        <p class="eyebrow">Step 2 of 2</p>
-        <h1 class="book-title"><em>Your Event Details</em></h1>
-        <p class="book-sub">Adjust hours and guest count to see your estimate update — final quote confirmed when we reply.</p>
-      </div>
+      <input type="hidden" name="_subject" value="New Booking Inquiry — The Drink Is Right" />
+      <input type="hidden" name="_next" value="https://thedrinkisright.com/thank-you" />
+      <input type="text" name="_gotcha" style="display:none" />
+      <input type="hidden" id="service_tier" name="service_tier" value="Full Bar" />
+      <input type="hidden" id="estimated_total" name="estimated_total" value="" />
+      <input type="hidden" id="estimate_breakdown" name="estimate_breakdown" value="" />
+      <input type="hidden" id="bartender_count" name="bartender_count" value="" />
+      <input type="hidden" id="holiday_upcharge" name="holiday_upcharge" value="" />
+      <input type="hidden" id="arrival_time" name="arrival_time" value="" />
 
-      <div class="selected-package-chip" id="selected-package-chip" hidden>
-        <div class="selected-package-chip-head">
-          <span class="selected-package-text">
-            Package: <strong id="selected-package-name"></strong>
-          </span>
-          <button type="button" id="change-package-btn">Change package</button>
-        </div>
-        <div class="selected-package-estimate" id="selected-package-estimate" hidden aria-live="polite">
+      <div class="selected-package-chip selected-package-chip--estimate" id="selected-package-chip">
+        <div class="selected-package-estimate" id="selected-package-estimate" aria-live="polite">
           <div class="selected-package-estimate-top">
             <span class="selected-package-estimate-label">Estimated total</span>
             <span class="selected-package-estimate-amount" id="selected-package-estimate-amount">—</span>
@@ -127,17 +53,6 @@
           <p class="selected-package-estimate-note">Estimate only — confirmed after we connect. Travel or venue extras may apply and will be noted in your quote.</p>
         </div>
       </div>
-
-    <form class="book-form" action="https://formspree.io/f/maqvdgrb" method="POST">
-
-      <input type="hidden" name="_subject" value="New Booking Inquiry — The Drink Is Right" />
-      <input type="hidden" name="_next" value="https://thedrinkisright.com/thank-you" />
-      <input type="text" name="_gotcha" style="display:none" />
-      <input type="hidden" id="service_tier" name="service_tier" value="" />
-      <input type="hidden" id="estimated_total" name="estimated_total" value="" />
-      <input type="hidden" id="estimate_breakdown" name="estimate_breakdown" value="" />
-      <input type="hidden" id="bartender_count" name="bartender_count" value="" />
-      <input type="hidden" id="holiday_upcharge" name="holiday_upcharge" value="" />
 
       <fieldset class="form-section">
         <legend>Your info</legend>
@@ -196,6 +111,7 @@
             <select id="event_start_time" name="event_start_time" required>
               {{ partial "time-options.html" "Select a time" }}
             </select>
+            <p class="form-hint form-hint--holiday" id="start-arrival-hint" hidden></p>
           </div>
           <div class="form-group">
             <label for="event_hours">Hours <span class="required">*</span></label>
@@ -203,7 +119,7 @@
               <input type="number" id="event_hours" name="event_hours" min="3" max="6" step="1" value="3" inputmode="numeric" placeholder="3" enterkeyhint="next" required />
               <span class="hours-suffix">hrs</span>
             </div>
-            <p class="form-hint">3-hour minimum · 6-hour maximum</p>
+            <p class="form-hint form-hint--holiday">3-hour minimum · 6-hour maximum</p>
           </div>
         </div>
         <div class="form-row form-row--2">
@@ -245,14 +161,8 @@
         <p>Events on major holidays will be upcharged.</p>
       </aside>
 
-      <aside class="selected-package-chip selected-package-chip--bottom" id="selected-package-chip-bottom" hidden aria-live="polite">
-        <div class="selected-package-chip-head">
-          <span class="selected-package-text">
-            Package: <strong id="selected-package-name-bottom"></strong>
-          </span>
-          <button type="button" id="change-package-btn-bottom">Change package</button>
-        </div>
-        <div class="selected-package-estimate" id="selected-package-estimate-bottom" hidden>
+      <aside class="selected-package-chip selected-package-chip--estimate selected-package-chip--bottom" id="selected-package-chip-bottom" aria-live="polite">
+        <div class="selected-package-estimate" id="selected-package-estimate-bottom">
           <div class="selected-package-estimate-top">
             <span class="selected-package-estimate-label">Estimated total</span>
             <span class="selected-package-estimate-amount" id="selected-package-estimate-amount-bottom">—</span>
@@ -269,8 +179,6 @@
       </div>
 
     </form>
-
-    </div>
 
   </div>
 </section>
