@@ -54,25 +54,15 @@ if (ctaBtn) {
   });
 }
 
-// ---- /book page: two-step flow (choose package -> event details) ----
-if (document.getElementById('book-step-1')) {
-  // Reset here (before any deep-link tier gets applied below) so the later
-  // "always reset on load" block doesn't wipe out a deep-linked selection.
+// ---- /book page: Full Bar inquiry + live estimate ----
+if (document.getElementById('book-page')) {
   var bookFormEarly = document.querySelector('.book-form');
   if (bookFormEarly) bookFormEarly.reset();
 
-  var step1 = document.getElementById('book-step-1');
-  var step2 = document.getElementById('book-step-2');
-  var progressSteps = document.querySelectorAll('.book-progress-step');
-  var tierCards = document.querySelectorAll('.tier-select-card');
-  var skipBtn = document.getElementById('tier-skip-btn');
-  var changeBtn = document.getElementById('change-package-btn');
-  var changeBtnBottom = document.getElementById('change-package-btn-bottom');
+  var bookPage = document.getElementById('book-page');
   var tierInput = document.getElementById('service_tier');
   var chip = document.getElementById('selected-package-chip');
   var chipBottom = document.getElementById('selected-package-chip-bottom');
-  var chipName = document.getElementById('selected-package-name');
-  var chipNameBottom = document.getElementById('selected-package-name-bottom');
   var estimateEl = document.getElementById('selected-package-estimate');
   var estimateAmount = document.getElementById('selected-package-estimate-amount');
   var estimateBreakdown = document.getElementById('selected-package-estimate-breakdown');
@@ -87,19 +77,20 @@ if (document.getElementById('book-step-1')) {
   var guestsSelect = document.getElementById('guests');
   var dateInputLive = document.getElementById('date');
   var dateHolidayHint = document.getElementById('date-holiday-hint');
-  var selectedHourly = 0;
-  var selectedTier = '';
+  var startTimeSelect = document.getElementById('event_start_time');
+  var arrivalHint = document.getElementById('start-arrival-hint');
+  var arrivalTimeInput = document.getElementById('arrival_time');
+  var ARRIVAL_LEAD_MINUTES = 90;
+  var selectedHourly = parseInt(bookPage.dataset.hourly, 10) || 233;
+  var selectedTier = bookPage.dataset.tier || 'Full Bar';
+  if (tierInput) tierInput.value = selectedTier;
 
   // 50+ — blended team rate (2 bartenders included); 100+ is custom quote
   var BLENDED_TEAM_HOURLY = {
     '50–80': {
-      'Bartender': 185,
-      'Basic Bar': 225,
       'Full Bar': 280
     },
     '80–100': {
-      'Bartender': 200,
-      'Basic Bar': 240,
       'Full Bar': 310
     }
   };
@@ -317,6 +308,41 @@ if (document.getElementById('book-step-1')) {
     dateHolidayHint.hidden = false;
   }
 
+  function formatMinutesAs12Hour(totalMins) {
+    var normalized = ((totalMins % 1440) + 1440) % 1440;
+    var h24 = Math.floor(normalized / 60);
+    var mins = normalized % 60;
+    var h12 = h24 % 12;
+    if (h12 === 0) h12 = 12;
+    var ampm = h24 < 12 ? 'AM' : 'PM';
+    var minStr = mins < 10 ? '0' + mins : String(mins);
+    return h12 + ':' + minStr + ' ' + ampm;
+  }
+
+  function startTimeValueToMinutes(value) {
+    if (!value || value.indexOf(':') === -1) return null;
+    var parts = value.split(':');
+    var hours = parseInt(parts[0], 10);
+    var mins = parseInt(parts[1], 10);
+    if (isNaN(hours) || isNaN(mins)) return null;
+    return hours * 60 + mins;
+  }
+
+  function updateArrivalHint() {
+    if (!arrivalHint) return;
+    var startMins = startTimeSelect ? startTimeValueToMinutes(startTimeSelect.value) : null;
+    if (startMins == null) {
+      arrivalHint.hidden = true;
+      arrivalHint.textContent = '';
+      if (arrivalTimeInput) arrivalTimeInput.value = '';
+      return;
+    }
+    var arrivalLabel = formatMinutesAs12Hour(startMins - ARRIVAL_LEAD_MINUTES);
+    arrivalHint.textContent = 'Arrival time: ' + arrivalLabel + ' — 1 hour 30 minutes before start.';
+    arrivalHint.hidden = false;
+    if (arrivalTimeInput) arrivalTimeInput.value = arrivalLabel;
+  }
+
   function formatMoney(n) {
     return '$' + Math.round(n).toLocaleString('en-US');
   }
@@ -325,13 +351,8 @@ if (document.getElementById('book-step-1')) {
     return formatMoney(hourly * STARTING_FROM_HOURS);
   }
 
-  // Fill "Starting from" on cards from data-hourly so HTML stays in sync
-  tierCards.forEach(function(card) {
-    var hourly = parseInt(card.dataset.hourly, 10);
-    if (!hourly) return;
-    var priceEl = card.querySelector('.tier-select-price strong');
-    if (priceEl) priceEl.textContent = startingFrom(hourly);
-  });
+  var offerPrice = document.querySelector('.book-offer-price strong');
+  if (offerPrice) offerPrice.textContent = startingFrom(selectedHourly);
 
   function guestPricingFromSelect(select) {
     if (!select || !select.value) {
@@ -426,7 +447,12 @@ if (document.getElementById('book-step-1')) {
     return label + ' · holiday fee applies';
   }
 
-  function buildEstimateBreakdown(result, holiday, holidayFee) {
+  function publicScopeLine(result) {
+    if (result.isCustomQuote) return '100+ guests';
+    return formatHoursLabel(result.hours) + ' · ' + formatGuestBand(result.guestBand);
+  }
+
+  function buildPublicEstimateBreakdown(result, holiday, holidayFee) {
     if (result.isCustomQuote) {
       var customText = '100+ guests\nWe will contact you with further information.';
       if (holiday) {
@@ -435,13 +461,21 @@ if (document.getElementById('book-step-1')) {
       return customText;
     }
 
-    var line1 = formatHoursLabel(result.hours) + ' for ' + formatGuestBand(result.guestBand);
+    var text = publicScopeLine(result);
+    if (holiday) {
+      text += '\n' + holidayBreakdownLine(holiday, holidayFee);
+    }
+    return text;
+  }
+
+  function buildInternalEstimateBreakdown(result, holiday, holidayFee) {
+    if (result.isCustomQuote) {
+      return buildPublicEstimateBreakdown(result, holiday, holidayFee);
+    }
 
     var hourlyRate = result.isTeamRate ? result.hourly : result.effectiveHourly;
     var bartenderLabel = result.bartenders === 1 ? '1 bartender' : result.bartenders + ' bartenders';
-    var line2 = bartenderLabel + ' for ' + formatMoney(hourlyRate) + '/hr';
-
-    var text = line1 + '\n' + line2;
+    var text = publicScopeLine(result) + '\n' + bartenderLabel + ' for ' + formatMoney(hourlyRate) + '/hr';
     if (holiday) {
       text += '\n' + holidayBreakdownLine(holiday, holidayFee);
     }
@@ -474,16 +508,19 @@ if (document.getElementById('book-step-1')) {
     updateHolidayDateHint();
 
     var totalText;
-    var breakdownText;
+    var publicBreakdown;
+    var internalBreakdown;
     var holidayFee = null;
 
     if (result.isCustomQuote) {
       totalText = 'Custom Quote';
-      breakdownText = buildEstimateBreakdown(result, holiday, null);
+      publicBreakdown = buildPublicEstimateBreakdown(result, holiday, null);
+      internalBreakdown = buildInternalEstimateBreakdown(result, holiday, null);
     } else {
       holidayFee = holiday ? Math.round(result.total * holiday.percent / 100) : null;
       totalText = formatMoney(result.total + (holidayFee || 0));
-      breakdownText = buildEstimateBreakdown(result, holiday, holidayFee);
+      publicBreakdown = buildPublicEstimateBreakdown(result, holiday, holidayFee);
+      internalBreakdown = buildInternalEstimateBreakdown(result, holiday, holidayFee);
     }
 
     function paintEstimate(panel, amountEl, breakdownEl) {
@@ -494,94 +531,20 @@ if (document.getElementById('book-step-1')) {
         void amountEl.offsetWidth;
         amountEl.classList.add('is-flash');
       }
-      if (breakdownEl) breakdownEl.textContent = breakdownText;
+      if (breakdownEl) breakdownEl.textContent = publicBreakdown;
     }
 
     paintEstimate(estimateEl, estimateAmount, estimateBreakdown);
     paintEstimate(estimateElBottom, estimateAmountBottom, estimateBreakdownBottom);
 
     if (estimatedTotalInput) estimatedTotalInput.value = totalText;
-    if (estimateBreakdownInput) estimateBreakdownInput.value = breakdownText;
+    if (estimateBreakdownInput) estimateBreakdownInput.value = internalBreakdown;
     if (bartenderCountInput) {
       bartenderCountInput.value = result.isCustomQuote ? '' : String(result.bartenders);
     }
     if (holidayUpchargeInput) {
       holidayUpchargeInput.value = formatHolidayUpchargeField(holiday, holidayFee);
     }
-  }
-
-  function scrollToBookTop() {
-    var bookInner = document.querySelector('.book-inner');
-    if (!bookInner) return;
-    var rect = bookInner.getBoundingClientRect();
-    var targetY = rect.top + window.scrollY - 20;
-    smoothScrollTo(Math.max(0, targetY));
-  }
-
-  function setActiveProgress(n) {
-    progressSteps.forEach(function(el) {
-      el.classList.toggle('is-active', parseInt(el.dataset.step, 10) <= n);
-    });
-  }
-
-  function setPackageDisplayName(tierName) {
-    var displayName = tierName === 'Not Sure Yet' ? "We'll help you choose" : tierName;
-    if (chipName) chipName.textContent = displayName;
-    if (chipNameBottom) chipNameBottom.textContent = displayName;
-  }
-
-  function setPackageChipVisible(show) {
-    if (chip) chip.hidden = !show;
-    if (chipBottom) chipBottom.hidden = !show;
-  }
-
-  function goToStep2(tierName, hourly) {
-    selectedHourly = hourly || 0;
-    selectedTier = tierName || '';
-    if (tierName) {
-      tierInput.value = tierName;
-      setPackageDisplayName(tierName);
-      setPackageChipVisible(true);
-    } else {
-      tierInput.value = '';
-      setPackageChipVisible(false);
-    }
-    step1.hidden = true;
-    step2.hidden = false;
-    setActiveProgress(2);
-    updateEstimate();
-    scrollToBookTop();
-  }
-
-  function goToStep1() {
-    step2.hidden = true;
-    step1.hidden = false;
-    setActiveProgress(1);
-    selectedHourly = 0;
-    selectedTier = '';
-    if (estimateEl) estimateEl.hidden = true;
-    if (estimateElBottom) estimateElBottom.hidden = true;
-    setPackageChipVisible(false);
-    scrollToBookTop();
-  }
-
-  tierCards.forEach(function(card) {
-    card.addEventListener('click', function() {
-      var hourly = parseInt(card.dataset.hourly, 10) || 0;
-      goToStep2(card.dataset.tier, hourly);
-    });
-  });
-
-  if (skipBtn) {
-    skipBtn.addEventListener('click', function() { goToStep2('Not Sure Yet', 0); });
-  }
-
-  if (changeBtn) {
-    changeBtn.addEventListener('click', goToStep1);
-  }
-
-  if (changeBtnBottom) {
-    changeBtnBottom.addEventListener('click', goToStep1);
   }
 
   if (hoursInputLive) {
@@ -603,25 +566,12 @@ if (document.getElementById('book-step-1')) {
     guestsSelect.addEventListener('change', updateEstimate);
   }
 
-  var step1Progress = document.querySelector('.book-progress-step[data-step="1"]');
-  if (step1Progress) {
-    step1Progress.style.cursor = 'pointer';
-    step1Progress.addEventListener('click', function() {
-      if (step2 && !step2.hidden) goToStep1();
-    });
+  if (startTimeSelect) {
+    startTimeSelect.addEventListener('change', updateArrivalHint);
   }
 
-  // Deep link support: /book?tier=Full%20Bar jumps straight to step 2
-  var tierParam = new URLSearchParams(window.location.search).get('tier');
-  if (tierParam) {
-    var matchCard = null;
-    tierCards.forEach(function(card) {
-      if (card.dataset.tier.toLowerCase() === tierParam.toLowerCase()) matchCard = card;
-    });
-    if (matchCard) {
-      goToStep2(matchCard.dataset.tier, parseInt(matchCard.dataset.hourly, 10) || 0);
-    }
-  }
+  updateArrivalHint();
+  updateEstimate();
 }
 
 // ---- /book page: phone number validation ----
