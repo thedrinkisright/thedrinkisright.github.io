@@ -1087,13 +1087,11 @@ em  { font-style: italic; color: inherit; }
   margin: 0 auto;
 }
 
-.book-dry-hire-note {
-  margin: 1rem auto 0;
-  max-width: 560px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  line-height: 1.45;
-  color: var(--gold);
+.book-offer-alcohol {
+  margin: 0.35rem 0 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: rgba(250,247,242,0.72);
 }
 
 .book-offer {
@@ -1496,25 +1494,17 @@ em  { font-style: italic; color: inherit; }
 .book-booking-terms {
   max-width: 100%;
   margin: 0;
-  padding: 1.15rem 1.35rem;
-  background: linear-gradient(135deg, rgba(201,168,76,0.16), rgba(201,168,76,0.06));
-  border: 1px solid rgba(201,168,76,0.45);
-  border-radius: 4px;
+  padding: 0.25rem 0 0.5rem;
   display: flex;
   flex-direction: column;
-  gap: 0.55rem;
+  gap: 0.4rem;
 }
 
 .book-booking-terms p {
   margin: 0;
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   line-height: 1.55;
-  color: rgba(250,247,242,0.85);
-}
-
-.book-terms-note-label {
-  font-weight: 700;
-  color: var(--gold);
+  color: rgba(250,247,242,0.5);
 }
 
 /* Google Places dropdown above book UI */
