@@ -61,14 +61,9 @@ if (document.getElementById('book-page')) {
 
   var bookPage = document.getElementById('book-page');
   var tierInput = document.getElementById('service_tier');
-  var chip = document.getElementById('selected-package-chip');
-  var chipBottom = document.getElementById('selected-package-chip-bottom');
   var estimateEl = document.getElementById('selected-package-estimate');
   var estimateAmount = document.getElementById('selected-package-estimate-amount');
   var estimateBreakdown = document.getElementById('selected-package-estimate-breakdown');
-  var estimateElBottom = document.getElementById('selected-package-estimate-bottom');
-  var estimateAmountBottom = document.getElementById('selected-package-estimate-amount-bottom');
-  var estimateBreakdownBottom = document.getElementById('selected-package-estimate-breakdown-bottom');
   var estimatedTotalInput = document.getElementById('estimated_total');
   var estimateBreakdownInput = document.getElementById('estimate_breakdown');
   var bartenderCountInput = document.getElementById('bartender_count');
@@ -485,7 +480,6 @@ if (document.getElementById('book-page')) {
   function updateEstimate() {
     if (!selectedHourly) {
       if (estimateEl) estimateEl.hidden = true;
-      if (estimateElBottom) estimateElBottom.hidden = true;
       if (estimatedTotalInput) estimatedTotalInput.value = '';
       if (estimateBreakdownInput) estimateBreakdownInput.value = '';
       if (bartenderCountInput) bartenderCountInput.value = '';
@@ -535,7 +529,6 @@ if (document.getElementById('book-page')) {
     }
 
     paintEstimate(estimateEl, estimateAmount, estimateBreakdown);
-    paintEstimate(estimateElBottom, estimateAmountBottom, estimateBreakdownBottom);
 
     if (estimatedTotalInput) estimatedTotalInput.value = totalText;
     if (estimateBreakdownInput) estimateBreakdownInput.value = internalBreakdown;
