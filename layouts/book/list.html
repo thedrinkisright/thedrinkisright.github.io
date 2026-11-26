@@ -7,7 +7,6 @@
       <p class="eyebrow">Mobile Bartending</p>
       <h1 class="book-title"><em>Book Your Bar</em></h1>
       <p class="book-sub">You stay with your guests. We run the bar.</p>
-      <p class="book-dry-hire-note">We're insured and certified. You purchase the alcohol.</p>
     </div>
 
     <div class="book-offer">
@@ -15,18 +14,14 @@
         <h2 class="book-offer-name">Full Bar</h2>
         <p class="book-offer-price">Starting from <strong>$699</strong></p>
       </div>
-      <p class="book-offer-pitch">A complete bar at your event. You purchase the alcohol.</p>
+      <p class="book-offer-pitch">A complete bar at your event.</p>
+      <p class="book-offer-alcohol">You purchase the alcohol.</p>
       <p class="book-offer-includes">What's included</p>
       <ul class="book-offer-items">
-        <li>Custom cocktail menu</li>
-        <li>Alcohol shopping list</li>
-        <li>Bartending tools &amp; garnishes</li>
-        <li>Bar napkins &amp; cocktail straws</li>
-        <li>Steel frame bar table</li>
-        <li>Back table &amp; garbage bin</li>
-        <li>Wine chiller, beer cooler &amp; ice cooler</li>
-        <li>Ice &amp; disposable cups</li>
-        <li>Mixers, juices &amp; sodas</li>
+        <li>Custom cocktail menu &amp; shopping list</li>
+        <li>Bar setup</li>
+        <li>Ice, cups, mixers, juices &amp; sodas</li>
+        <li>Tools, garnishes &amp; barware</li>
       </ul>
       <p class="book-offer-rates">3 hrs · up to 25 guests</p>
     </div>
@@ -42,17 +37,6 @@
       <input type="hidden" id="bartender_count" name="bartender_count" value="" />
       <input type="hidden" id="holiday_upcharge" name="holiday_upcharge" value="" />
       <input type="hidden" id="arrival_time" name="arrival_time" value="" />
-
-      <div class="selected-package-chip selected-package-chip--estimate" id="selected-package-chip">
-        <div class="selected-package-estimate" id="selected-package-estimate" aria-live="polite">
-          <div class="selected-package-estimate-top">
-            <span class="selected-package-estimate-label">Estimated total</span>
-            <span class="selected-package-estimate-amount" id="selected-package-estimate-amount">—</span>
-          </div>
-          <p class="selected-package-estimate-breakdown" id="selected-package-estimate-breakdown"></p>
-          <p class="selected-package-estimate-note">Estimate only — confirmed after we connect. Travel or venue extras may apply and will be noted in your quote.</p>
-        </div>
-      </div>
 
       <fieldset class="form-section">
         <legend>Your info</legend>
@@ -81,17 +65,17 @@
             <label for="event_type">Occasion <span class="required">*</span></label>
             <select id="event_type" name="event_type" required>
               <option value="" disabled selected>Select one</option>
-              <option value="Birthday Party">🎂 Birthday Party</option>
-              <option value="Engagement">💍 Engagement</option>
-              <option value="Wedding">💒 Wedding</option>
-              <option value="Rehearsal Dinner">🍽️ Rehearsal Dinner</option>
-              <option value="Retirement Party">🥂 Retirement Party</option>
-              <option value="Anniversary">💐 Anniversary</option>
-              <option value="Corporate Event">💼 Corporate Event</option>
-              <option value="Bridal Shower">🎀 Bridal Shower</option>
-              <option value="House Party">🏠 House Party</option>
-              <option value="Graduation Party">🎓 Graduation Party</option>
-              <option value="Other">✨ Other</option>
+              <option value="Birthday Party">Birthday Party</option>
+              <option value="Engagement">Engagement</option>
+              <option value="Wedding">Wedding</option>
+              <option value="Rehearsal Dinner">Rehearsal Dinner</option>
+              <option value="Retirement Party">Retirement Party</option>
+              <option value="Anniversary">Anniversary</option>
+              <option value="Corporate Event">Corporate Event</option>
+              <option value="Bridal Shower">Bridal Shower</option>
+              <option value="House Party">House Party</option>
+              <option value="Graduation Party">Graduation Party</option>
+              <option value="Other">Other</option>
             </select>
           </div>
           <div class="form-group">
@@ -126,10 +110,10 @@
           <div class="form-group">
             <label for="guests">Total guest count <span class="required">*</span></label>
             <select id="guests" name="guests" required>
-              <option value="Up to 25" data-guest-hourly="0" data-bartenders="1" data-max-guests="25" selected>Up to 25 · 1 bartender</option>
-              <option value="25–50" data-guest-hourly="30" data-bartenders="1" data-max-guests="50">25–50 · 1 bartender</option>
-              <option value="50–80" data-guest-hourly="60" data-bartenders="2" data-max-guests="80">50–80 · 2 bartenders</option>
-              <option value="80–100" data-guest-hourly="80" data-bartenders="2" data-max-guests="100">80–100 · 2 bartenders</option>
+              <option value="Up to 25" data-guest-hourly="0" data-bartenders="1" data-max-guests="25" selected>Up to 25</option>
+              <option value="25–50" data-guest-hourly="30" data-bartenders="1" data-max-guests="50">25–50</option>
+              <option value="50–80" data-guest-hourly="60" data-bartenders="2" data-max-guests="80">50–80</option>
+              <option value="80–100" data-guest-hourly="80" data-bartenders="2" data-max-guests="100">80–100</option>
               <option value="100+" data-custom-quote="1" data-bartenders="0">100+</option>
             </select>
           </div>
@@ -154,20 +138,20 @@
 
       <aside class="book-booking-terms">
         <span class="book-terms-heading">Booking terms</span>
-        <p><span class="book-terms-note-label">Note:</span> A $100 non-refundable deposit is required to book and lock a date/time slot for our services.</p>
-        <p>Full payment is due two weeks prior to the event date.</p>
-        <p>For Wedding, Rehearsal Dinner, Engagement, and Bridal Shower bookings, full payment is due one month prior to the event date.</p>
-        <p>Discount available for returning clients and referrals from past clients.</p>
-        <p>Events on major holidays will be upcharged.</p>
+        <p>A $100 deposit holds your date. It applies to your total and is non-refundable.</p>
+        <p>Balance is due two weeks before the event.</p>
+        <p>For weddings, rehearsal dinners, engagements, and bridal showers, balance is due one month before.</p>
+        <p>Major holidays include an additional fee, confirmed in your quote.</p>
+        <p>We're insured and certified.</p>
       </aside>
 
-      <aside class="selected-package-chip selected-package-chip--estimate selected-package-chip--bottom" id="selected-package-chip-bottom" aria-live="polite">
-        <div class="selected-package-estimate" id="selected-package-estimate-bottom">
+      <aside class="selected-package-chip selected-package-chip--estimate selected-package-chip--bottom" id="selected-package-chip" aria-live="polite">
+        <div class="selected-package-estimate" id="selected-package-estimate">
           <div class="selected-package-estimate-top">
             <span class="selected-package-estimate-label">Estimated total</span>
-            <span class="selected-package-estimate-amount" id="selected-package-estimate-amount-bottom">—</span>
+            <span class="selected-package-estimate-amount" id="selected-package-estimate-amount">—</span>
           </div>
-          <p class="selected-package-estimate-breakdown" id="selected-package-estimate-breakdown-bottom"></p>
+          <p class="selected-package-estimate-breakdown" id="selected-package-estimate-breakdown"></p>
           <p class="selected-package-estimate-note">Estimate only — confirmed after we connect. Travel or venue extras may apply and will be noted in your quote.</p>
         </div>
       </aside>
