@@ -68,7 +68,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="{{ "/css/style.css" | relURL }}" />
+  <link rel="stylesheet" href="{{ "/css/style.css" | relURL }}?v={{ now.Unix }}" />
 </head>
 <body>
   {{ partial "nav.html" . }}
@@ -76,7 +76,7 @@
     {{ block "main" . }}{{ end }}
   </main>
   {{ partial "footer.html" . }}
-  <script src="{{ "/js/main.js" | relURL }}"></script>
+  <script src="{{ "/js/main.js" | relURL }}?v={{ now.Unix }}"></script>
   {{ if and (eq .Section "book") .Site.Params.googleMapsApiKey }}
   <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ .Site.Params.googleMapsApiKey }}&libraries=places&callback=initBookPlacesAutocomplete&loading=async"></script>
   {{ end }}

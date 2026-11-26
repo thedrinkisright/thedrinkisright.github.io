@@ -299,7 +299,7 @@ if (document.getElementById('book-page')) {
       dateHolidayHint.textContent = '';
       return;
     }
-    dateHolidayHint.textContent = holiday.label + ' — a +' + holiday.percent + '% upcharge applies to your estimate.';
+    dateHolidayHint.textContent = holiday.label + ' — holiday rate applies.';
     dateHolidayHint.hidden = false;
   }
 
@@ -434,6 +434,10 @@ if (document.getElementById('book-page')) {
     return hours + (hours === 1 ? ' hour' : ' hours');
   }
 
+  function holidayPublicLine(holiday) {
+    return holiday.label + ' · holiday rate included';
+  }
+
   function holidayBreakdownLine(holiday, holidayFee) {
     var label = 'Holiday Upcharge: ' + holiday.label;
     if (holidayFee != null) {
@@ -451,14 +455,14 @@ if (document.getElementById('book-page')) {
     if (result.isCustomQuote) {
       var customText = '100+ guests\nWe will contact you with further information.';
       if (holiday) {
-        customText += '\n' + holidayBreakdownLine(holiday, null);
+        customText += '\n' + holidayPublicLine(holiday);
       }
       return customText;
     }
 
     var text = publicScopeLine(result);
     if (holiday) {
-      text += '\n' + holidayBreakdownLine(holiday, holidayFee);
+      text += '\n' + holidayPublicLine(holiday);
     }
     return text;
   }
@@ -639,7 +643,12 @@ if (document.querySelector('.book-form')) {
   }
 
   var dateError = attachFieldError(dateInput, 'Please choose a date after today.');
-  var hoursError = attachFieldError(hoursInput, 'Bookings are 3–6 hours.');
+  var hoursHint = document.getElementById('hours-range-hint');
+
+  function showHoursRangeError(show) {
+    if (hoursHint) hoursHint.classList.toggle('is-error', !!show);
+    if (hoursInput) hoursInput.style.borderColor = show ? '#E24B4A' : '';
+  }
 
   if (dateInput) {
     dateInput.min = tomorrowISO();
@@ -664,7 +673,7 @@ if (document.querySelector('.book-form')) {
     hoursInput.addEventListener('input', function() {
       this.value = this.value.replace(/[^\d]/g, '');
       if (this.value === '0') this.value = '';
-      showFieldError(this, hoursError, hoursInvalid(false));
+      showHoursRangeError(hoursInvalid(false));
     });
     hoursInput.addEventListener('blur', function() {
       var n = parseInt(this.value, 10);
@@ -673,7 +682,7 @@ if (document.querySelector('.book-form')) {
       } else if (n > MAX_BOOKING_HOURS) {
         this.value = String(MAX_BOOKING_HOURS);
       }
-      showFieldError(this, hoursError, hoursInvalid(false));
+      showHoursRangeError(hoursInvalid(false));
     });
   }
 
@@ -699,7 +708,7 @@ if (document.querySelector('.book-form')) {
     }
 
     if (hoursInvalid(true)) {
-      showFieldError(hoursInput, hoursError, true);
+      showHoursRangeError(true);
       hoursInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
       hoursInput.focus();
       return;

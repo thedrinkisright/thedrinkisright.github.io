@@ -989,6 +989,10 @@ em  { font-style: italic; color: inherit; }
   color: rgba(201,168,76,0.9);
 }
 
+.form-hint--holiday.is-error {
+  color: #E24B4A;
+}
+
 /* White calendar icon on desktop for text-type date inputs */
 /* Calendar icon handled by real buttons on both date inputs */
 
