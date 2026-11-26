@@ -219,7 +219,6 @@ em  { font-style: italic; color: inherit; }
 /* Nav links: white on dark, dark on light */
 .site-header.nav-dark .nav-link      { color: rgba(250,247,242,0.8); }
 .site-header.nav-dark .logo-sub      { color: var(--gold); }
-.site-header.nav-dark .nav-phone     { color: rgba(250,247,242,0.7); }
 .site-header.nav-dark .hamburger span { background: #fff; }
 
 
@@ -278,16 +277,6 @@ em  { font-style: italic; color: inherit; }
     text-align: center;
     white-space: nowrap;
 }
-
-.nav-phone {
-  font-size: 0.73rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  color: rgba(250,247,242,0.7);
-  transition: color var(--dur);
-}
-.site-header.scrolled .nav-phone { color: var(--text-mid); }
-.nav-phone:hover { color: var(--gold) !important; }
 
 .hamburger {
   display: none;
@@ -1662,19 +1651,23 @@ em  { font-style: italic; color: inherit; }
 /* Force dark color-scheme on book page date input always */
 #date { color-scheme: dark; }
 
-.form-submit { text-align: center; }
+.form-submit {
+  text-align: center;
+  gap: 0.5rem;
+}
 
 .form-status {
   color: #E24B4A;
   font-size: 0.85rem;
-  margin: 0.75rem 0 0;
+  margin: 0;
 }
 
 .form-note {
-  margin-top: 1rem;
-  font-size: 0.8rem;
-  color: #fff;
-  font-style: italic;
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: rgba(250,247,242,0.45);
+  font-style: normal;
 }
 
 .form-note a {
@@ -1978,7 +1971,7 @@ em  { font-style: italic; color: inherit; }
   max-width: var(--max);
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
+  grid-template-columns: 2fr 1fr;
   gap: clamp(2rem,4vw,4rem);
   padding-bottom: 3rem;
   margin-bottom: 2rem;
@@ -2090,8 +2083,8 @@ em  { font-style: italic; color: inherit; }
   /* Services — 2 columns side by side on iPad Pro */
   .services-two-col { grid-template-columns: 1fr 1fr; }
 
-  /* Footer — brand full width, then 3 cols */
-  .footer-top   { grid-template-columns: repeat(3, 1fr); }
+  /* Footer — brand full width, then careers */
+  .footer-top   { grid-template-columns: 1fr; }
   .footer-brand { grid-column: 1 / -1; }
 
   /* Drinks — side by side on iPad landscape */
@@ -2106,7 +2099,7 @@ em  { font-style: italic; color: inherit; }
   /* ---- Nav: enlarged to 130px for bigger logo ---- */
   :root { --nav-h: 130px; }
 
-  .nav-left, .nav-right, .nav-phone { display: none; }
+  .nav-left, .nav-right { display: none; }
   .nav-bar {
     display: flex;
     align-items: center;
@@ -2167,10 +2160,9 @@ em  { font-style: italic; color: inherit; }
   .values-grid         { grid-template-columns: 1fr; }
   .about-grid          { grid-template-columns: 1fr; }
   .about-stats         { grid-template-columns: 1fr 1fr; }
-  /* Brand full width, Follow Us + Careers in 2 cols, Contact full width */
-  .footer-top          { grid-template-columns: 1fr 1fr; }
+  /* Brand full width, then careers */
+  .footer-top          { grid-template-columns: 1fr; }
   .footer-brand        { grid-column: 1 / -1; }
-  .footer-col:last-child { grid-column: 1 / -1; }
   .footer-bottom       { flex-direction: column; }
 
   /* ---- Footer: tighten fonts so 3 columns fit on iPhone ---- */
