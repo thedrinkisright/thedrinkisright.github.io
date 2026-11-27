@@ -2094,8 +2094,8 @@ em  { font-style: italic; color: inherit; }
 }
 
 @media (max-width: 768px) {
-  /* ---- Nav: enlarged to 130px for bigger logo ---- */
-  :root { --nav-h: 130px; }
+  /* ---- Nav: larger mark, keep a clear tap lane for the menu ---- */
+  :root { --nav-h: 148px; }
 
   .nav-left, .nav-right { display: none; }
   .nav-bar {
@@ -2114,26 +2114,33 @@ em  { font-style: italic; color: inherit; }
     align-items: center;
     text-align: center;
     gap: 4px;
+    max-width: calc(100% - 9rem);
+    pointer-events: none;
   }
   .hamburger {
     display: flex;
     flex-shrink: 0;
+    position: relative;
+    z-index: 6;
   }
   .mobile-nav.open { display: flex; }
 
   .nav-logo-img {
-    height: 90px;           /* enlarged from 52px */
+    height: 104px;
     padding-top: 12px;      /* keep stirrer fully visible */
     width: auto;
+    pointer-events: auto;
   }
   .logo-sub {
-    font-size: 0.42rem;
+    font-size: clamp(0.46rem, 2.2vw, 0.56rem);
     font-weight: 700;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.08em;
     margin-top: 5px;
     text-align: center;
     white-space: nowrap;
     display: block;
+    max-width: 100%;
+    overflow: hidden;
   }
 
   /* ---- Hero: solid black on mobile; photo stays desktop-only ---- */
