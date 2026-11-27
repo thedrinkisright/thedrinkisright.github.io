@@ -1,7 +1,7 @@
 {{ define "main" }}
 
 <section class="book-body" data-nav-theme="dark">
-  <div class="book-inner" id="book-page" data-tier="Full Bar" data-hourly="233">
+  <div class="book-inner" id="book-page" data-tier="Full Bar Experience" data-hourly="249.66666667">
 
     <div class="book-header">
       <p class="eyebrow">Mobile Bartending</p>
@@ -11,19 +11,19 @@
 
     <div class="book-offer">
       <div class="book-offer-top">
-        <h2 class="book-offer-name">Full Bar</h2>
-        <p class="book-offer-price">Starting from <strong>$699</strong></p>
+        <h2 class="book-offer-name">Full Bar Experience</h2>
+        <p class="book-offer-price">Starting from <strong>$749</strong></p>
       </div>
       <p class="book-offer-pitch">A complete bar at your event.</p>
       <p class="book-offer-alcohol">You purchase the alcohol.</p>
       <p class="book-offer-includes">What's included</p>
       <ul class="book-offer-items">
         <li>Custom cocktail menu &amp; shopping list</li>
-        <li>Bar setup</li>
+        <li>Bar setup &amp; breakdown</li>
         <li>Ice, cups, mixers, juices &amp; sodas</li>
-        <li>Tools, garnishes &amp; barware</li>
+        <li>Garnishes, tools &amp; barware</li>
       </ul>
-      <p class="book-offer-rates">3 hrs · up to 25 guests</p>
+      <p class="book-offer-rates">3 hrs · 1 bartender · up to 25 guests</p>
     </div>
 
     <form class="book-form" action="https://formspree.io/f/maqvdgrb" method="POST">
@@ -31,7 +31,7 @@
       <input type="hidden" name="_subject" value="New Booking Inquiry — The Drink Is Right" />
       <input type="hidden" name="_next" value="https://thedrinkisright.com/thank-you" />
       <input type="text" name="_gotcha" style="display:none" />
-      <input type="hidden" id="service_tier" name="service_tier" value="Full Bar" />
+      <input type="hidden" id="service_tier" name="service_tier" value="Full Bar Experience" />
       <input type="hidden" id="estimated_total" name="estimated_total" value="" />
       <input type="hidden" id="estimate_breakdown" name="estimate_breakdown" value="" />
       <input type="hidden" id="bartender_count" name="bartender_count" value="" />
@@ -110,10 +110,10 @@
           <div class="form-group">
             <label for="guests">Total guest count <span class="required">*</span></label>
             <select id="guests" name="guests" required>
-              <option value="Up to 25" data-guest-hourly="0" data-bartenders="1" selected>Up to 25</option>
-              <option value="25–50" data-guest-hourly="30" data-bartenders="1">25–50</option>
-              <option value="50–80" data-guest-hourly="60" data-bartenders="2">50–80</option>
-              <option value="80–100" data-guest-hourly="80" data-bartenders="2">80–100</option>
+              <option value="Up to 25" data-hourly="249.66666667" data-bartenders="1" selected>Up to 25</option>
+              <option value="26–49" data-hourly="280" data-bartenders="1">26–49</option>
+              <option value="50–80" data-hourly="350" data-bartenders="2">50–80</option>
+              <option value="81–100" data-hourly="400" data-bartenders="2">81–100</option>
               <option value="100+" data-custom-quote="1" data-bartenders="0">100+</option>
             </select>
           </div>

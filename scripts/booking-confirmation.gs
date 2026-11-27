@@ -25,19 +25,31 @@ function receiptsAfterMs() {
   return now;
 }
 
+function inquirySearchQuery(includeSkipped) {
+  var query = [
+    '(from:formspree OR subject:"Booking Inquiry")',
+    '-label:"' + SENT_LABEL + '"'
+  ];
+  if (!includeSkipped) query.push('-label:"' + SKIPPED_LABEL + '"');
+  return query.join(' ');
+}
+
 function ignoreExistingInquiries() {
   var skippedLabel = getOrCreateLabel(SKIPPED_LABEL);
-  var query = [
-    'subject:"' + BOOKING_SUBJECT + '"',
-    '-label:"' + SENT_LABEL + '"',
-    '-label:"' + SKIPPED_LABEL + '"'
-  ].join(' ');
+  var cutoff = Date.now() - 60 * 60 * 1000;
+  var query = inquirySearchQuery(false);
   for (var i = 0; i < 20; i++) {
     var threads = GmailApp.search(query, 0, 50);
     if (!threads.length) break;
+    var labeled = 0;
     threads.forEach(function (thread) {
+      var message = thread.getMessages()[0];
+      if (!message) return;
+      if (message.getDate().getTime() >= cutoff) return;
       thread.addLabel(skippedLabel);
+      labeled++;
     });
+    if (!labeled) break;
   }
 }
 
@@ -64,33 +76,67 @@ function sendBookingReceipts() {
   if (!lock.tryLock(10000)) return;
 
   try {
-    var sentLabel = getOrCreateLabel(SENT_LABEL);
-    var skippedLabel = getOrCreateLabel(SKIPPED_LABEL);
-    var query = [
-      'subject:"' + BOOKING_SUBJECT + '"',
-      '-label:"' + SENT_LABEL + '"',
-      '-label:"' + SKIPPED_LABEL + '"'
-    ].join(' ');
-    var threads = GmailApp.search(query, 0, 20);
-
-    threads.forEach(function (thread) {
-      var message = thread.getMessages()[0];
-      if (!message || message.isDraft()) return;
-      if (message.getDate().getTime() <= receiptsAfterMs()) {
-        thread.addLabel(skippedLabel);
-        return;
-      }
-      var clientEmail = extractClientEmail(message);
-      if (!clientEmail) {
-        thread.addLabel(skippedLabel);
-        return;
-      }
-      sendReceipt(clientEmail);
-      thread.addLabel(sentLabel);
-    });
+    processInquiryThreads(GmailApp.search(inquirySearchQuery(false), 0, 20), false);
   } finally {
     lock.releaseLock();
   }
+}
+
+function sendForLatestInquiry() {
+  var threads = GmailApp.search(inquirySearchQuery(true), 0, 5);
+  if (!threads.length) {
+    throw new Error('No Formspree booking email found in this inbox.');
+  }
+  processInquiryThreads([threads[0]], true);
+}
+
+function debugLastInquiry() {
+  var threads = GmailApp.search(inquirySearchQuery(true) + ' newer_than:2d', 0, 5);
+  if (!threads.length) {
+    Logger.log('No Formspree / Booking Inquiry emails found.');
+    return;
+  }
+  threads.forEach(function (thread, i) {
+    var message = thread.getMessages()[0];
+    var labels = thread.getLabels().map(function (label) {
+      return label.getName();
+    }).join(', ');
+    Logger.log('--- ' + (i + 1) + ' ---');
+    Logger.log('Subject: ' + message.getSubject());
+    Logger.log('From: ' + message.getFrom());
+    Logger.log('Date: ' + message.getDate());
+    Logger.log('Labels: ' + labels);
+    Logger.log('Extracted client email: ' + (extractClientEmail(message) || '(none)'));
+    Logger.log('Plain snippet: ' + htmlToText(message.getPlainBody() || message.getBody()).slice(0, 400));
+  });
+}
+
+function processInquiryThreads(threads, force) {
+  var sentLabel = getOrCreateLabel(SENT_LABEL);
+  var skippedLabel = getOrCreateLabel(SKIPPED_LABEL);
+  var cutoff = receiptsAfterMs() - 2 * 60 * 60 * 1000;
+
+  threads.forEach(function (thread) {
+    var message = thread.getMessages()[0];
+    if (!message || message.isDraft()) return;
+    if (!force && message.getDate().getTime() < cutoff) {
+      thread.addLabel(skippedLabel);
+      return;
+    }
+    var alreadySent = thread.getLabels().some(function (label) {
+      return label.getName() === SENT_LABEL;
+    });
+    if (alreadySent) return;
+    var clientEmail = extractClientEmail(message);
+    Logger.log('Subject: ' + message.getSubject());
+    Logger.log('Client email: ' + (clientEmail || '(none)'));
+    if (!clientEmail) {
+      thread.addLabel(skippedLabel);
+      return;
+    }
+    sendReceipt(clientEmail);
+    thread.addLabel(sentLabel);
+  });
 }
 
 function testSendReceipt() {
@@ -115,7 +161,7 @@ function sendReceipt(to) {
 function extractClientEmail(message) {
   var raw = message.getBody() + '\n' + message.getPlainBody();
   var text = htmlToText(raw);
-  var fieldMatch = text.match(/(?:^|\n)\s*email\s*[:\n]\s*([^\s<>]+@[^\s<>]+)/i);
+  var fieldMatch = text.match(/\bemail\s*[:\n\s]+([^\s<>]+@[^\s<>]+)/i);
   if (fieldMatch && isClientEmail(fieldMatch[1])) {
     return fieldMatch[1].replace(/[.,;:]+$/, '').toLowerCase();
   }

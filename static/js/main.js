@@ -54,7 +54,7 @@ if (ctaBtn) {
   });
 }
 
-// ---- /book page: Full Bar inquiry + live estimate ----
+// ---- /book page: Full Bar Experience inquiry + live estimate ----
 if (document.getElementById('book-page')) {
   var bookFormEarly = document.querySelector('.book-form');
   if (bookFormEarly) bookFormEarly.reset();
@@ -76,19 +76,16 @@ if (document.getElementById('book-page')) {
   var arrivalHint = document.getElementById('start-arrival-hint');
   var arrivalTimeInput = document.getElementById('arrival_time');
   var ARRIVAL_LEAD_MINUTES = 90;
-  var selectedHourly = parseInt(bookPage.dataset.hourly, 10) || 233;
-  var selectedTier = bookPage.dataset.tier || 'Full Bar';
+  var selectedHourly = parseFloat(bookPage.dataset.hourly) || (749 / 3);
+  var selectedTier = bookPage.dataset.tier || 'Full Bar Experience';
   if (tierInput) tierInput.value = selectedTier;
 
-  // 50+ — blended team rate (2 bartenders included); 100+ is custom quote
-  var BLENDED_TEAM_HOURLY = {
-    '50–80': {
-      'Full Bar': 280
-    },
-    '80–100': {
-      'Full Bar': 310
-    }
-  };
+  function bandHourlyFromOption(opt) {
+    if (!opt) return selectedHourly;
+    var raw = opt.getAttribute('data-hourly');
+    var parsed = raw != null && raw !== '' ? parseFloat(raw) : NaN;
+    return isNaN(parsed) ? selectedHourly : parsed;
+  }
 
   var HOLIDAY_PEAK_PERCENT = 20;
   var HOLIDAY_HIGH_PERCENT = 15;
@@ -351,12 +348,12 @@ if (document.getElementById('book-page')) {
 
   function guestPricingFromSelect(select) {
     if (!select || !select.value) {
-      return { guestBand: 'Up to 25', guestHourly: 0, bartenders: 1, isCustomQuote: false };
+      return { guestBand: 'Up to 25', hourly: selectedHourly, bartenders: 1, isCustomQuote: false };
     }
     var opt = select.options[select.selectedIndex];
     return {
       guestBand: select.value,
-      guestHourly: parseInt(opt.getAttribute('data-guest-hourly') || '0', 10),
+      hourly: bandHourlyFromOption(opt),
       bartenders: parseInt(opt.getAttribute('data-bartenders') || '1', 10),
       isCustomQuote: opt.getAttribute('data-custom-quote') === '1'
     };
@@ -385,43 +382,23 @@ if (document.getElementById('book-page')) {
       };
     }
 
-    var bandRates = BLENDED_TEAM_HOURLY[guestPricing.guestBand];
-    var blended = bandRates && bandRates[tierName];
     var billed = billableHours(hours);
-    if (blended) {
-      return {
-        isCustomQuote: false,
-        total: blended * billed,
-        hourly: blended,
-        guestHourly: 0,
-        supplyHourly: 0,
-        extraBartenders: Math.max(0, requiredBartenders(guestPricing) - 1),
-        extraBartenderHourly: 0,
-        isTeamRate: true,
-        effectiveHourly: blended,
-        hours: hours,
-        billableHours: billed,
-        guestBand: guestPricing.guestBand,
-        bartenders: requiredBartenders(guestPricing)
-      };
-    }
-
-    // ≤50 — tier hourly + guest add
-    var effectiveHourly = hourly + guestPricing.guestHourly;
+    var bartenders = requiredBartenders(guestPricing);
+    var rate = guestPricing.hourly != null ? guestPricing.hourly : hourly;
     return {
       isCustomQuote: false,
-      total: effectiveHourly * billed,
-      hourly: hourly,
-      guestHourly: guestPricing.guestHourly,
+      total: rate * billed,
+      hourly: rate,
+      guestHourly: 0,
       supplyHourly: 0,
-      extraBartenders: 0,
+      extraBartenders: Math.max(0, bartenders - 1),
       extraBartenderHourly: 0,
-      isTeamRate: false,
-      effectiveHourly: effectiveHourly,
+      isTeamRate: bartenders > 1,
+      effectiveHourly: rate,
       hours: hours,
       billableHours: billed,
       guestBand: guestPricing.guestBand,
-      bartenders: requiredBartenders(guestPricing)
+      bartenders: bartenders
     };
   }
 

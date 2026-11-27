@@ -1512,7 +1512,7 @@ em  { font-style: italic; color: inherit; }
 
 @media (min-width: 861px) {
   .tier-select-card[data-tier="Bartender"] { order: 1; }
-  .tier-select-card[data-tier="Full Bar"] { order: 2; }
+  .tier-select-card[data-tier="Full Bar Experience"] { order: 2; }
 }
 
 @media (max-width: 860px) {
