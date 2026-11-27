@@ -26,19 +26,48 @@ function receiptsAfterMs() {
   return now;
 }
 
-function inquirySearchQuery(includeSkipped) {
-  var query = [
-    '(from:formspree OR subject:"Booking Inquiry")',
-    '-label:"' + SENT_LABEL + '"'
-  ];
-  if (!includeSkipped) query.push('-label:"' + SKIPPED_LABEL + '"');
-  return query.join(' ');
+function inquirySearchQuery() {
+  return '(from:formspree OR subject:"Booking Inquiry") newer_than:2d';
+}
+
+function sentMessageIds() {
+  try {
+    return JSON.parse(PropertiesService.getScriptProperties().getProperty('sentMessageIds') || '[]');
+  } catch (err) {
+    return [];
+  }
+}
+
+function hasSentMessage(id) {
+  return sentMessageIds().indexOf(id) !== -1;
+}
+
+function markMessageSent(id) {
+  var ids = sentMessageIds();
+  if (ids.indexOf(id) !== -1) return;
+  ids.push(id);
+  if (ids.length > 200) ids = ids.slice(-200);
+  PropertiesService.getScriptProperties().setProperty('sentMessageIds', JSON.stringify(ids));
+}
+
+function unmarkMessageSent(id) {
+  var ids = sentMessageIds().filter(function (stored) {
+    return stored !== id;
+  });
+  PropertiesService.getScriptProperties().setProperty('sentMessageIds', JSON.stringify(ids));
+}
+
+function isInquiryMessage(message) {
+  var from = String(message.getFrom() || '').toLowerCase();
+  var subject = String(message.getSubject() || '');
+  if (from.indexOf('formspree') !== -1) return true;
+  return /booking inquiry/i.test(subject) && from.indexOf('thedrinkisright.com') === -1;
 }
 
 function ignoreExistingInquiries() {
   var skippedLabel = getOrCreateLabel(SKIPPED_LABEL);
   var cutoff = Date.now() - 60 * 60 * 1000;
-  var query = inquirySearchQuery(false);
+  var query = inquirySearchQuery() + ' -label:"' + SKIPPED_LABEL + '" -label:"' + SENT_LABEL + '"';
   for (var i = 0; i < 20; i++) {
     var threads = GmailApp.search(query, 0, 50);
     if (!threads.length) break;
@@ -77,36 +106,40 @@ function sendBookingReceipts() {
   if (!lock.tryLock(10000)) return;
 
   try {
-    processInquiryThreads(GmailApp.search(inquirySearchQuery(false), 0, 20), false);
+    processInquiryThreads(GmailApp.search(inquirySearchQuery(), 0, 20), false);
   } finally {
     lock.releaseLock();
   }
 }
 
 function sendForLatestInquiry() {
-  var threads = GmailApp.search(
-    '(from:formspree OR subject:"Booking Inquiry") newer_than:2d',
-    0,
-    10
-  );
-  if (!threads.length) {
+  var threads = GmailApp.search(inquirySearchQuery(), 0, 10);
+  var latest = null;
+  threads.forEach(function (thread) {
+    thread.getMessages().forEach(function (message) {
+      if (!isInquiryMessage(message)) return;
+      if (!latest || message.getDate().getTime() > latest.getDate().getTime()) {
+        latest = message;
+      }
+    });
+  });
+  if (!latest) {
     throw new Error('No Formspree booking email found in this inbox.');
   }
-  var thread = threads[0];
-  var sentLabel = getOrCreateLabel(SENT_LABEL);
-  thread.removeLabel(getOrCreateLabel(SKIPPED_LABEL));
-  thread.removeLabel(sentLabel);
-  processInquiryThreads([thread], true);
+  unmarkMessageSent(latest.getId());
+  latest.getThread().removeLabel(getOrCreateLabel(SKIPPED_LABEL));
+  processInquiryMessages([latest], true);
 }
 
 function debugLastInquiry() {
-  var threads = GmailApp.search(inquirySearchQuery(true) + ' newer_than:2d', 0, 5);
+  var threads = GmailApp.search(inquirySearchQuery(), 0, 5);
   if (!threads.length) {
     Logger.log('No Formspree / Booking Inquiry emails found.');
     return;
   }
   threads.forEach(function (thread, i) {
-    var message = thread.getMessages()[0];
+    var messages = thread.getMessages();
+    var message = messages[messages.length - 1];
     var labels = thread.getLabels().map(function (label) {
       return label.getName();
     }).join(', ');
@@ -115,6 +148,8 @@ function debugLastInquiry() {
     Logger.log('From: ' + message.getFrom());
     Logger.log('Reply-To: ' + (message.getReplyTo() || '(none)'));
     Logger.log('Date: ' + message.getDate());
+    Logger.log('Thread messages: ' + messages.length);
+    Logger.log('Already sent ID: ' + hasSentMessage(message.getId()));
     Logger.log('Labels: ' + labels);
     Logger.log('Extracted client email: ' + (extractClientEmail(message) || '(none)'));
     Logger.log('Details sentence: ' + (detailsSentence(extractInquiryDetails(message)) || '(generic)'));
@@ -123,21 +158,24 @@ function debugLastInquiry() {
 }
 
 function processInquiryThreads(threads, force) {
+  threads.forEach(function (thread) {
+    processInquiryMessages(thread.getMessages(), force);
+  });
+}
+
+function processInquiryMessages(messages, force) {
   var sentLabel = getOrCreateLabel(SENT_LABEL);
   var skippedLabel = getOrCreateLabel(SKIPPED_LABEL);
   var cutoff = receiptsAfterMs() - 2 * 60 * 60 * 1000;
 
-  threads.forEach(function (thread) {
-    var message = thread.getMessages()[0];
-    if (!message || message.isDraft()) return;
+  messages.forEach(function (message) {
+    if (!message || message.isDraft() || !isInquiryMessage(message)) return;
+    if (hasSentMessage(message.getId())) return;
     if (!force && message.getDate().getTime() < cutoff) {
-      thread.addLabel(skippedLabel);
+      message.getThread().addLabel(skippedLabel);
       return;
     }
-    var alreadySent = thread.getLabels().some(function (label) {
-      return label.getName() === SENT_LABEL;
-    });
-    if (alreadySent) return;
+
     var clientEmail = extractClientEmail(message);
     var details = {};
     try {
@@ -150,13 +188,14 @@ function processInquiryThreads(threads, force) {
     Logger.log('Client email: ' + (clientEmail || '(none)'));
     Logger.log('Details sentence: ' + (detailsSentence(details) || '(generic)'));
     if (!clientEmail) {
-      thread.addLabel(skippedLabel);
+      message.getThread().addLabel(skippedLabel);
       Logger.log('Skipped: no client email on this inquiry.');
       return;
     }
     try {
       sendReceipt(clientEmail, details);
-      thread.addLabel(sentLabel);
+      markMessageSent(message.getId());
+      message.getThread().addLabel(sentLabel);
     } catch (sendErr) {
       Logger.log('Send failed: ' + sendErr);
       throw sendErr;

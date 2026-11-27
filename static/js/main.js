@@ -704,6 +704,21 @@ if (document.querySelector('.book-form')) {
       statusEl.textContent = '';
     }
 
+    var subjectInput = bookForm.querySelector('input[name="_subject"]');
+    if (subjectInput) {
+      var nameVal = '';
+      var dateVal = '';
+      var nameEl = bookForm.querySelector('#name');
+      var dateEl = bookForm.querySelector('#date');
+      if (nameEl && nameEl.value) nameVal = nameEl.value.replace(/\s+/g, ' ').trim();
+      if (dateEl && dateEl.value) dateVal = dateEl.value;
+      var subject = 'New Booking Inquiry — The Drink Is Right';
+      if (nameVal) subject += ' · ' + nameVal;
+      if (dateVal) subject += ' · ' + dateVal;
+      subject += ' · ' + String(Date.now()).slice(-5);
+      subjectInput.value = subject;
+    }
+
     fetch(bookForm.action, {
       method: 'POST',
       body: new FormData(bookForm),
