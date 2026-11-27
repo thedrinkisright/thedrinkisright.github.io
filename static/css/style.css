@@ -993,6 +993,10 @@ em  { font-style: italic; color: inherit; }
   color: #E24B4A;
 }
 
+.form-group input.field-hint-error {
+  border-color: #E24B4A;
+}
+
 /* White calendar icon on desktop for text-type date inputs */
 /* Calendar icon handled by real buttons on both date inputs */
 
