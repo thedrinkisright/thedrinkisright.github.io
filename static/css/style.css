@@ -2094,8 +2094,8 @@ em  { font-style: italic; color: inherit; }
 }
 
 @media (max-width: 768px) {
-  /* ---- Nav: taller bar so the mark and tagline can sit larger ---- */
-  :root { --nav-h: 158px; }
+  /* ---- Nav: enlarged to 130px for bigger logo ---- */
+  :root { --nav-h: 130px; }
 
   .nav-left, .nav-right { display: none; }
   .nav-bar {
@@ -2122,15 +2122,15 @@ em  { font-style: italic; color: inherit; }
   .mobile-nav.open { display: flex; }
 
   .nav-logo-img {
-    height: 110px;
+    height: 90px;           /* enlarged from 52px */
     padding-top: 12px;      /* keep stirrer fully visible */
     width: auto;
   }
   .logo-sub {
-    font-size: clamp(0.5rem, 2.8vw, 0.68rem);
+    font-size: 0.42rem;
     font-weight: 700;
-    letter-spacing: 0.1em;
-    margin-top: 6px;
+    letter-spacing: 0.12em;
+    margin-top: 5px;
     text-align: center;
     white-space: nowrap;
     display: block;
