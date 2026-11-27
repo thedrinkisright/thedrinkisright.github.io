@@ -551,7 +551,44 @@ if (document.getElementById('book-page')) {
 // ---- /book page: phone number validation ----
 if (document.querySelector('.book-form')) {
   var bookForm = document.querySelector('.book-form');
+  var emailInput = document.getElementById('email');
+  var emailHint = document.getElementById('email-hint');
   var phoneInput = document.querySelector('input[name="phone"]');
+
+  function emailIsInvalid() {
+    if (!emailInput) return false;
+    var value = emailInput.value.trim();
+    if (!value) return true;
+    if (emailInput.validity) {
+      return emailInput.validity.typeMismatch || emailInput.validity.badInput;
+    }
+    return !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  }
+
+  function showEmailHint(show) {
+    if (emailHint) {
+      emailHint.textContent = emailInput && emailInput.value.trim()
+        ? 'Please enter a valid email'
+        : 'Please enter an email';
+      emailHint.hidden = !show;
+      emailHint.classList.toggle('is-error', !!show);
+    }
+    if (emailInput) emailInput.classList.toggle('field-hint-error', !!show);
+  }
+
+  if (emailInput) {
+    emailInput.addEventListener('invalid', function(e) {
+      e.preventDefault();
+      showEmailHint(true);
+    });
+    emailInput.addEventListener('input', function() {
+      showEmailHint(false);
+    });
+    emailInput.addEventListener('blur', function() {
+      if (this.value.trim()) showEmailHint(emailIsInvalid());
+    });
+  }
+
   var phoneError = document.createElement('p');
   phoneError.style.cssText = 'color:#E24B4A;font-size:0.78rem;margin-top:0.35rem;display:none;';
   phoneError.textContent = 'Please enter a valid US phone number (e.g. (929) 000-0000)';
@@ -666,6 +703,13 @@ if (document.querySelector('.book-form')) {
   bookForm.addEventListener('submit', function(e) {
     e.preventDefault();
 
+    if (emailInput && emailIsInvalid()) {
+      showEmailHint(true);
+      emailInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      emailInput.focus();
+      return;
+    }
+
     if (phoneInput) {
       var digits = phoneInput.value.replace(/\D/g, '');
       if (digits.length !== 10) {
@@ -688,6 +732,14 @@ if (document.querySelector('.book-form')) {
       showHoursRangeError(true);
       hoursInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
       hoursInput.focus();
+      return;
+    }
+
+    var missing = bookForm.querySelector(':invalid');
+    if (missing) {
+      missing.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      missing.focus();
+      if (typeof missing.reportValidity === 'function') missing.reportValidity();
       return;
     }
 
