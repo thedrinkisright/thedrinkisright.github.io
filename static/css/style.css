@@ -2136,6 +2136,14 @@ em  { font-style: italic; color: inherit; }
     display: block;
   }
 
+  /* ---- Hero: solid black on mobile; photo stays desktop-only ---- */
+  .hero-bg {
+    background: #000;
+  }
+  .hero-bg::after {
+    display: none;
+  }
+
   /* ---- Hero: adjust top padding for mobile nav height ---- */
   .hero-content {
     padding: calc(var(--nav-h) + 1.5rem) 1.25rem 2rem;
