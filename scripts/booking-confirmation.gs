@@ -1,8 +1,9 @@
 /**
  * Booking receipt for The Drink Is Right
  *
- * In script.google.com: Select all in Code.gs, delete, paste THIS WHOLE FILE,
- * Save, then run installTrigger.
+ * In script.google.com: Select all in Code.gs, delete, paste THIS WHOLE FILE, Save.
+ * First setup only: run installTrigger.
+ * To send the latest request now: run sendForLatestInquiry.
  */
 
 var BOOKING_SUBJECT = 'New Booking Inquiry — The Drink Is Right';
@@ -67,7 +68,7 @@ function installTrigger() {
   });
   ScriptApp.newTrigger('sendBookingReceipts')
     .timeBased()
-    .everyMinutes(5)
+    .everyMinutes(1)
     .create();
 }
 
@@ -83,11 +84,19 @@ function sendBookingReceipts() {
 }
 
 function sendForLatestInquiry() {
-  var threads = GmailApp.search(inquirySearchQuery(true), 0, 5);
+  var threads = GmailApp.search(
+    '(from:formspree OR subject:"Booking Inquiry") newer_than:2d',
+    0,
+    10
+  );
   if (!threads.length) {
     throw new Error('No Formspree booking email found in this inbox.');
   }
-  processInquiryThreads([threads[0]], true);
+  var thread = threads[0];
+  var sentLabel = getOrCreateLabel(SENT_LABEL);
+  thread.removeLabel(getOrCreateLabel(SKIPPED_LABEL));
+  thread.removeLabel(sentLabel);
+  processInquiryThreads([thread], true);
 }
 
 function debugLastInquiry() {
@@ -104,6 +113,7 @@ function debugLastInquiry() {
     Logger.log('--- ' + (i + 1) + ' ---');
     Logger.log('Subject: ' + message.getSubject());
     Logger.log('From: ' + message.getFrom());
+    Logger.log('Reply-To: ' + (message.getReplyTo() || '(none)'));
     Logger.log('Date: ' + message.getDate());
     Logger.log('Labels: ' + labels);
     Logger.log('Extracted client email: ' + (extractClientEmail(message) || '(none)'));
@@ -129,16 +139,28 @@ function processInquiryThreads(threads, force) {
     });
     if (alreadySent) return;
     var clientEmail = extractClientEmail(message);
-    var details = extractInquiryDetails(message);
+    var details = {};
+    try {
+      details = extractInquiryDetails(message);
+    } catch (detailsErr) {
+      Logger.log('Details parse failed: ' + detailsErr);
+    }
     Logger.log('Subject: ' + message.getSubject());
+    Logger.log('Reply-To: ' + (message.getReplyTo() || '(none)'));
     Logger.log('Client email: ' + (clientEmail || '(none)'));
     Logger.log('Details sentence: ' + (detailsSentence(details) || '(generic)'));
     if (!clientEmail) {
       thread.addLabel(skippedLabel);
+      Logger.log('Skipped: no client email on this inquiry.');
       return;
     }
-    sendReceipt(clientEmail, details);
-    thread.addLabel(sentLabel);
+    try {
+      sendReceipt(clientEmail, details);
+      thread.addLabel(sentLabel);
+    } catch (sendErr) {
+      Logger.log('Send failed: ' + sendErr);
+      throw sendErr;
+    }
   });
 }
 
@@ -161,7 +183,17 @@ function sendReceipt(to, details) {
   }
 }
 
+function emailFromHeader(value) {
+  var match = String(value || '').match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
+  if (!match) return '';
+  var address = match[0].replace(/[.,;:]+$/, '').toLowerCase();
+  return isClientEmail(address) ? address : '';
+}
+
 function extractClientEmail(message) {
+  var fromHeader = emailFromHeader(message.getReplyTo()) || emailFromHeader(message.getFrom());
+  if (fromHeader) return fromHeader;
+
   var raw = message.getBody() + '\n' + message.getPlainBody();
   var text = htmlToText(raw);
   var fieldMatch = text.match(/\bemail\s*[:\n\s]+([^\s<>]+@[^\s<>]+)/i);
@@ -192,8 +224,11 @@ function htmlToText(html) {
     .replace(/<[^>]+>/g, ' ')
     .replace(/&nbsp;/gi, ' ')
     .replace(/&amp;/gi, '&')
-    .replace(/&ndash;/gi, '\u2013')
-    .replace(/&#8211;/g, '\u2013')
+    .replace(/&#64;/g, '@')
+    .replace(/&#x40;/gi, '@')
+    .replace(/&commat;/gi, '@')
+    .replace(/&ndash;/gi, '-')
+    .replace(/&#8211;/g, '-')
     .replace(/[ \t]+\n/g, '\n')
     .replace(/\n{3,}/g, '\n\n');
 }
@@ -204,7 +239,7 @@ function extractField(text, keys) {
     var escaped = keys[i].replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+');
     var patterns = [
       new RegExp('(?:^|\\n)\\s*' + escaped + '\\s*\\n\\s*([^\\n]+)', 'i'),
-      new RegExp('(?:^|\\n)\\s*' + escaped + '\\s*[:\\-\\u2013]\\s*([^\\n]+)', 'i'),
+      new RegExp('(?:^|\\n)\\s*' + escaped + '\\s*[:\\-]\\s*([^\\n]+)', 'i'),
       new RegExp('(?:^|\\n)\\s*' + escaped + '\\s{2,}([^\\n]+)', 'i')
     ];
     for (var p = 0; p < patterns.length; p++) {
@@ -222,7 +257,11 @@ function isFieldLabel(value) {
 }
 
 function extractInquiryDetails(message) {
-  var text = htmlToText((message && message.getBody ? message.getBody() : '') + '\n' + (message && message.getPlainBody ? message.getPlainBody() : ''));
+  var body = '';
+  var plain = '';
+  try { body = message.getBody() || ''; } catch (e1) {}
+  try { plain = message.getPlainBody() || ''; } catch (e2) {}
+  var text = htmlToText(body + '\n' + plain);
   return {
     occasion: extractField(text, ['event_type', 'Occasion']),
     date: extractField(text, ['event_date', 'Date']),
@@ -305,7 +344,7 @@ function detailsSentence(details) {
   var scope = [];
   if (hours) scope.push(hours);
   if (guests) scope.push(guests);
-  if (scope.length) sentence += ' \u2014 ' + scope.join(', ');
+  if (scope.length) sentence += ' — ' + scope.join(', ');
   return sentence + '.';
 }
 
