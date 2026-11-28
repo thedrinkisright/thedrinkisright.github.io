@@ -890,13 +890,13 @@ if (document.querySelector('.book-form')) {
         return;
       }
       return res.json().then(function(data) {
-        var msg = 'Something went wrong. Please try again or call us.';
+        var msg = 'Something went wrong. Please try again.';
         if (data && data.errors && data.errors[0] && data.errors[0].message) {
           msg = data.errors[0].message;
         }
         throw new Error(msg);
       }, function() {
-        throw new Error('Something went wrong. Please try again or call us.');
+        throw new Error('Something went wrong. Please try again.');
       });
     }).catch(function(err) {
       if (submitBtn) {
@@ -905,7 +905,7 @@ if (document.querySelector('.book-form')) {
       }
       if (statusEl) {
         statusEl.hidden = false;
-        statusEl.textContent = err.message || 'Something went wrong. Please try again or call us.';
+        statusEl.textContent = err.message || 'Something went wrong. Please try again.';
       }
     });
   });
