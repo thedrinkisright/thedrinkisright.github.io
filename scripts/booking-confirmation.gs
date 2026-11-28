@@ -454,9 +454,8 @@ function receiptHtml(details) {
           '</td></tr>' +
           '<tr><td style="padding:40px 44px 56px;">' +
             '<table role="presentation" width="100%" cellpadding="0" cellspacing="0">' +
-              '<tr><td style="font-family:Georgia,Times,serif;font-size:28px;line-height:1.3;color:#161414;">We\'ll be in touch.</td></tr>' +
-              '<tr><td style="padding-top:18px;">' +
-                '<div style="width:40px;height:1px;background:#C9A84C;line-height:1px;font-size:1px;">&nbsp;</div>' +
+              '<tr><td style="padding:0;">' +
+                '<span style="display:inline-block;font-family:Georgia,Times,serif;font-size:28px;line-height:1.3;color:#161414;padding-bottom:18px;border-bottom:1px solid #C9A84C;">We\'ll be in touch.</span>' +
               '</td></tr>' +
               body +
               '<tr><td style="padding-top:40px;font-family:Georgia,Times,serif;font-size:15px;line-height:1.6;color:#161414;">The Drink Is Right<br><span style="color:#8A8680;font-size:13px;">New York City</span></td></tr>' +
