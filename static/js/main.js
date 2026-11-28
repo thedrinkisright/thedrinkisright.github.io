@@ -31,6 +31,104 @@ var MAX_BOOKING_HOURS = 6;
 var STARTING_FROM_HOURS = 3;
 var DEFAULT_BOOKING_HOURS = 3;
 
+function occasionPhrase(occasion) {
+  var raw = String(occasion || '').replace(/\s+/g, ' ').trim();
+  if (!raw || /^select one$/i.test(raw)) return '';
+  var phrases = {
+    'birthday party': 'a birthday party',
+    'engagement': 'an engagement',
+    'wedding': 'a wedding',
+    'rehearsal dinner': 'a rehearsal dinner',
+    'retirement party': 'a retirement party',
+    'anniversary': 'an anniversary',
+    'corporate event': 'a corporate event',
+    'bridal shower': 'a bridal shower',
+    'house party': 'a house party',
+    'graduation party': 'a graduation party',
+    'other': 'an event'
+  };
+  var mapped = phrases[raw.toLowerCase()];
+  if (mapped) return mapped;
+  var noun = raw.toLowerCase();
+  var first = noun.replace(/[^a-z]/g, '').charAt(0);
+  if (!first) return '';
+  return ('aeiou'.indexOf(first) !== -1 ? 'an ' : 'a ') + noun;
+}
+
+function formatEventDate(raw) {
+  var value = String(raw || '').trim();
+  if (!value || /^select a date$/i.test(value)) return '';
+  var iso = value.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!iso) return value;
+  var months = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+  var month = months[parseInt(iso[2], 10) - 1];
+  if (!month) return '';
+  return month + ' ' + parseInt(iso[3], 10) + ', ' + iso[1];
+}
+
+function formatStartTime(raw) {
+  var value = String(raw || '').replace(/\s+/g, ' ').trim();
+  if (!value || /^select a time$/i.test(value)) return '';
+  var hm = value.match(/^(\d{1,2}):(\d{2})$/);
+  if (hm) {
+    var hours = parseInt(hm[1], 10);
+    var mins = hm[2];
+    if (hours >= 0 && hours <= 23) {
+      var ampm = hours >= 12 ? 'PM' : 'AM';
+      var h12 = hours % 12;
+      if (!h12) h12 = 12;
+      return h12 + ':' + mins + ' ' + ampm;
+    }
+  }
+  return value;
+}
+
+function formatHoursPhrase(raw) {
+  var n = parseInt(String(raw || '').replace(/[^\d]/g, ''), 10);
+  if (!n) return '';
+  return n === 1 ? '1 hour' : n + ' hours';
+}
+
+function formatGuestsPhrase(raw) {
+  var value = String(raw || '').replace(/\s+/g, ' ').trim();
+  if (!value) return '';
+  if (/^up to 25$/i.test(value)) return 'up to 25 guests';
+  if (/guests$/i.test(value)) return value.charAt(0).toLowerCase() + value.slice(1);
+  return value + ' guests';
+}
+
+function detailsSentence(details) {
+  if (!details) return '';
+  var occasion = occasionPhrase(details.occasion);
+  var date = formatEventDate(details.date);
+  var time = formatStartTime(details.startTime);
+  var hours = formatHoursPhrase(details.hours);
+  var guests = formatGuestsPhrase(details.guests);
+  if (!occasion && !date && !time && !hours && !guests) return '';
+
+  var sentence = 'We received your request for ' + (occasion || 'an event');
+  if (date) sentence += ' on ' + date;
+  if (time) sentence += ' at ' + time;
+  var scope = [];
+  if (hours) scope.push(hours);
+  if (guests) scope.push(guests);
+  if (scope.length) sentence += ' — ' + scope.join(', ');
+  return sentence + '.';
+}
+
+function bookingReceiptCopy(details) {
+  var sentence = detailsSentence(details);
+  return {
+    details: sentence,
+    followUp: sentence
+      ? 'We typically respond within 24 hours.'
+      : 'We received your booking request and typically respond within 24 hours.'
+  };
+}
+
 function billableHours(hours) {
   return hours;
 }
@@ -777,7 +875,17 @@ if (document.querySelector('.book-form')) {
       headers: { 'Accept': 'application/json' }
     }).then(function(res) {
       if (res.ok) {
-        try { sessionStorage.setItem('tdrBookingComplete', '1'); } catch (err) {}
+        try {
+          var copy = bookingReceiptCopy({
+            occasion: (bookForm.querySelector('#event_type') || {}).value,
+            date: (bookForm.querySelector('#date') || {}).value,
+            startTime: (bookForm.querySelector('#event_start_time') || {}).value,
+            hours: (bookForm.querySelector('#event_hours') || {}).value,
+            guests: (bookForm.querySelector('#guests') || {}).value
+          });
+          sessionStorage.setItem('tdrBookingComplete', '1');
+          sessionStorage.setItem('tdrBookingCopy', JSON.stringify(copy));
+        } catch (err) {}
         window.location.href = '/thank-you/';
         return;
       }

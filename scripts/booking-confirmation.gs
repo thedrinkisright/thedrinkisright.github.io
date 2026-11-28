@@ -351,6 +351,17 @@ function formatEventDate(raw) {
 function formatStartTime(raw) {
   var value = String(raw || '').replace(/\s+/g, ' ').trim();
   if (!value || /^select a time$/i.test(value)) return '';
+  var hm = value.match(/^(\d{1,2}):(\d{2})$/);
+  if (hm) {
+    var hours = parseInt(hm[1], 10);
+    var mins = hm[2];
+    if (hours >= 0 && hours <= 23) {
+      var ampm = hours >= 12 ? 'PM' : 'AM';
+      var h12 = hours % 12;
+      if (!h12) h12 = 12;
+      return h12 + ':' + mins + ' ' + ampm;
+    }
+  }
   return value;
 }
 

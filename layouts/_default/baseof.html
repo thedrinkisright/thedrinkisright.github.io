@@ -70,7 +70,7 @@
 
   <link rel="stylesheet" href="{{ "/css/style.css" | relURL }}?v={{ now.Unix }}" />
 </head>
-<body>
+<body{{ if eq .Layout "thank-you" }} class="page-thankyou"{{ end }}>
   {{ partial "nav.html" . }}
   <main id="main-content">
     {{ block "main" . }}{{ end }}
